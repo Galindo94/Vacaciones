@@ -26,16 +26,26 @@
     <script>
         $(document).ready(function () {
             // create DatePicker from input HTML element
-            $("#datepicker").kendoDatePicker();
-            $("#datepicker").attr("readonly", true);
-            $("#datepickerFin").kendoDatePicker();
-            $("#datepickerFin").attr("readonly", true);
+            $(".kendocalendar").kendoDatePicker();
+            $(".kendocalendar").attr("readonly", true);
+
+            $("input[class='kendocalendar k-input']").each(function (index) {
+                $(this).attr('id', 'kendocalendar_' + index);
+            })
+
 
             $("#fireme").click(function () {
-                $("#EnSureModal").modal();
-
-
+                $("#EnSureModal").modal({
+                    backdrop: 'static',
+                }
+                );
             });
+
+            $('#EnSureModal').on('hidden.bs.modal', function (e) {
+                console.log("test");
+                $("#datepicker").val('');
+                $("#datepickerFin").val('');
+            })
 
             $.getJSON("/Home/GetCiudadList", function (json) {
                 $("#rowSelection").kendoGrid({
@@ -80,6 +90,25 @@
             @Html.Partial("_CuerpoEscenario")
             @Html.Partial("_OtrosColaboradoresEscenario")
             @Html.Partial("_GridEmpleados")
+        </div>
+        <button id="fireme" class="btn btn-default">Fire me up!</button>
+        <div class="modal fade" id="EnSureModal" role="dialog">
+            <div class="modal-dialog">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <button type="button" class="close" data-dismiss="modal">&times;</button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="jumbotron-cuerpo">
+                            @Html.Partial("_ModalAnotadores")
+                        </div>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-default" data-dismiss="modal">no</button>
+                        <button type="button" class="btn btn-default" data-dismiss="modal">yes</button>
+                    </div>
+                </div>
+            </div>
         </div>
     </div>
 </body>
