@@ -1,0 +1,50 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.bootstrap-v4.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
+    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jquery.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/angular.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jszip.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/kendo.all.min.js")"></script>
+    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
+
+    @*calendario*@
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.min.css")" rel="stylesheet" />
+
+    @*Grid*@
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.mobile.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.rtl.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.common.min.css")" rel="stylesheet" />
+
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.silver.min.css")" rel="stylesheet" />
+    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.mobile.all.min.css")" rel="stylesheet" />
+
+
+</head>
+
+<body class="k-content">
+
+    <main>
+        <div class="container">
+            @RenderSection("featured", required: false)
+            @RenderBody()
+        </div>
+    </main>
+
+    <footer class="footer text-center d-flex align-items-center">
+        <div class="container pb-0">
+            <hr />
+            <p>Copyright &copy; @DateTime.Now.Year Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+
+    </script>
+</body>
+</html>
