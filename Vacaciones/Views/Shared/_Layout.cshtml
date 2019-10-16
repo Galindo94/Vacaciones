@@ -27,14 +27,33 @@
 
 </head>
 
-<body class="k-content">
+<body>
 
-    <main>
-        <div class="container">
-            @RenderSection("featured", required: false)
-            @RenderBody()
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+        <a class="navbar-brand" href="#">Vacaciones</a>
+        <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mr-auto">
+                <li class="nav-item active">
+                    @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                </li>
+                <li class="nav-item">
+                    @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
+                </li>
+            </ul>
         </div>
-    </main>
+    </nav>
+
+    <br />
+
+    <div class="container body-content">
+        @RenderBody()
+    </div>
 
     <footer class="footer text-center d-flex align-items-center">
         <div class="container pb-0">
@@ -43,8 +62,6 @@
         </div>
     </footer>
 
-    <script>
 
-    </script>
 </body>
 </html>
