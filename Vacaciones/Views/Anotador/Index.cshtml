@@ -15,6 +15,7 @@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.bootstrap-v4.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
     <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
+
     @*calendario*@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.min.css")" rel="stylesheet" />
     <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jquery.min.js")"></script>
@@ -25,26 +26,27 @@
 
     <script>
         $(document).ready(function () {
-            // create DatePicker from input HTML element
+            //Se le asignan a todos los inputs que tengan la clase .kendocalendar que sean de tipo calendario y se desabilitan
             $(".kendocalendar").kendoDatePicker();
             $(".kendocalendar").attr("readonly", true);
 
+            //Se colocan los Id de los inputs dinamicamente
             $("input[class='kendocalendar k-input']").each(function (index) {
                 $(this).attr('id', 'kendocalendar_' + index);
             })
 
-
-            $("#fireme").click(function () {
-                $("#EnSureModal").modal({
+            //Evitar que se cierre la modal cuando se da click por fuera de ella
+            $("#btnOtrosColaboradoresModal").click(function () {
+                $("#ModalOtrosColaboradores").modal({
                     backdrop: 'static',
                 }
                 );
             });
 
-            $('#EnSureModal').on('hidden.bs.modal', function (e) {
+            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
                 console.log("test");
-                $("#datepicker").val('');
-                $("#datepickerFin").val('');
+                $("#kendocalendar_2").val('');
+                $("#kendocalendar_3").val('');
             })
 
             $.getJSON("/Home/GetCiudadList", function (json) {
@@ -91,21 +93,18 @@
             @Html.Partial("_OtrosColaboradoresEscenario")
             @Html.Partial("_GridEmpleados")
         </div>
-        <button id="fireme" class="btn btn-default">Fire me up!</button>
-        <div class="modal fade" id="EnSureModal" role="dialog">
+
+        <div class="modal fade" id="ModalOtrosColaboradores" role="dialog">
             <div class="modal-dialog">
                 <div class="modal-content">
-                    <div class="modal-header">
-                        <button type="button" class="close" data-dismiss="modal">&times;</button>
-                    </div>
                     <div class="modal-body">
                         <div class="jumbotron-cuerpo">
                             @Html.Partial("_ModalAnotadores")
                         </div>
-                    </div>
-                    <div class="modal-footer">
-                        <button type="button" class="btn btn-default" data-dismiss="modal">no</button>
-                        <button type="button" class="btn btn-default" data-dismiss="modal">yes</button>
+                        <div class="jumbotron-cuerpo center">
+                            <button type="button" class="btn btn-light" data-dismiss="modal">Agregar</button>
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
+                        </div>
                     </div>
                 </div>
             </div>
