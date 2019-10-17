@@ -5,7 +5,7 @@ using System.Web;
 
 namespace Vacaciones.Models
 {
-    public class ListaEmpleadosModels
+    public class EmpleadoModels
     {
         public string Cedula { get; set; }
         public int NumeroDias { get; set; }

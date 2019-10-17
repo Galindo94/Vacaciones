@@ -1,39 +1,17 @@
 ﻿@model Vacaciones.Models.Persona
-
-@{
-    Layout = null;
-}
-
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Anotador</title>
-
-    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.bootstrap-v4.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/bootstrap.min.css")" rel="stylesheet" type="text/css" />
-    <link href="@Url.Content("~/Content/Site.css")" rel="stylesheet" type="text/css" />
-
-    @*calendario*@
-    <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.min.css")" rel="stylesheet" />
-    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jquery.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/angular.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jszip.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/kendo/2019.3.917/kendo.all.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
 
     <script>
-        $(document).ready(function () {
-            //Se le asignan a todos los inputs que tengan la clase .kendocalendar que sean de tipo calendario y se desabilitan
-            $(".kendocalendar").kendoDatePicker();
-            $(".kendocalendar").attr("readonly", true);
 
-            //Se colocan los Id de los inputs dinamicamente
-            $("input[class='kendocalendar k-input']").each(function (index) {
-                $(this).attr('id', 'kendocalendar_' + index);
-            })
+
+
+
+        $(document).ready(function () {
 
             //Evitar que se cierre la modal cuando se da click por fuera de ella
             $("#btnOtrosColaboradoresModal").click(function () {
@@ -44,12 +22,11 @@
             });
 
             $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
-                console.log("test");
                 $("#kendocalendar_2").val('');
                 $("#kendocalendar_3").val('');
             })
 
-            $.getJSON("/Home/GetCiudadList", function (json) {
+            $.getJSON("/Anotador/ConsultarListaEmpleado", function (json) {
                 $("#rowSelection").kendoGrid({
                     dataSource: {
                         data: json,
@@ -81,12 +58,37 @@
                     ]
                 });
             });
+
+            $('#btnAgregar').click(function () {
+                $.post("../Anotador/AgregarEmpleado", { Cedula: "1234567", NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (datas) {
+
+
+                    $("#rowSelection").kendoGrid({
+                        dataSource: {
+                            data: datas,
+                            pageSize: 5
+                        },
+                        selectable: "single",
+                        pageable: {
+                            buttonCount: 5
+                        },
+                        scrollable: false,
+                        navigatable: true
+                    });
+
+                });
+            });
+
+
+
+
         });
     </script>
 
 </head>
 <body>
     <div class="jumbotron">
+
         <div class="jumbotron-cuerpo">
             @Html.Partial("_EncabezadoEscenario")
             @Html.Partial("_CuerpoEscenario")
@@ -94,15 +96,15 @@
             @Html.Partial("_GridEmpleados")
         </div>
 
-        <div class="modal fade" id="ModalOtrosColaboradores" role="dialog">
-            <div class="modal-dialog">
+        <div class="modal fade  bd-example-modal-lg " id="ModalOtrosColaboradores" role="dialog">
+            <div class="modal-dialog modal-lg">
                 <div class="modal-content">
                     <div class="modal-body">
                         <div class="jumbotron-cuerpo">
                             @Html.Partial("_ModalAnotadores")
                         </div>
                         <div class="jumbotron-cuerpo center">
-                            <button type="button" class="btn btn-light" data-dismiss="modal">Agregar</button>
+                            <button id="btnAgregar" type="button" class="btn btn-light" data-dismiss="modal">Agregar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>

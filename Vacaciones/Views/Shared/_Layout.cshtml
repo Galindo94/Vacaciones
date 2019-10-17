@@ -25,6 +25,30 @@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.mobile.all.min.css")" rel="stylesheet" />
 
 
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            // create DatePicker from input HTML element
+            $(".kendocalendar").kendoDatePicker({
+                format: "dd/MM/yyyy"
+            }
+            );
+
+            $(".kendocalendar").attr("readonly", true);
+            $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
+
+            $("input[class='kendocalendar k-input']").each(function (index) {
+                $(this).attr('id', 'kendocalendar_' + index);
+            });
+
+            $("input[class='NumDias k-textbox']").each(function (index) {
+                $(this).attr('id', 'NumDias' + index);
+            });
+
+
+        });
+    </script>
+
 </head>
 
 <body>
@@ -42,9 +66,13 @@
                 <li class="nav-item">
                     @Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
                 </li>
+
                 <li class="nav-item">
                     @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
                 </li>
+                @*<li class="nav-item">
+                        @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
+                    </li>*@
             </ul>
         </div>
     </nav>
@@ -64,4 +92,5 @@
 
 
 </body>
+
 </html>
