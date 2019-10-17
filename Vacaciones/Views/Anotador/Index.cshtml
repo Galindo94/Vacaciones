@@ -20,10 +20,12 @@
 
             //Se limpian los valores de la ventana modal
             $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
+                console.log('entre');
                 $("#kendocalendar_2").data("kendoDatePicker").value(null);
                 $("#kendocalendar_3").data("kendoDatePicker").value(null);
                 $("#NumDias1").val('');
-            })
+            });
+
 
             $.getJSON("/Anotador/ConsultarListaEmpleado", function (json) {
                 $("#rowSelection").kendoGrid({
@@ -81,10 +83,6 @@
                     }
                 });
             });
-
-
-
-
         });
     </script>
 
