@@ -8,9 +8,6 @@
 
     <script>
 
-
-
-
         $(document).ready(function () {
 
             //Evitar que se cierre la modal cuando se da click por fuera de ella
@@ -21,9 +18,11 @@
                 );
             });
 
+            //Se limpian los valores de la ventana modal
             $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
-                $("#kendocalendar_2").data("kendoDatePicker").value(null);
-                $("#kendocalendar_3").data("kendoDatePicker").value(null);
+                $("#kendocalendar_2").val('');
+                $("#kendocalendar_3").val('');
+                $("#NumDias1").val('');
             })
 
             $.getJSON("/Anotador/ConsultarListaEmpleado", function (json) {
@@ -60,22 +59,26 @@
             });
 
             $('#btnAgregar').click(function () {
-                $.post("../Anotador/AgregarEmpleado", { Cedula: "1234567", NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (datas) {
+                $.post("../Anotador/AgregarEmpleado", { Cedula: "1234567", NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
 
-
-                    $("#rowSelection").kendoGrid({
-                        dataSource: {
-                            data: datas,
-                            pageSize: 5
-                        },
-                        selectable: "single",
-                        pageable: {
-                            buttonCount: 5
-                        },
-                        scrollable: false,
-                        navigatable: true
-                    });
-
+                    if (d.Codigo == 2) {
+                        alert(d.Mensaje);
+                    }
+                    else {
+                        alert(d.Mensaje);
+                        $("#rowSelection").kendoGrid({
+                            dataSource: {
+                                data: d.Resultado.Data,
+                                pageSize: 5
+                            },
+                            selectable: "single",
+                            pageable: {
+                                buttonCount: 5
+                            },
+                            scrollable: false,
+                            navigatable: true
+                        });
+                    }
                 });
             });
 
