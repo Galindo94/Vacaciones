@@ -6,14 +6,14 @@ using System.Web.Mvc;
 using Vacaciones.Models;
 using System.Data;
 using Newtonsoft.Json;
+using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers
 {
     public class AnotadorController : Controller
     {
-     
         List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
-
+        MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         // GET: Anotador
         public ActionResult Index()
         {
@@ -25,28 +25,54 @@ namespace Vacaciones.Controllers
         public JsonResult AgregarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual)
         {
 
-            //var result = HttpContext.Current.Session["Products"] as IList<ProductViewModel>;
             oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
 
-            if (!string.IsNullOrEmpty(Cedula))
+            EmpleadoModels oEmpleado = new EmpleadoModels
             {
-                EmpleadoModels os = new EmpleadoModels
+                Cedula = Cedula,
+                NumeroDias = Convert.ToInt32(NumeroDias),
+                FechaInicio = FechaInicio,
+                FechaFin = FechaFin
+            };
+
+            //Se valida si ya la cedula ha sido agregada
+            int Existe = oLstEmpleados
+                .Where(w => w.Cedula == oEmpleado.Cedula).Count();
+            if (Existe == 0)
+            {
+                oLstEmpleados.Add(oEmpleado);
+
+                oMensajeRespuesta = new MensajeRespuesta
                 {
-                    Cedula = Cedula,
-                    NumeroDias = Convert.ToInt32(NumeroDias),
-                    FechaInicio = FechaInicio,
-                    FechaFin = FechaFin
+                    Codigo = "1",
+                    Mensaje = "Empleado agregado correctamente.",
+                    Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
 
                 };
-                oLstEmpleados.Add(os);
+            }
+            else
+            {
+                oMensajeRespuesta = new MensajeRespuesta
+                {
+                    Codigo = "2",
+                    Mensaje = "El empleado ya ha sido agregado a la lista.",
+                    Resultado = Json("", JsonRequestBehavior.AllowGet)
+                };
+
 
             }
 
-            return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
+            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
         }
 
         public JsonResult ConsultarListaEmpleado()
         {
+            if (oLstEmpleados == null)
+            {
+                oLstEmpleados = new List<EmpleadoModels>();
+            }
+
             return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
         }
 
