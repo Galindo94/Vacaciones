@@ -22,8 +22,8 @@
             });
 
             $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
-                $("#kendocalendar_2").val('');
-                $("#kendocalendar_3").val('');
+                $("#kendocalendar_2").data("kendoDatePicker").value(null);
+                $("#kendocalendar_3").data("kendoDatePicker").value(null);
             })
 
             $.getJSON("/Anotador/ConsultarListaEmpleado", function (json) {
