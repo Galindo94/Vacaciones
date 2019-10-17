@@ -1,8 +1,4 @@
-﻿using Newtonsoft.Json;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
+﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Vacaciones.Models;
 
@@ -39,71 +35,5 @@ namespace Vacaciones.Controllers
             return PartialView();
         }
 
-
-
-        public JsonResult GetCiudadList()
-        {
-            List<ListaEmpleadosModels> oLstEmpleados = new List<ListaEmpleadosModels>
-            {
-                new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                 new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                  new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                   new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                    new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                     new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                      new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-                       new ListaEmpleadosModels
-                {
-                    Cedula = "1152694826",
-                    NumeroDias=7,
-                    FechaInicio = "16/10/2019",
-                    FechaFin = "25/10/2019"
-                },
-            };
-
-            return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
-        }
     }
 }
