@@ -76,6 +76,31 @@ namespace Vacaciones.Controllers
             return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
         }
 
+        public JsonResult ValidarCantidadDias(int NumeroDias)
+        {
+            if (NumeroDias < 6)
+            {
+                oMensajeRespuesta = new MensajeRespuesta
+                {
+                    Codigo = "1",
+                    Mensaje = "La cantidad de dias debe ser superior a 6",
+                    Resultado = Json("", JsonRequestBehavior.AllowGet)
+                };
+            }
+
+            if (NumeroDias > ViewBag.NumeroDias)
+            {
+                oMensajeRespuesta = new MensajeRespuesta
+                {
+                    Codigo = "1",
+                    Mensaje = "La cantidad de dias debe ser menor o igual al numero de dias disponibles",
+                    Resultado = Json("", JsonRequestBehavior.AllowGet)
+                };
+            }
+
+            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+        }
+
         // GET: Anotador/Details/5
         public ActionResult Details(int id)
         {

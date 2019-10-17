@@ -18,56 +18,73 @@
                 );
             });
 
-            //Se limpian los valores de la ventana modal
+            //Se limpian los valores de la ventana modal cuando se cierran
             $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
-                console.log('entre');
                 $("#kendocalendar_2").data("kendoDatePicker").value(null);
                 $("#kendocalendar_3").data("kendoDatePicker").value(null);
                 $("#NumDias1").val('');
             });
 
-
-            $.getJSON("/Anotador/ConsultarListaEmpleado", function (json) {
-                $("#rowSelection").kendoGrid({
-                    dataSource: {
-                        data: json,
-                        pageSize: 5
-                    },
-                    selectable: "single",
-                    pageable: {
-                        buttonCount: 5
-                    },
-                    scrollable: false,
-                    navigatable: true,
-                    columns: [
-                        {
-                            field: "Cedula",
-                            title: "Cedula"
-                        },
-                        {
-                            field: "NumeroDias",
-                            title: "Numero de dias"
-                        },
-                        {
-                            field: "FechaInicio",
-                            title: "Fecha de inicio"
-                        },
-                        {
-                            field: "FechaFin",
-                            title: "Fecha de fin"
-                        }
-                    ]
-                });
+            //Validacion del campo numero de dias
+            $("#NumDias0").focusout(function () {
+                $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val() }, function (respuesta) {
+                    if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
+                        swal.fire({
+                            title: "Advertencia!",
+                            text: respuesta.Mensaje,
+                            type: 'warning',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                    }
+                })
             });
 
+            //Creacion de la grid
+            $("#rowSelection").kendoGrid({
+                dataSource: {
+                    data: "",
+                    pageSize: 5
+                },
+                selectable: "single",
+                pageable: {
+                    buttonCount: 5
+                },
+                scrollable: false,
+                navigatable: true,
+                columns: [
+                    {
+                        field: "Cedula",
+                        title: "Cedula"
+                    },
+                    {
+                        field: "NumeroDias",
+                        title: "Numero de dias"
+                    },
+                    {
+                        field: "FechaInicio",
+                        title: "Fecha de inicio"
+                    },
+                    {
+                        field: "FechaFin",
+                        title: "Fecha de fin"
+                    }
+                ]
+            });
+
+            //Evento del boton aregar dentro d ela ventana modal
             $('#btnAgregar').click(function () {
                 $.post("../Anotador/AgregarEmpleado", { Cedula: "1234567", NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
-
                     if (d.Codigo == 2) {
-                        alert(d.Mensaje);
+                        swal.fire({
+                            title: "Advertencia!",
+                            text: d.Mensaje,
+                            type: 'warning',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
                     }
                     else {
-                        alert(d.Mensaje);
                         $("#rowSelection").kendoGrid({
                             dataSource: {
                                 data: d.Resultado.Data,
@@ -80,10 +97,19 @@
                             scrollable: false,
                             navigatable: true
                         });
+
+                        swal.fire({
+                            title: "Buen trabajo!",
+                            text: d.Mensaje,
+                            type: 'success',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
                     }
                 });
             });
         });
+
     </script>
 
 </head>
