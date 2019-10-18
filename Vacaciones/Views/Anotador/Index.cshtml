@@ -10,36 +10,6 @@
 
         $(document).ready(function () {
 
-            //Evitar que se cierre la modal cuando se da click por fuera de ella
-            $("#btnOtrosColaboradoresModal").click(function () {
-                $("#ModalOtrosColaboradores").modal({
-                    backdrop: 'static',
-                }
-                );
-            });
-
-            //Se limpian los valores de la ventana modal cuando se cierran
-            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
-                $("#kendocalendar_2").data("kendoDatePicker").value(null);
-                $("#kendocalendar_3").data("kendoDatePicker").value(null);
-                $("#NumDias1").val('');
-            });
-
-            //Validacion del campo numero de dias
-            $("#NumDias0").focusout(function () {
-                $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val() }, function (respuesta) {
-                    if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
-                        swal.fire({
-                            title: "Advertencia!",
-                            text: respuesta.Mensaje,
-                            type: 'warning',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                    }
-                })
-            });
-
             //Creacion de la grid
             $("#rowSelection").kendoGrid({
                 dataSource: {
@@ -72,9 +42,105 @@
                 ]
             });
 
-            //Evento del boton aregar dentro d ela ventana modal
+
+            //Validacion del campo numero de dias en pantalla principal
+            $("#NumDias0").focusout(function () {
+                if ($("#NumDias0").val() != '') {
+                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val() }, function (respuesta) {
+                        if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: respuesta.Mensaje,
+                                type: 'warning',
+                                confirmButtonText: "Ok",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    setTimeout(function () {
+                                        $("#NumDias0").val('');
+                                        $("#NumDias0").focus();
+                                    }, 500)
+                                }
+                            });
+                        }
+                    })
+                }
+            });
+
+
+            //Ventana Modal
+            //Validacion del campo numero de dias
+            $("#NumDias1").focusout(function () {
+                if ($("#NumDias1").val() != '') {
+                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias1").val() }, function (respuesta) {
+                        if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: respuesta.Mensaje,
+                                type: 'warning',
+                                confirmButtonText: "Ok",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    setTimeout(function () {
+                                        $("#NumDias1").val('');
+                                        $("#NumDias1").focus();
+                                    }, 500)
+                                }
+                            });
+                        }
+                    })
+                }
+            });
+
+
+            //Evitar que se cierre la modal cuando se da click por fuera de ella
+            $("#btnOtrosColaboradoresModal").click(function () {
+                if ($("#txtCedulaOtros").val() != '') {
+
+                    var exis = false;
+
+                    $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
+                        if (this.Cedula == $("#txtCedulaOtros").val()) {
+                            exis = true;
+                        }
+                    });
+
+
+                    if (!exis) {
+                        $("#ModalOtrosColaboradores").modal({
+                            backdrop: 'static'
+                        });
+                    }
+                    else {
+                        swal.fire({
+                            title: "Advertencia!",
+                            text: "El usuario ya se encuentra en la lista",
+                            type: 'warning',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        });
+                    }
+
+                }
+                else {
+                    swal.fire({
+                        title: "Advertencia!",
+                        text: "Debe ingresar una cedula",
+                        type: 'warning',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                }
+            });
+
+            //Evento del boton aregar dentro de la ventana modal
             $('#btnAgregar').click(function () {
-                $.post("../Anotador/AgregarEmpleado", { Cedula: "1234567", NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
+                $.post("../Anotador/AgregarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
                     if (d.Codigo == 2) {
                         swal.fire({
                             title: "Advertencia!",
@@ -85,19 +151,7 @@
                         });
                     }
                     else {
-                        $("#rowSelection").kendoGrid({
-                            dataSource: {
-                                data: d.Resultado.Data,
-                                pageSize: 5
-                            },
-                            selectable: "single",
-                            pageable: {
-                                buttonCount: 5
-                            },
-                            scrollable: false,
-                            navigatable: true
-                        });
-
+                        $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
                         swal.fire({
                             title: "Buen trabajo!",
                             text: d.Mensaje,
@@ -108,6 +162,16 @@
                     }
                 });
             });
+
+            //Se limpian los valores de la ventana modal cuando se cierran
+            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
+                $("#kendocalendar_2").data("kendoDatePicker").value(null);
+                $("#kendocalendar_3").data("kendoDatePicker").value(null);
+                $("#NumDias1").val('');
+                $("#txtCedulaOtros").val('');
+            });
+
+
         });
 
     </script>
