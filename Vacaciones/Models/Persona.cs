@@ -8,7 +8,7 @@ namespace Vacaciones.Models
     public class Persona
     {
         public string NombrePersona { get; set; }
-        public int NumeroDias { get; set; }
+        public double NumeroDias { get; set; }
         public string Documento { get; set; }
     }
 }

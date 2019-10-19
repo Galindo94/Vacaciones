@@ -2,7 +2,7 @@
 
     <div class="col-md-12">
         <label class="fieldlist-label">Seleccione el numero de dias a tomar</label>
-        <input class="NumDias k-textbox" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6"  />
+        <input class="NumDias k-textbox" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6" />
         <br />
         <br />
     </div>
@@ -21,8 +21,19 @@
             <input class="kendocalendar" style="width:auto" />
         </div>
 
+
+
+
+    </div>
+
+    <div class="col-md-12">
+        <button id="btnAgergarCuerpoEscenario" class="btn btn-lg btn-postobon">Agregar</button>
+        <br />
+        <br />
     </div>
 
     <hr />
+
+    <input id="DocumentoHidden" type="hidden" value="@ViewBag.Documento" />
 
 </div>

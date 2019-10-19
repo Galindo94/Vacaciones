@@ -46,7 +46,7 @@
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
-                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val() }, function (respuesta) {
+                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val(), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
                         if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
@@ -70,11 +70,50 @@
             });
 
 
+            //Evento del boton aregar dentro de la ventana Principal
+            $("[id=btnAgergarCuerpoEscenario]:eq(0)").click(function () {
+                if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
+                    $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
+                        if (d.Codigo == 2) {
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: d.Mensaje,
+                                type: 'warning',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                        else {
+                            $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
+                            swal.fire({
+                                title: "Buen trabajo!",
+                                text: d.Mensaje,
+                                type: 'success',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                    });
+                }
+                else {
+                    swal.fire({
+                        title: "Advertencia!",
+                        text: "Debe ingresar el numero de dias, la fecha de inicio y la fecha de fin para la solicitud de vacaciones.",
+                        type: 'warning',
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: '#00AFF0',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                };
+            });
+
+
             //Ventana Modal
             //Validacion del campo numero de dias
             $("#NumDias1").focusout(function () {
                 if ($("#NumDias1").val() != '') {
-                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias1").val() }, function (respuesta) {
+                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias1").val(), NumDiasDisponibles: parseFloat($("#SpanNumDias1").html()) }, function (respuesta) {
                         if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
@@ -112,9 +151,36 @@
 
 
                     if (!exis) {
-                        $("#ModalOtrosColaboradores").modal({
-                            backdrop: 'static'
+                        $.getJSON("/Anotador/ConsultarEmpleadosAnotador", { Cedula: $("#txtCedulaOtros").val() }, function (respuesta) {
+                            if (respuesta.Codigo == 1) {
+                                $("#ModalOtrosColaboradores").modal({
+                                    backdrop: 'static'
+                                });
+                                $("[id=btnAgergarCuerpoEscenario]:eq(1)").remove();
+                                $("#SpanNumDias1").html(respuesta.Resultado.Data.NumeroDias);
+                                $("#SpanNombreEmpleado1").html(respuesta.Resultado.Data.NombrePersona);
+
+                                //console.log($("#SpanNumDias1").html(), respuesta.Resultado.NumeroDias);
+                            }
+                            else if (respuesta.Codigo == 2) {
+                                swal.fire({
+                                    title: "Advertencia!",
+                                    text: respuesta.Mensaje,
+                                    type: 'warning',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                            } else if (respuesta.Codigo == -1) {
+                                swal.fire({
+                                    title: "Error!",
+                                    text: respuesta.Mensaje,
+                                    type: 'error',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                            };
                         });
+
                     }
                     else {
                         swal.fire({
@@ -139,37 +205,52 @@
             });
 
             //Evento del boton aregar dentro de la ventana modal
-            $('#btnAgregar').click(function () {
-                $.post("../Anotador/AgregarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
-                    if (d.Codigo == 2) {
-                        swal.fire({
-                            title: "Advertencia!",
-                            text: d.Mensaje,
-                            type: 'warning',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                    }
-                    else {
-                        $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
-                        swal.fire({
-                            title: "Buen trabajo!",
-                            text: d.Mensaje,
-                            type: 'success',
-                            allowOutsideClick: false,
-                            allowEscapeKey: false
-                        });
-                    }
-                });
+            $("#btnAgregar").click(function () {
+                if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' && $("#kendocalendar_3").val() != '') {
+                    $.post("../Anotador/AgregarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
+                        if (d.Codigo == 2) {
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: d.Mensaje,
+                                type: 'warning',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                        }
+                        else {
+                            $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
+                            swal.fire({
+                                title: "Buen trabajo!",
+                                text: d.Mensaje,
+                                type: 'success',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            $('#ModalOtrosColaboradores').modal('hide')
+                        }
+                    });
+                }
+                else {
+                    swal.fire({
+                        title: "Advertencia!",
+                        text: "Debe ingresar el numero de dias, la fecha de inicio y la fecha de fin para la solicitud de vacaciones.",
+                        type: 'warning',
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: '#00AFF0',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                }
             });
 
             //Se limpian los valores de la ventana modal cuando se cierran
-            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function (e) {
+            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function () {
                 $("#kendocalendar_2").data("kendoDatePicker").value(null);
                 $("#kendocalendar_3").data("kendoDatePicker").value(null);
                 $("#NumDias1").val('');
                 $("#txtCedulaOtros").val('');
             });
+
 
 
         });
@@ -195,7 +276,7 @@
                             @Html.Partial("_ModalAnotadores")
                         </div>
                         <div class="jumbotron-cuerpo center">
-                            <button id="btnAgregar" type="button" class="btn btn-light" data-dismiss="modal">Agregar</button>
+                            <button id="btnAgregar" type="button" class="btn btn-light">Agregar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>

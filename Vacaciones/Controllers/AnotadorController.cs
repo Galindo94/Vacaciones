@@ -14,11 +14,16 @@ namespace Vacaciones.Controllers
     {
         List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+        Persona oPersona = new Persona();
         // GET: Anotador
-        public ActionResult Index()
+        public ActionResult Index(string Valores)
         {
-            ViewBag.NombreEmpleado = "Carlos Andres Ospina Estrada";
-            ViewBag.NumeroDias = 12;
+            Persona ols = new Persona();
+            ols = JsonConvert.DeserializeObject<Persona>(Valores);
+
+            ViewBag.NombreEmpleado = ols.NombrePersona;
+            ViewBag.NumeroDias = ols.NumeroDias;
+            ViewBag.Documento = ols.Documento;
             return View();
         }
 
@@ -76,7 +81,7 @@ namespace Vacaciones.Controllers
             return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult ValidarCantidadDias(int NumeroDias)
+        public JsonResult ValidarCantidadDias(int NumeroDias, float NumDiasDisponibles)
         {
             if (NumeroDias < 6)
             {
@@ -88,7 +93,7 @@ namespace Vacaciones.Controllers
                 };
             }
 
-            if (NumeroDias > ViewBag.NumeroDias)
+            if (NumeroDias > NumDiasDisponibles)
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
@@ -99,6 +104,64 @@ namespace Vacaciones.Controllers
             }
 
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+        }
+
+        public JsonResult ConsultarEmpleadosAnotador(string Cedula)
+        {
+            try
+            {
+
+                bool Encontro = false;
+
+
+                #region Escenario 1 planta ejecutiva
+
+
+                if (Cedula == "98714393" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.Documento = Cedula;
+                    oPersona.NombrePersona = "NELSON ENRIQUE USUGA MESA";
+                    oPersona.NumeroDias = 19.42;
+                    Encontro = true;
+                }
+
+                if (Cedula == "1045138486" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.Documento = Cedula;
+                    oPersona.NombrePersona = "JOHN FREDIS CORDOBA VASQUEZ";
+                    oPersona.NumeroDias = 19.67;
+                    Encontro = true;
+                }
+
+                #endregion
+
+
+
+                if (!Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "2";
+                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontro en el sistema. Verifiquelo e intentelo de nuevo.";
+                    oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    oMensajeRespuesta.Mensaje = "";
+                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception)
+            {
+                oMensajeRespuesta.Codigo = "-1";
+                oMensajeRespuesta.Mensaje = "Ocurrio un error al consultar el documento. Contacte al administrador del sistema";
+                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
         }
 
         // GET: Anotador/Details/5

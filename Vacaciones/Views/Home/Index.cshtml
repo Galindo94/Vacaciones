@@ -1,23 +1,75 @@
-﻿@{
-    ViewBag.Title = "Home Page";
-}
+﻿
+<!DOCTYPE html>
 
-<div class="jumbotron">
-    <div class="jumbotron-cuerpo">
-        <div class="container body-content">
-            <h1 class="jumbotron-encabezado center">Solicitud de vacaciones</h1>
-            <div class="col-md-12 center">
-                <label class="fieldlist-label">Usuario</label>
-                <input class="k-textbox" type="text" />
-                <br />
-                <br />
-            </div>
-            <div class="col-md-12 center">
-                <label class="fieldlist-label">Contrase&ntilde;a</label>
-                <input class="k-textbox" type="text" />
-                <br />
-                <br />
+<html>
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+    <script>
+
+        $(document).ready(function () {
+
+            $("#Ingresar").click(function () {
+                $.getJSON("/Home/Login", { Cedula: $("#txtCedulaLogin").val() }, function (respuesta) {
+
+                    var resultado = respuesta.Codigo.split('$');
+
+                    if (resultado[0] == 1) {
+                        if (resultado[1] == 1) {
+                            var url = "@Url.Action("Index", "EjecutivosYPlanta", new { Valores = "ValoresData" }, null)";
+                            url = url.replace("ValoresData", JSON.stringify(respuesta.Resultado.Data));
+                            window.location.href = url
+                        }
+                        else if (resultado[1] == 2)
+                        {
+                            var url = "@Url.Action("Index", "EjecutivosYPlanta", new { Valores = "ValoresData" }, null)";
+                            url = url.replace("ValoresData", JSON.stringify(respuesta.Resultado.Data));
+                            window.location.href = url
+                        }
+                        else if (resultado[1] == 3) {
+                             var url = "@Url.Action("Index", "Anotador", new { Valores = "ValoresData" }, null)";
+                            url = url.replace("ValoresData", JSON.stringify(respuesta.Resultado.Data));
+                            window.location.href = url
+                        }
+                    }
+                    else {
+                        swal.fire({
+                            title: "Advertencia!",
+                            text: respuesta.Mensaje,
+                            type: 'warning',
+                            confirmButtonText: "Ok",
+                            confirmButtonColor: '#00AFF0',
+                            allowOutsideClick: false,
+                            allowEscapeKey: false
+                        })
+                    }
+                })
+
+
+
+            });
+
+        });
+
+    </script>
+
+</head>
+<body>
+    <div class="jumbotron">
+        <div class="jumbotron-cuerpo">
+            <div class="container body-content">
+                <h1 class="jumbotron-encabezado center">Login</h1>
+                <div class="col-md-12 center">
+                    <label class="fieldlist-label">Cedula</label>
+                    <input id="txtCedulaLogin" class="k-textbox" type="number" />
+                    <br />
+                    <br />
+                    <button id="Ingresar" class="k-button k-primary">Ingresar</button>
+                </div>
             </div>
         </div>
     </div>
-</div>
+
+</body>
+</html>
