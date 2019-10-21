@@ -70,7 +70,7 @@
             });
 
 
-            //Evento del boton aregar dentro de la ventana Principal
+            //Evento del boton agregar dentro de la ventana Principal
             $("[id=btnAgergarCuerpoEscenario]:eq(0)").click(function () {
                 if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
                     $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
