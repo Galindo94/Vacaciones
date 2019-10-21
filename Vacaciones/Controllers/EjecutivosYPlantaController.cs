@@ -14,6 +14,8 @@ namespace Vacaciones.Controllers
     {
 
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+        List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
+
         // GET: EjecutivosYPlanta
         public ActionResult Index(String Valores)
         {
@@ -22,7 +24,7 @@ namespace Vacaciones.Controllers
 
             ViewBag.NombreEmpleado = ols.NombrePersona;
             ViewBag.NumeroDias = ols.NumeroDias;
-
+            ViewBag.Documento = ols.Documento;
             return View();
         }
 
@@ -49,6 +51,32 @@ namespace Vacaciones.Controllers
             }
 
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+        }
+
+
+        public JsonResult AgregarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual)
+        {
+
+            oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
+
+            EmpleadoModels oEmpleado = new EmpleadoModels
+            {
+                Cedula = Cedula,
+                NumeroDias = Convert.ToInt32(NumeroDias),
+                FechaInicio = FechaInicio,
+                FechaFin = FechaFin
+            };
+
+
+            oMensajeRespuesta = new MensajeRespuesta
+            {
+                Codigo = "1",
+                Mensaje = "Su solicitud ha sido procesada correctamente.",
+                Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+            };
+
+            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
         }
 
 
