@@ -14,6 +14,11 @@
             $("#rowSelection").kendoGrid({
                 dataSource: {
                     data: "",
+                    schema: {
+                        model: {
+                            id:"id",
+                        }
+                    },
                     pageSize: 5
                 },
                 selectable: "single",
@@ -48,12 +53,47 @@
                         media: "(min-width: 100px)"
                     },
                     {
-                        title: "Items",
-                        template: kendo.template($("#responsive-column-template").html()),
-                        media: "(max-width: 450px)"
+                        title: "Editar",
+                        command: [
+                            {
+                                name: "Edit",
+                                text: "Editar",
+                                click: function (e) {
+                                    console.log(e);
+                                    //var row = $("#rowSelection").data("kendoGrid").tbody.find("tr[data-uid='" + e.model.uid + "']");
+                                    //console.log(row);
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        title: "Eliminar",
+                        command: [
+                            {n
+                                name: "Delete",
+                                text: "Eliminar",
+                                click: function (e) {
+                                    console.log(e);
+                                }
+                            }
+                        ]
                     }
+
+
                 ]
             });
+
+
+            var hhGrid = $('#rowSelection').data("kendoGrid").dataSource.data();
+
+            hhGrid.bind('change', grid_change);
+
+            function grid_change(e) {
+                var selectedCells = this.select();
+                var dataItem = this.dataItem(selectedCells[0].parentNode);
+
+                console.log("Estamos",selectedCells)
+            }
 
 
             //Validacion del campo numero de dias en pantalla principal
