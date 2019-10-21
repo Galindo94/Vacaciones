@@ -25,19 +25,32 @@
                 columns: [
                     {
                         field: "Cedula",
-                        title: "Cedula"
+                        title: "Cedula",
+                        width: 250,
+                        media: "(min-width: 100px)"
                     },
                     {
                         field: "NumeroDias",
-                        title: "Numero de dias"
+                        title: "Numero de dias",
+                        width: 250,
+                        media: "(min-width: 100px)"
                     },
                     {
                         field: "FechaInicio",
-                        title: "Fecha de inicio"
+                        title: "Fecha de inicio",
+                        width: 250,
+                        media: "(min-width: 100px)"
                     },
                     {
                         field: "FechaFin",
-                        title: "Fecha de fin"
+                        title: "Fecha de fin",
+                        width: 250,
+                        media: "(min-width: 100px)"
+                    },
+                    {
+                        title: "Items",
+                        template: kendo.template($("#responsive-column-template").html()),
+                        media: "(max-width: 450px)"
                     }
                 ]
             });
@@ -71,7 +84,8 @@
 
 
             //Evento del boton aregar dentro de la ventana Principal
-            $("[id=btnAgergarCuerpoEscenario]:eq(0)").click(function () {
+            $("#btnAgregar0").click(function () {
+                console.log("Este es el primero");
                 if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
                     $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
                         if (d.Codigo == 2) {
@@ -156,11 +170,10 @@
                                 $("#ModalOtrosColaboradores").modal({
                                     backdrop: 'static'
                                 });
-                                $("[id=btnAgergarCuerpoEscenario]:eq(1)").remove();
+                                $("#btnAgregar2").remove();
                                 $("#SpanNumDias1").html(respuesta.Resultado.Data.NumeroDias);
                                 $("#SpanNombreEmpleado1").html(respuesta.Resultado.Data.NombrePersona);
 
-                                //console.log($("#SpanNumDias1").html(), respuesta.Resultado.NumeroDias);
                             }
                             else if (respuesta.Codigo == 2) {
                                 swal.fire({
@@ -204,8 +217,50 @@
                 }
             });
 
+            //BTN GUARDAR
+            $("#btnAgregar1").click(function () {
+                console.log("Este es el segundo");
+                if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0 ) {
+                    swal.fire({
+                        title: "Buen trabajo!",
+                        text: "Solicitud enviada satisfactoriamente",
+                        type: 'success',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    }).then((result) => {
+                        if (result.value) {
+                            var url = "@Url.Action("Index", "Home",  null)";
+                            window.location.href = url
+                            }
+                        });
+                }
+
+                else {
+                    swal.fire({
+                        title: "Advertencia!",
+                        text: "Debe ingresar minimo un item a la lista.",
+                        type: 'warning',
+                        confirmButtonText: "Ok",
+                        confirmButtonColor: '#00AFF0',
+                        confirmButtonColor: '#00AFF0',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    })
+                }
+            });
+
+            //Se limpian los valores de la ventana modal cuando se cierran
+            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function () {
+                $("#kendocalendar_2").data("kendoDatePicker").value(null);
+                $("#kendocalendar_3").data("kendoDatePicker").value(null);
+                $("#NumDias1").val('');
+                $("#txtCedulaOtros").val('');
+            });
+
+
+
             //Evento del boton aregar dentro de la ventana modal
-            $("#btnAgregar").click(function () {
+            $("#btnAgregarModal").click(function () {
                 if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' && $("#kendocalendar_3").val() != '') {
                     $.post("../Anotador/AgregarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
                         if (d.Codigo == 2) {
@@ -240,15 +295,7 @@
                         allowOutsideClick: false,
                         allowEscapeKey: false
                     })
-                }
-            });
-
-            //Se limpian los valores de la ventana modal cuando se cierran
-            $('#ModalOtrosColaboradores').on('hidden.bs.modal', function () {
-                $("#kendocalendar_2").data("kendoDatePicker").value(null);
-                $("#kendocalendar_3").data("kendoDatePicker").value(null);
-                $("#NumDias1").val('');
-                $("#txtCedulaOtros").val('');
+                };
             });
 
 
@@ -276,7 +323,7 @@
                             @Html.Partial("_ModalAnotadores")
                         </div>
                         <div class="jumbotron-cuerpo center">
-                            <button id="btnAgregar" type="button" class="btn btn-light">Agregar</button>
+                            <button id="btnAgregarModal" type="button" class="btn btn-light">Agregar</button>
                             <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancelar</button>
                         </div>
                     </div>
@@ -284,5 +331,33 @@
             </div>
         </div>
     </div>
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>Cedula</strong>
+        <p class="col-template-val">#=data.Cedula#</p>
+
+        <strong>Numero de dias</strong>
+        <p class="col-template-val">#=data.NumeroDias#</p>
+
+        <strong>Fecha de inicio</strong>
+        <p class="col-template-val">#=data.FechaInicio#</p>
+
+        <strong>Fecha de fin</strong>
+        <p class="col-template-val">#=data.FechaFin#</p>
+    </script>
+
+    <style>
+        .col-template-val {
+            margin: 0 0 1em .5em !important;
+        }
+    </style>
+
 </body>
+
+
+
+
 </html>
+
+

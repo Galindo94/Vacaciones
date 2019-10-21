@@ -50,6 +50,13 @@
                 $(this).attr('id', 'SpanNombreEmpleado' + index);
             });
 
+            $("button[class='btn btn-lg btn-postobon']").each(function (index) {
+                $(this).attr('id', 'btnAgregar' + index);
+            });
+
+
+
+
 
         });
     </script>
@@ -66,18 +73,15 @@
                     @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
                 </li>
                 <li class="nav-item">
-                    @Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
                 <li class="nav-item">
-                    @Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
 
                 <li class="nav-item">
-                    @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
-                @*<li class="nav-item">
-                        @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
-                    </li>*@
             </ul>
         </div>
     </nav>

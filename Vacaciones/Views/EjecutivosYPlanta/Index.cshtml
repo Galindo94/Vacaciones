@@ -39,9 +39,9 @@
 
 
             //Evento del boton aregar dentro de la ventana Principal
-            $("[id=btnAgergarCuerpoEscenario]:eq(0)").click(function () {
-                if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
-                    $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
+            $("#btnAgregar0").click(function () {
+                if ($("#DocumentoHidden").val() != '' && $("#SpanNumDias0").html() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
+                    $.post("../EjecutivosYPlanta/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: "" }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
@@ -52,14 +52,20 @@
                             });
                         }
                         else {
-                            $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
                             swal.fire({
                                 title: "Buen trabajo!",
                                 text: d.Mensaje,
                                 type: 'success',
                                 allowOutsideClick: false,
                                 allowEscapeKey: false
-                            });
+                            }).then((result) => {
+                            if (result.value) {
+                                var url = "@Url.Action("Index", "Home",  null)";
+                                window.location.href = url
+                            }
+                        });
+
+
                         }
                     });
                 }
