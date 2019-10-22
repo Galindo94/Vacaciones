@@ -14,10 +14,81 @@
             $("#rowSelection").kendoGrid({
                 dataSource: {
                     data: "",
+                    schema: {
+                        model: {
+                            id:"id",
+                        }
+                    },
                     pageSize: 5
                 },
-                scrollable: true,
-                navigatable: true
+                selectable: "single",
+                pageable: {
+                    buttonCount: 5
+                },
+                scrollable: false,
+                navigatable: true,
+                columns: [
+                    {
+                        field: "Cedula",
+                        title: "Cedula",
+                        width: 250,
+                        media: "(min-width: 100px)"
+                    },
+                    {
+                        field: "NumeroDias",
+                        title: "Numero de dias",
+                        width: 250,
+                        media: "(min-width: 100px)"
+                    },
+                    {
+                        field: "FechaInicio",
+                        title: "Fecha de inicio",
+                        width: 250,
+                        media: "(min-width: 100px)"
+                    },
+                    {
+                        field: "FechaFin",
+                        title: "Fecha de fin",
+                        width: 250,
+                        media: "(min-width: 100px)"
+                    },
+                    {
+                        title: "Editar",
+                        command: [
+                            {
+                                name: "Edit",
+                                text: "Editar",
+                                class: "selectRow",
+                                click: function (e) {
+
+                                    var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                    var grid = $("#rowSelection").data("kendoGrid")
+
+
+                                    $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
+                                        if (this.Cedula == item.Cedula) {
+                                            rowIndex = index;
+                                            row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(rowIndex);
+                                            grid.select(row);
+                                        }
+                                    });
+                                }
+                            }
+                        ]
+                    },
+                    {
+                        title: "Eliminar",
+                        command: [
+                            {
+                                name: "Delete",
+                                text: "Eliminar",
+                                click: function (e) {
+                                    console.log(e);
+                                }
+                            }
+                        ]
+                    }
+                ]
             });
 
             //Validacion del campo numero de dias en pantalla principal
@@ -49,7 +120,6 @@
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
-                console.log("Este es el primero");
                 if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
                     $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
                         if (d.Codigo == 2) {
@@ -183,7 +253,6 @@
 
             //BTN GUARDAR
             $("#btnAgregar1").click(function () {
-                console.log("Este es el segundo");
                 if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0 ) {
                     swal.fire({
                         title: "Buen trabajo!",
@@ -295,5 +364,33 @@
             </div>
         </div>
     </div>
+
+
+    <script id="responsive-column-template" type="text/x-kendo-template">
+        <strong>Cedula</strong>
+        <p class="col-template-val">#=data.Cedula#</p>
+
+        <strong>Numero de dias</strong>
+        <p class="col-template-val">#=data.NumeroDias#</p>
+
+        <strong>Fecha de inicio</strong>
+        <p class="col-template-val">#=data.FechaInicio#</p>
+
+        <strong>Fecha de fin</strong>
+        <p class="col-template-val">#=data.FechaFin#</p>
+    </script>
+
+    <style>
+        .col-template-val {
+            margin: 0 0 1em .5em !important;
+        }
+    </style>
+
 </body>
+
+
+
+
 </html>
+
+
