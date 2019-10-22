@@ -1,11 +1,41 @@
 ﻿@model Vacaciones.Models.Persona
 
+@{
+    var nombre = @ViewBag.Ejemplo;
+}
+
 <!DOCTYPE html>
 
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
+            var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
+            var finFecha = @Html.Raw(Json.Encode(ViewBag.FinFecha));
+            var dates = [];
+            var fechas = fechasConcatendas.split(",")
+            for (var index = 0; index < fechas.length; index++) {
+                dates.push(new Date(fechas[index]));
+            }
+            $(".kendocalendar").kendoDatePicker({
+                format: "dd/MM/yyyy",
+                min: inicioFecha,
+                max: finFecha,
+                disableDates: dates
+            });
+
+            $(".kendocalendar").attr("readonly", true);
+            $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
+
+            $("input[class='kendocalendar k-input']").each(function (index) {
+                $(this).attr('id', 'kendocalendar_' + index);
+            });
+        });
+    </script>
 </head>
 <body>
     <div class="jumbotron">

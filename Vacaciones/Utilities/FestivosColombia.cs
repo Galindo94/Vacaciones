@@ -139,5 +139,53 @@ namespace Vacaciones.Utilities
                 return new DateTime(Anio, 4, dia);
             }
         }
+
+        public static string DiasFestivoSabadosDomingosConcatenado(int Anio, bool incluirSabado)
+        {
+            List<DateTime> dias = DiasFestivos(Anio);
+            string diasConcatenados = "";
+            foreach(DateTime d in dias)
+            {
+                diasConcatenados = diasConcatenados + d.Month + "/" + d.Day + "/" + d.Year + ",";
+            }
+            string sabadosDomingoConcatenados = SabadosDomingosConcatenados(Anio, incluirSabado);
+            diasConcatenados = diasConcatenados.TrimEnd(',');
+            if (sabadosDomingoConcatenados != "")
+            {
+                diasConcatenados = diasConcatenados + "," + sabadosDomingoConcatenados;
+            }
+            return diasConcatenados;
+        }
+
+        public static string SabadosDomingosConcatenados(int Anio, bool incluirSabado)
+        {
+            DateTime startDate = new DateTime(Anio, DateTime.Now.Month, DateTime.Now.Day);
+            DateTime endDate = new DateTime(Anio, 12, 31);
+            string diasConcatenados = "";
+            TimeSpan diff = endDate - startDate;
+            int days = diff.Days;
+            int j = 0;
+            for (var i = 0; i <= days; i++)
+            {
+                var testDate = startDate.AddDays(i);
+                if (incluirSabado == true)
+                {
+                    if (testDate.DayOfWeek == DayOfWeek.Saturday || testDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        diasConcatenados = diasConcatenados + testDate.Month + "/" + testDate.Day + "/" + testDate.Year + ",";
+                    }
+                }
+                else
+                {
+                    if (testDate.DayOfWeek == DayOfWeek.Sunday)
+                    {
+                        diasConcatenados = diasConcatenados + testDate.Month + "/" + testDate.Day + "/" + testDate.Year + ",";
+                    }
+                }
+                
+            }
+            diasConcatenados = diasConcatenados.TrimEnd(',');
+            return diasConcatenados;
+        }
     }
 }
