@@ -58,10 +58,20 @@
                             {
                                 name: "Edit",
                                 text: "Editar",
+                                class: "selectRow",
                                 click: function (e) {
-                                    console.log(e);
-                                    //var row = $("#rowSelection").data("kendoGrid").tbody.find("tr[data-uid='" + e.model.uid + "']");
-                                    //console.log(row);
+
+                                    var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                    var grid = $("#rowSelection").data("kendoGrid")
+
+
+                                    $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
+                                        if (this.Cedula == item.Cedula) {
+                                            rowIndex = index;
+                                            row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(rowIndex);
+                                            grid.select(row);
+                                        }
+                                    });
                                 }
                             }
                         ]
@@ -69,7 +79,7 @@
                     {
                         title: "Eliminar",
                         command: [
-                            {n
+                            {
                                 name: "Delete",
                                 text: "Eliminar",
                                 click: function (e) {
@@ -78,23 +88,8 @@
                             }
                         ]
                     }
-
-
                 ]
             });
-
-
-            var hhGrid = $('#rowSelection').data("kendoGrid").dataSource.data();
-
-            hhGrid.bind('change', grid_change);
-
-            function grid_change(e) {
-                var selectedCells = this.select();
-                var dataItem = this.dataItem(selectedCells[0].parentNode);
-
-                console.log("Estamos",selectedCells)
-            }
-
 
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
@@ -125,7 +120,6 @@
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
-                console.log("Este es el primero");
                 if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '' && $("#kendocalendar_1").val() != '') {
                     $.post("../Anotador/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (d) {
                         if (d.Codigo == 2) {
@@ -259,7 +253,6 @@
 
             //BTN GUARDAR
             $("#btnAgregar1").click(function () {
-                console.log("Este es el segundo");
                 if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0 ) {
                     swal.fire({
                         title: "Buen trabajo!",
