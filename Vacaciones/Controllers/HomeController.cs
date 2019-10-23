@@ -9,10 +9,9 @@ namespace Vacaciones.Controllers
     {
         public ActionResult Index()
         {
-            ViewBag.Message = "Welcome to ASP.NET MVC!";
+            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
 
-            ViewBag.NumeroDias = 22;
-
+            ViewBag.eldato = user;
 
             return View();
         }

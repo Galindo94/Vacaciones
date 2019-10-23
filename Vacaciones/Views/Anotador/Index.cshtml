@@ -1,31 +1,22 @@
 ﻿@model Vacaciones.Models.Persona
 <!DOCTYPE html>
-
 <html>
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <script>
-
         $(document).ready(function () {
-
             //Creacion de la grid
             $("#rowSelection").kendoGrid({
                 dataSource: {
                     data: "",
-                    schema: {
-                        model: {
-                            id:"id",
-                        }
-                    },
                     pageSize: 5
                 },
                 selectable: "single",
                 pageable: {
                     buttonCount: 5
                 },
-                scrollable: false,
+                scrollable: true,
                 navigatable: true,
                 columns: [
                     {
@@ -60,11 +51,8 @@
                                 text: "Editar",
                                 class: "selectRow",
                                 click: function (e) {
-
                                     var item = this.dataItem($(e.currentTarget).closest("tr"));
-                                    var grid = $("#rowSelection").data("kendoGrid")
-
-
+                                    var grid = $("#rowSelection").data("kendoGrid");
                                     $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
                                         if (this.Cedula == item.Cedula) {
                                             rowIndex = index;
@@ -190,7 +178,6 @@
                 if ($("#txtCedulaOtros").val() != '') {
 
                     var exis = false;
-
                     $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
                         if (this.Cedula == $("#txtCedulaOtros").val()) {
                             exis = true;
@@ -291,7 +278,6 @@
             });
 
 
-
             //Evento del boton aregar dentro de la ventana modal
             $("#btnAgregarModal").click(function () {
                 if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' && $("#kendocalendar_3").val() != '') {
@@ -336,7 +322,6 @@
         });
 
     </script>
-
 </head>
 <body>
     <div class="jumbotron">
@@ -364,33 +349,5 @@
             </div>
         </div>
     </div>
-
-
-    <script id="responsive-column-template" type="text/x-kendo-template">
-        <strong>Cedula</strong>
-        <p class="col-template-val">#=data.Cedula#</p>
-
-        <strong>Numero de dias</strong>
-        <p class="col-template-val">#=data.NumeroDias#</p>
-
-        <strong>Fecha de inicio</strong>
-        <p class="col-template-val">#=data.FechaInicio#</p>
-
-        <strong>Fecha de fin</strong>
-        <p class="col-template-val">#=data.FechaFin#</p>
-    </script>
-
-    <style>
-        .col-template-val {
-            margin: 0 0 1em .5em !important;
-        }
-    </style>
-
 </body>
-
-
-
-
 </html>
-
-
