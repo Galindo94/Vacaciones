@@ -24,6 +24,19 @@ namespace Vacaciones.Controllers
             ViewBag.NombreEmpleado = ols.NombrePersona;
             ViewBag.NumeroDias = ols.NumeroDias;
             ViewBag.Documento = ols.Documento;
+
+            // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
+            string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, true);
+            ViewBag.DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos;
+
+            // Fecha donde el usuario puede iniciar sus vacaciones (Se le agregan los días según condicion, 1 o 15 días)
+            ViewBag.InicioFecha = DateTime.Now.AddDays(15);
+
+
+            // Fecha maxima que se le mostrará al usuario para pedir sus vacaciones (Esta para 60 días se puede cambiar según criterio)
+            ViewBag.FinFecha = DateTime.Now.AddDays(60);
+
+
             return View();
         }
 
