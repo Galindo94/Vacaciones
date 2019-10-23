@@ -1,35 +1,34 @@
 ﻿<div class=" col-md-12 center">
 
-    <div class="col-md-12">
-        <label class="fieldlist-label">Seleccione el numero de dias a tomar</label>
-        <input class="NumDias k-textbox" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6" />
-        <br />
-        <br />
-    </div>
-
     <div class="col-md-12 row">
 
-        <div class="col-md-6">
-            <label class="fieldlist-label">Inicio de vacaciones</label>
-            <input class="kendocalendar" style="width:auto" />
-            <br />
-            <br />
+        <div class="col-md-4">
+            <div class="col-md-12">
+                <label class="fieldlist-label">Nro. de d&iacute;as a tomar</label>
+                <input class="NumDias k-textbox" style="width:inherit" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6" />
+            </div>
         </div>
 
-        <div class="col-md-6">
-            <label class="fieldlist-label">Fin de vacaciones</label>
-            <input class="kendocalendar" style="width:auto" />
+        <div class="col-md-4">
+            <div class="col-md-12">
+                <label class="fieldlist-label">Inicio de vacaciones</label>
+                <input class="kendocalendar" style="width:inherit" />
+            </div>
         </div>
 
-
-
+        <div class="col-md-4">
+            <div class="col-md-12">
+                <label class="fieldlist-label">Fin de vacaciones</label>
+                <input class="kendocalendar" style="width:inherit" />
+            </div>
+        </div>
 
     </div>
 
+    <br />
+
     <div class="col-md-12">
-        <button class="btn btn-lg btn-postobon">Agregar</button>
-        <br />
-        <br />
+        <button class="btn btn-lg btn-postobon">Enviar</button>
     </div>
 
     <hr />
