@@ -1,15 +1,15 @@
-﻿<div class=" col-md-12 center">
+﻿<div class="col-md-12 center">
 
     <div class="col-md-12 row">
 
         <div class="col-md-4">
             <div class="col-md-12">
                 <label class="fieldlist-label">Nro. de d&iacute;as a tomar</label>
-                <input class="NumDias k-textbox" style="width:inherit" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6" />
+                <input class="NumDias k-textbox" style="width:inherit" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="6" onkeydown="return event.keyCode !== 69" />
             </div>
         </div>
 
-        <div class="col-md-4">
+        <div class="col-md-4" style="">
             <div class="col-md-12">
                 <label class="fieldlist-label">Inicio de vacaciones</label>
                 <input class="kendocalendar" style="width:inherit" />

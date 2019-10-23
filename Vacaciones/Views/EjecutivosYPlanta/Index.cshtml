@@ -40,7 +40,7 @@
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
-                if ($("#DocumentoHidden").val() != '' && $("#SpanNumDias0").html() != '' && $("#kendocalendar_0").val() != '') {
+                if ($("#DocumentoHidden").val() != '' && $("#NumDias0").html() != '' && $("#kendocalendar_0").val() != '') {
                     $.post("../EjecutivosYPlanta/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val() }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
