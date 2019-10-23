@@ -11,6 +11,30 @@
 
         $(document).ready(function () {
 
+            //Control de kendoCalendar
+            var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
+            var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
+            var finFecha = @Html.Raw(Json.Encode(ViewBag.FinFecha));
+            var dates = [];
+            var fechas = fechasConcatendas.split(",")
+            for (var index = 0; index < fechas.length; index++) {
+                dates.push(new Date(fechas[index]));
+            }
+            $(".kendocalendar").kendoDatePicker({
+                format: "dd/MM/yyyy",
+                min: inicioFecha,
+                max: finFecha,
+                disableDates: dates
+            });
+
+            $(".kendocalendar").attr("readonly", true);
+            $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
+
+            $("input[class='kendocalendar k-input']").each(function (index) {
+                $(this).attr('id', 'kendocalendar_' + index);
+            });
+
+
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
