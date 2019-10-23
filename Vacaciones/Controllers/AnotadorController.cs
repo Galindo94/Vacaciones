@@ -27,47 +27,94 @@ namespace Vacaciones.Controllers
             return View();
         }
 
-        public JsonResult AgregarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual)
+        public JsonResult AgregarOEditarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual, bool EsEdit)
         {
-
-            oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
-
-            EmpleadoModels oEmpleado = new EmpleadoModels
+            try
             {
-                Cedula = Cedula,
-                NumeroDias = Convert.ToInt32(NumeroDias),
-                FechaInicio = FechaInicio,
-                FechaFin = FechaFin
-            };
 
-            //Se valida si ya la cedula ha sido agregada
-            int Existe = oLstEmpleados
-                .Where(w => w.Cedula == oEmpleado.Cedula).Count();
-            if (Existe == 0)
+                oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
+
+                if (!EsEdit)
+                {
+
+                    EmpleadoModels oEmpleado = new EmpleadoModels
+                    {
+                        Cedula = Cedula,
+                        NumeroDias = Convert.ToInt32(NumeroDias),
+                        FechaInicio = FechaInicio,
+                        FechaFin = FechaFin
+                    };
+
+                    //Se valida si ya la cedula ha sido agregada
+                    int Existe = oLstEmpleados
+                        .Where(w => w.Cedula == oEmpleado.Cedula).Count();
+                    if (Existe == 0)
+                    {
+                        oLstEmpleados.Add(oEmpleado);
+
+                        oMensajeRespuesta = new MensajeRespuesta
+                        {
+                            Codigo = "1",
+                            Mensaje = "Empleado agregado correctamente.",
+                            Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+
+                        };
+                    }
+                    else
+                    {
+                        oMensajeRespuesta = new MensajeRespuesta
+                        {
+                            Codigo = "2",
+                            Mensaje = "El empleado ya ha sido agregado a la lista.",
+                            Resultado = Json("", JsonRequestBehavior.AllowGet)
+                        };
+
+
+                    }
+
+                    return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+                }
+                else
+                {
+
+                    if (oLstEmpleados != null && oLstEmpleados.Count > 0)
+                    {
+                        foreach (var item in oLstEmpleados)
+                        {
+                            if (item.Cedula == Cedula)
+                            {
+                                item.NumeroDias = Convert.ToInt32(NumeroDias);
+                                item.FechaInicio = FechaInicio;
+                                item.FechaFin = FechaFin;
+                            }
+                        }
+                    }
+
+                    oMensajeRespuesta = new MensajeRespuesta
+                    {
+                        Codigo = "1",
+                        Mensaje = "Empleado actualizado correctamente.",
+                        Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+
+                    };
+
+                    return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+                }
+
+            }
+            catch (Exception)
             {
-                oLstEmpleados.Add(oEmpleado);
-
                 oMensajeRespuesta = new MensajeRespuesta
                 {
-                    Codigo = "1",
-                    Mensaje = "Empleado agregado correctamente.",
+                    Codigo = "-1",
+                    Mensaje = "Ocurrió un error. Por favor contacte al administrador del sistema.",
                     Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
 
                 };
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
-            else
-            {
-                oMensajeRespuesta = new MensajeRespuesta
-                {
-                    Codigo = "2",
-                    Mensaje = "El empleado ya ha sido agregado a la lista.",
-                    Resultado = Json("", JsonRequestBehavior.AllowGet)
-                };
-
-
-            }
-
-            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
         }
 
@@ -88,7 +135,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de dias debe ser superior a 6",
+                    Mensaje = "La cantidad de días debe ser superior a 6.",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -98,7 +145,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de dias debe ser menor o igual al numero de dias disponibles",
+                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles.",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -142,7 +189,7 @@ namespace Vacaciones.Controllers
                 if (!Encontro)
                 {
                     oMensajeRespuesta.Codigo = "2";
-                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontro en el sistema. Verifiquelo e intentelo de nuevo.";
+                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontró en el sistema. Verifíquelo e inténtelo de nuevo.";
                     oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
                 }
                 else
@@ -157,83 +204,87 @@ namespace Vacaciones.Controllers
             catch (Exception)
             {
                 oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrio un error al consultar el documento. Contacte al administrador del sistema";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error al consultar el documento. Contacte al administrador del sistema.";
                 oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
 
-        // GET: Anotador/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: Anotador/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: Anotador/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
+        public JsonResult EditarEmpleado(string Cedula)
         {
             try
             {
-                // TODO: Add insert logic here
 
-                return RedirectToAction("Index");
+                bool Encontro = false;
+
+
+                #region Escenario 1 planta ejecutiva
+
+                if (Cedula == "8356830" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.NombrePersona = "CRISTIAN ESTEBAN PIEDRAHITA OCAMPO";
+                    oPersona.NumeroDias = 13.75;
+                    Encontro = true;
+                }
+
+                if (Cedula == "98714393" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.Documento = Cedula;
+                    oPersona.NombrePersona = "NELSON ENRIQUE USUGA MESA";
+                    oPersona.NumeroDias = 19.42;
+                    Encontro = true;
+                }
+
+                if (Cedula == "15374042" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.NombrePersona = " JEISON ALEJANDRO RAMIREZ RAMIREZ";
+                    oPersona.NumeroDias = 8.75;
+                    Encontro = true;
+                }
+
+
+                if (Cedula == "1045138486" && !Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "1";
+                    oPersona.Documento = Cedula;
+                    oPersona.NombrePersona = "JOHN FREDIS CORDOBA VASQUEZ";
+                    oPersona.NumeroDias = 19.67;
+                    Encontro = true;
+                }
+
+                #endregion
+
+
+
+                if (!Encontro)
+                {
+                    oMensajeRespuesta.Codigo = "2";
+                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontró en el sistema. Verifíquelo e inténtelo de nuevo.";
+                    oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+                }
+                else
+                {
+                    oMensajeRespuesta.Mensaje = "";
+                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
+                }
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
             }
-            catch
+            catch (Exception)
             {
-                return View();
+                oMensajeRespuesta.Codigo = "-1";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error al consultar el documento. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
 
-        // GET: Anotador/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
 
-        // POST: Anotador/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: Anotador/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: Anotador/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }

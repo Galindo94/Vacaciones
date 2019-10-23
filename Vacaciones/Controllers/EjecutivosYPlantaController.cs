@@ -35,7 +35,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de dias debe ser superior a 6",
+                    Mensaje = "La cantidad de días debe ser superior a 6.",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -45,7 +45,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de dias debe ser menor o igual al numero de dias disponibles",
+                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles.",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -54,25 +54,13 @@ namespace Vacaciones.Controllers
         }
 
 
-        public JsonResult AgregarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual)
+        public JsonResult AgregarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin)
         {
-
-            oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
-
-            EmpleadoModels oEmpleado = new EmpleadoModels
-            {
-                Cedula = Cedula,
-                NumeroDias = Convert.ToInt32(NumeroDias),
-                FechaInicio = FechaInicio,
-                FechaFin = FechaFin
-            };
-
-
             oMensajeRespuesta = new MensajeRespuesta
             {
                 Codigo = "1",
-                Mensaje = "Su solicitud ha sido procesada correctamente.",
-                Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+                Mensaje = "Su solicitud ha sido enviada exitosamente.",
+                Resultado = Json("", JsonRequestBehavior.AllowGet)
             };
 
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -81,76 +69,5 @@ namespace Vacaciones.Controllers
 
 
 
-        // GET: EjecutivosYPlanta/Details/5
-        public ActionResult Details(int id)
-        {
-            return View();
-        }
-
-        // GET: EjecutivosYPlanta/Create
-        public ActionResult Create()
-        {
-            return View();
-        }
-
-        // POST: EjecutivosYPlanta/Create
-        [HttpPost]
-        public ActionResult Create(FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add insert logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EjecutivosYPlanta/Edit/5
-        public ActionResult Edit(int id)
-        {
-            return View();
-        }
-
-        // POST: EjecutivosYPlanta/Edit/5
-        [HttpPost]
-        public ActionResult Edit(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add update logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
-
-        // GET: EjecutivosYPlanta/Delete/5
-        public ActionResult Delete(int id)
-        {
-            return View();
-        }
-
-        // POST: EjecutivosYPlanta/Delete/5
-        [HttpPost]
-        public ActionResult Delete(int id, FormCollection collection)
-        {
-            try
-            {
-                // TODO: Add delete logic here
-
-                return RedirectToAction("Index");
-            }
-            catch
-            {
-                return View();
-            }
-        }
     }
 }
