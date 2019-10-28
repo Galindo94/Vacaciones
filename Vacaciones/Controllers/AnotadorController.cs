@@ -15,15 +15,16 @@ namespace Vacaciones.Controllers
         List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         Persona oPersona = new Persona();
+
         // GET: Anotador
         public ActionResult Index(string Valores)
         {
-            Persona ols = new Persona();
-            ols = JsonConvert.DeserializeObject<Persona>(Valores);
+            Persona oPersona = new Persona();
+            oPersona = JsonConvert.DeserializeObject<Persona>(Valores);
 
-            ViewBag.NombreEmpleado = ols.NombrePersona;
-            ViewBag.NumeroDias = ols.NumeroDias;
-            ViewBag.Documento = ols.Documento;
+            ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
+            ViewBag.NumeroDias = oPersona.NumeroDias;
+            ViewBag.Documento = oPersona.Identificacion;
 
             // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
             string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, true);
@@ -44,7 +45,6 @@ namespace Vacaciones.Controllers
         {
             try
             {
-
                 oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
 
                 if (!EsEdit)
@@ -166,38 +166,36 @@ namespace Vacaciones.Controllers
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
         }
 
-        public JsonResult ConsultarEmpleadosAnotador(string Cedula)
+        public JsonResult ConsultarEmpleadosAnotador(int Cedula)
         {
             try
             {
-
                 bool Encontro = false;
-
 
                 #region Escenario 1 planta ejecutiva
 
 
-                if (Cedula == "98714393" && !Encontro)
+                if (Cedula == 98714393 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.Documento = Cedula;
-                    oPersona.NombrePersona = "NELSON ENRIQUE USUGA MESA";
+                    oPersona.Identificacion = Cedula;
+                    oPersona.Nombres = "NELSON ENRIQUE";
+                    oPersona.Apellidos = "USUGA MESA";
                     oPersona.NumeroDias = 19.42;
                     Encontro = true;
                 }
 
-                if (Cedula == "1045138486" && !Encontro)
+                if (Cedula == 1045138486 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.Documento = Cedula;
-                    oPersona.NombrePersona = "JOHN FREDIS CORDOBA VASQUEZ";
+                    oPersona.Identificacion = Cedula;
+                    oPersona.Nombres = "JOHN FREDIS";
+                    oPersona.Apellidos = "CORDOBA VASQUEZ";
                     oPersona.NumeroDias = 19.67;
                     Encontro = true;
                 }
 
                 #endregion
-
-
 
                 if (!Encontro)
                 {
@@ -224,54 +222,54 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public JsonResult EditarEmpleado(string Cedula)
+        public JsonResult EditarEmpleado(int Cedula)
         {
             try
             {
-
                 bool Encontro = false;
-
 
                 #region Escenario 1 planta ejecutiva
 
-                if (Cedula == "8356830" && !Encontro)
+                if (Cedula == 8356830 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.NombrePersona = "CRISTIAN ESTEBAN PIEDRAHITA OCAMPO";
+                    oPersona.Nombres = "CRISTIAN ESTEBAN";
+                    oPersona.Apellidos = "PIEDRAHITA OCAMPO";
                     oPersona.NumeroDias = 13.75;
                     Encontro = true;
                 }
 
-                if (Cedula == "98714393" && !Encontro)
+                if (Cedula == 98714393 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.Documento = Cedula;
-                    oPersona.NombrePersona = "NELSON ENRIQUE USUGA MESA";
+                    oPersona.Identificacion = Cedula;
+                    oPersona.Nombres = "NELSON ENRIQUE";
+                    oPersona.Apellidos = "USUGA MESA";
                     oPersona.NumeroDias = 19.42;
                     Encontro = true;
                 }
 
-                if (Cedula == "15374042" && !Encontro)
+                if (Cedula == 15374042 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.NombrePersona = " JEISON ALEJANDRO RAMIREZ RAMIREZ";
+                    oPersona.Nombres = "JEISON ALEJANDRO";
+                    oPersona.Apellidos = "RAMIREZ RAMIREZ";
                     oPersona.NumeroDias = 8.75;
                     Encontro = true;
                 }
 
 
-                if (Cedula == "1045138486" && !Encontro)
+                if (Cedula == 1045138486 && !Encontro)
                 {
                     oMensajeRespuesta.Codigo = "1";
-                    oPersona.Documento = Cedula;
-                    oPersona.NombrePersona = "JOHN FREDIS CORDOBA VASQUEZ";
+                    oPersona.Identificacion = Cedula;
+                    oPersona.Nombres = "JOHN FREDIS";
+                    oPersona.Apellidos = "CORDOBA VASQUEZ";
                     oPersona.NumeroDias = 19.67;
                     Encontro = true;
                 }
 
                 #endregion
-
-
 
                 if (!Encontro)
                 {
@@ -297,7 +295,5 @@ namespace Vacaciones.Controllers
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
-
-
     }
 }

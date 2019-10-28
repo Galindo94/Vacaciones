@@ -1,9 +1,7 @@
 ﻿<div class="col-md-12 center">
 
     <div class="col-md-12 jumbotron-encabezado">
-
-        Registro de solicitud de vacaciones para otros trabajadores.
-
+        Registro de solicitud de vacaciones para otros trabajadores
     </div>
 
 
@@ -11,7 +9,7 @@
 
         <label style="font-weight: bold;  color: #444;">Documento de identidad</label>
 
-        <input id="txtCedulaOtros" style="margin:1.5%;" type="number" class="k-textbox" min="6" maxlength="2" max="@ViewBag.NumeroDias" placeholder="Digite el número del documento de identificación." />
+        <input id="txtCedulaOtros" style="margin:1.5%;" type="number" class="k-textbox" onkeydown="return event.keyCode !== 69" placeholder="Digite el número del documento de identificación." />
 
         <button id="btnOtrosColaboradoresModal" class="btn btn-postobon btn-lg">Buscar</button>
 

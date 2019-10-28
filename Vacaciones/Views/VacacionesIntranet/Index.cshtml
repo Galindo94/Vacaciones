@@ -1,0 +1,92 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+
+            $("#btnIngresarVacacionesIntranet").click(function () {
+                $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (RespuestaDA) {
+                    switch (RespuestaDA.Codigo) {
+                        case "0":
+                            $.post("../VacacionesIntranet/ConsultaUserSAP", { UserDA: JSON.stringify(JSON.parse(RespuestaDA.Resultado.Data)) }, function (RespuestaSAP) {
+
+                                swal.fire({
+                                    text: RespuestaSAP.Mensaje,
+                                    type: 'success',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
+
+                            });
+
+                        case "-1":
+                            swal.fire({
+                                title: "Error!",
+                                text: RespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            break;
+
+                        case "-2":
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: RespuestaDA.Mensaje,
+                                type: 'warning',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            break;
+
+                        case "-3":
+                            swal.fire({
+                                title: "Error!",
+                                text: RespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            break;
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+
+    <div class="jumbotron">
+        <div class="jumbotron-cuerpo">
+            <div class="container body-content">
+                <h1 class="jumbotron-encabezado center">VACACIONES APP</h1>
+                <div class="col-md-12 center">
+                    <label class="fieldlist-label">Bienvenido (a) @ViewBag.UsuarioIntranet</label>
+                    <button id="btnIngresarVacacionesIntranet" class="btn btn-lg btn-primary">Presione aqui para ingresar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

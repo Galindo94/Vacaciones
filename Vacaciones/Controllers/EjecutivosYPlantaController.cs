@@ -19,12 +19,12 @@ namespace Vacaciones.Controllers
         // GET: EjecutivosYPlanta
         public ActionResult Index(String Valores)
         {
-            Persona ols = new Persona();
-            ols = JsonConvert.DeserializeObject<Persona>(Valores);
+            Persona oPersona = new Persona();
+            oPersona = JsonConvert.DeserializeObject<Persona>(Valores);
 
-            ViewBag.NombreEmpleado = ols.NombrePersona;
-            ViewBag.NumeroDias = ols.NumeroDias;
-            ViewBag.Documento = ols.Documento;
+            ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
+            ViewBag.NumeroDias = oPersona.NumeroDias;
+            ViewBag.Documento = oPersona.Identificacion;
 
 
             // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
@@ -79,8 +79,6 @@ namespace Vacaciones.Controllers
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
         }
-
-
 
     }
 }

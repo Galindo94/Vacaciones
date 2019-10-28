@@ -16,31 +16,33 @@ namespace Vacaciones.Controllers
             return View();
         }
 
-        public JsonResult Login(string Cedula)
+        public JsonResult Login(int Cedula)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             bool Encontro = false;
 
-            Persona oPersona = new Persona
+            Persona oPersona = new Persona()
             {
-                Documento = Cedula
+                Identificacion = Cedula
             };
 
             #region Escenario 1 planta ejecutiva
 
 
-            if (Cedula == "71625018" && !Encontro)
+            if (Cedula == 71625018 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$1";
-                oPersona.NombrePersona = "LUIS GILBERTO BETANCUR ZULUAGA";
+                oPersona.Nombres = "LUIS GILBERTO";
+                oPersona.Apellidos = "BETANCUR ZULUAGA";
                 oPersona.NumeroDias = 31.25;
                 Encontro = true;
             }
 
-            if (Cedula == "75095036" && !Encontro)
+            if (Cedula == 75095036 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$1";
-                oPersona.NombrePersona = "OSCAR YESID ROMERO ARENAS";
+                oPersona.Nombres = "OSCAR YESID";
+                oPersona.Apellidos = "ROMERO ARENAS";
                 oPersona.NumeroDias = 33.75;
                 Encontro = true;
             }
@@ -49,18 +51,20 @@ namespace Vacaciones.Controllers
 
             #region Empleados
 
-            if (Cedula == "98711404" && !Encontro)
+            if (Cedula == 98711404 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$2";
-                oPersona.NombrePersona = "JOAN ESTEBAN BOLIVAR RESTREPO";
+                oPersona.Nombres = "JOAN ESTEBAN";
+                oPersona.Apellidos = "BOLIVAR RESTREPO";
                 oPersona.NumeroDias = 11.25;
                 Encontro = true;
             }
 
-            if (Cedula == "1017183009" && !Encontro)
+            if (Cedula == 1017183009 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$2";
-                oPersona.NombrePersona = "NATALIA ANDREA GAVIRIA OVIEDO";
+                oPersona.Nombres = "NATALIA ANDREA";
+                oPersona.Apellidos = "GAVIRIA OVIEDO";
                 oPersona.NumeroDias = 22.5;
                 Encontro = true;
             }
@@ -69,18 +73,20 @@ namespace Vacaciones.Controllers
 
             #region Anotador
 
-            if (Cedula == "8356830" && !Encontro)
+            if (Cedula == 8356830 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$3";
-                oPersona.NombrePersona = "CRISTIAN ESTEBAN PIEDRAHITA OCAMPO";
+                oPersona.Nombres = "CRISTIAN ESTEBAN";
+                oPersona.Apellidos = "PIEDRAHITA OCAMPO";
                 oPersona.NumeroDias = 13.75;
                 Encontro = true;
             }
 
-            if (Cedula == "15374042" && !Encontro)
+            if (Cedula == 15374042 && !Encontro)
             {
                 oMensajeRespuesta.Codigo = "1$3";
-                oPersona.NombrePersona = " JEISON ALEJANDRO RAMIREZ RAMIREZ";
+                oPersona.Nombres = "JEISON ALEJANDRO";
+                oPersona.Apellidos = "RAMIREZ RAMIREZ";
                 oPersona.NumeroDias = 8.75;
                 Encontro = true;
             }
@@ -100,30 +106,9 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
             }
 
-
-
-
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
         }
 
-        public ActionResult About()
-        {
-            ViewBag.Message = "Your app description page.";
-
-            return View();
-        }
-
-        public ActionResult Contact()
-        {
-            ViewBag.Message = "Your contact page.";
-
-            return View();
-        }
-
-        public ActionResult Detalles()
-        {
-            return PartialView();
-        }
 
     }
 }

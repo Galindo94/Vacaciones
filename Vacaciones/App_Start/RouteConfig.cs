@@ -16,7 +16,7 @@ namespace Vacaciones
             routes.MapRoute(
                 name: "Default",
                 url: "{controller}/{action}/{id}",
-                defaults: new { controller = "Home", action = "Index", id = UrlParameter.Optional }
+                defaults: new { controller = "VacacionesIntranet", action = "Index", id = UrlParameter.Optional }
             );
         }
     }
