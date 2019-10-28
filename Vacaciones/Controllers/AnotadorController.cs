@@ -1,11 +1,10 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-using System.Web.Mvc;
-using Vacaciones.Models;
 using System.Data;
-using Newtonsoft.Json;
+using System.Linq;
+using System.Web.Mvc;
+using Vacaciones.Models.ModelosConsumo;
 using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers
@@ -14,13 +13,13 @@ namespace Vacaciones.Controllers
     {
         List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        Persona oPersona = new Persona();
+        PersonaModels oPersona = new PersonaModels();
 
         // GET: Anotador
         public ActionResult Index(string Valores)
         {
-            Persona oPersona = new Persona();
-            oPersona = JsonConvert.DeserializeObject<Persona>(Valores);
+            PersonaModels oPersona = new PersonaModels();
+            oPersona = JsonConvert.DeserializeObject<PersonaModels>(Valores);
 
             ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
             ViewBag.NumeroDias = oPersona.NumeroDias;

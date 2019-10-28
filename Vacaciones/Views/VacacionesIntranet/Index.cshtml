@@ -14,21 +14,27 @@
                 $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (RespuestaDA) {
                     switch (RespuestaDA.Codigo) {
                         case "0":
-                            $.post("../VacacionesIntranet/ConsultaUserSAP", { UserDA: JSON.stringify(JSON.parse(RespuestaDA.Resultado.Data)) }, function (RespuestaSAP) {
+                            $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(JSON.parse(RespuestaDA.Resultado.Data)) }, function (RespuestaSAP) {
+                                switch (RespuestaSAP.Codigo) {
 
-                                swal.fire({
-                                    text: RespuestaSAP.Mensaje,
-                                    type: 'success',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                });
-                                break;
+                                    case "0":
+                                        break;
 
 
+                                    case "-1":
+                                        break;
+
+
+                                    case "-2":
+                                        break;
+
+                                    case "-3":
+                                        break;
+                                }
                             });
+                            break;
 
+                         //El usuario no existe en el DA
                         case "-1":
                             swal.fire({
                                 title: "Error!",
@@ -38,9 +44,14 @@
                                 confirmButtonColor: '#00AFF0',
                                 allowOutsideClick: false,
                                 allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                }
                             });
                             break;
-
+                         // El usuario no se encontro en el DA
                         case "-2":
                             swal.fire({
                                 title: "Advertencia!",
@@ -50,9 +61,14 @@
                                 confirmButtonColor: '#00AFF0',
                                 allowOutsideClick: false,
                                 allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                }
                             });
                             break;
-
+                        // Error en el Servicio del DA
                         case "-3":
                             swal.fire({
                                 title: "Error!",

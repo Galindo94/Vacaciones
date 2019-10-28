@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using System.Web.Mvc;
 using Vacaciones.Models;
+using Vacaciones.Models.ModelosConsumo;
 using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers
@@ -21,7 +22,7 @@ namespace Vacaciones.Controllers
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             bool Encontro = false;
 
-            Persona oPersona = new Persona()
+            PersonaModels oPersona = new PersonaModels()
             {
                 Identificacion = Cedula
             };

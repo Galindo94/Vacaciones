@@ -1,6 +1,6 @@
-﻿namespace Vacaciones.Models
+﻿namespace Vacaciones.Models.ModelosConsumo
 {
-    public class Persona
+    public class PersonaModels
     {
         public int Identificacion { get; set; }
         public string Nombres { get; set; }

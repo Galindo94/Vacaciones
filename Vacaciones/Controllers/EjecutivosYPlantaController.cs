@@ -6,6 +6,7 @@ using System.Web.Mvc;
 using Newtonsoft;
 using Newtonsoft.Json;
 using Vacaciones.Models;
+using Vacaciones.Models.ModelosConsumo;
 using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers
@@ -19,8 +20,8 @@ namespace Vacaciones.Controllers
         // GET: EjecutivosYPlanta
         public ActionResult Index(String Valores)
         {
-            Persona oPersona = new Persona();
-            oPersona = JsonConvert.DeserializeObject<Persona>(Valores);
+            PersonaModels oPersona = new PersonaModels();
+            oPersona = JsonConvert.DeserializeObject<PersonaModels>(Valores);
 
             ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
             ViewBag.NumeroDias = oPersona.NumeroDias;

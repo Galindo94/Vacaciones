@@ -1,13 +1,19 @@
-﻿using Newtonsoft.Json;
-using Vacaciones.Utilities;
+﻿using log4net;
+using Newtonsoft.Json;
+using System;
 using System.Web.Mvc;
 using Vacaciones.Models;
+using Vacaciones.Models.ModelosConsumo;
+using Vacaciones.Utilities;
+using Vacaciones.Utilities.IntegracionesServicios;
 
 namespace Vacaciones.Controllers
 {
     public class VacacionesIntranetController : Controller
     {
-        Persona oPersonaCodigo = new Persona();
+        // Variable para almacenar los Log's
+        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
+        PersonaModels oPersonaCodigo = new PersonaModels();
         ConsumoDA oConsumoDA = new ConsumoDA();
         ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
 
@@ -23,48 +29,74 @@ namespace Vacaciones.Controllers
         // GET: VacacionesIntranet/Details/5
         public JsonResult ConsultarUserDA(string NombreUsuario)
         {
-            oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
-
-            oPersonaCodigo = JsonConvert.DeserializeObject<Persona>(oMensajeRespuesta.Resultado.Data.ToString());
-
-            if (oMensajeRespuesta.Codigo == "200")
+            try
             {
+                //Se guarda respuesta del API del DA
+                oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
+
+                //Se serializa la respuesta que arrojo el Servicio en formato de Persona
+                oPersonaCodigo = JsonConvert.DeserializeObject<PersonaModels>(oMensajeRespuesta.Resultado.Data.ToString());
+
+                //Al mensaje que se va a retornar se le asigna el codigo y el mensaje de la persona
                 oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
                 oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
 
+                //Se retornan los valores
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
             }
+            catch (Exception Ex)
+            {
+                Logger.Error(Ex);
 
-            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+                PersonaModels oPersonaError = new PersonaModels()
+                {
+                    Codigo = -3,
+                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
+                };
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
         }
 
-        public JsonResult ConsultaUserSAP(string UserDA)
+
+        public JsonResult ConsultarUserSAP(string UserDA)
         {
+            try
+            {
+                oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion);
 
-            ////var json = JsonConvert.SerializeObject(UserDA.Data);
-            //ConsumoDA oConsumoDAA = new ConsumoDA();
-            //var br = JsonConvert.DeserializeObject<ConsumoDA>(UserDA);
+                oPersonaCodigo = JsonConvert.DeserializeObject<PersonaModels>(oMensajeRespuesta.Resultado.Data.ToString());
 
-            //oConsumoDAA = JsonConvert.DeserializeObject<ConsumoDA>(UserDA);
+                oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
+                oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
 
-            //oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(oConsumoDAA.Identificacion);
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
 
-            //oConsumoDA = JsonConvert.DeserializeObject<ConsumoDA>(oMensajeRespuesta.Resultado.Data.ToString());
+                Logger.Error(Ex);
 
-            //if (oMensajeRespuesta.Codigo == "200")
-            //{
-            //    oMensajeRespuesta.Codigo = oConsumoDA.Codigo.ToString();
-            //    oMensajeRespuesta.Mensaje = oConsumoDA.Respuesta;
+                PersonaModels oPersonaError = new PersonaModels()
+                {
+                    Codigo = -3,
+                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
+                };
 
-            //    //if (oConsumoDA.Codigo == 0 && oConsumoDA.Identificacion > 0)
-            //    //{
-            //    //    oConsumoAPISAP.ConsultarUserSAP(oConsumoDA.Identificacion);
-            //    //}
-            //}
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
-            //return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
-            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
         }
+
+
 
     }
 }

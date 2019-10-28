@@ -202,10 +202,13 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
-    <Compile Include="Models\ConsumoAPISAP.cs" />
-    <Compile Include="Models\EmpleadoModels.cs" />
-    <Compile Include="Models\Persona.cs" />
-    <Compile Include="Models\ConsumoDA.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPISAP.cs" />
+    <Compile Include="Models\ModelosConsumo\EmpleadoModels.cs" />
+    <Compile Include="Models\ModelosConsumo\PersonaModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoDA.cs" />
+    <Compile Include="Models\ModelosRespuesta\DETAILS.cs" />
+    <Compile Include="Models\ModelosRespuesta\EXCEPTION.cs" />
+    <Compile Include="Models\ModelosRespuesta\RespuestaSAP.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\FestivosColombia.cs" />
     <Compile Include="Utilities\MensajeRespuesta.cs" />
