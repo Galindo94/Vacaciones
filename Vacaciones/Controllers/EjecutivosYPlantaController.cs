@@ -1,12 +1,8 @@
-﻿using System;
+﻿using Newtonsoft.Json;
+using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 using System.Web.Mvc;
-using Newtonsoft;
-using Newtonsoft.Json;
-using Vacaciones.Models;
-using Vacaciones.Models.ModelosConsumo;
+using Vacaciones.Models.ModelosGenerales;
 using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers

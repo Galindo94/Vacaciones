@@ -9,26 +9,101 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-
             $("#btnIngresarVacacionesIntranet").click(function () {
                 $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (RespuestaDA) {
                     switch (RespuestaDA.Codigo) {
                         case "0":
-                            $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(JSON.parse(RespuestaDA.Resultado.Data)) }, function (RespuestaSAP) {
+                            $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(RespuestaDA.Resultado.Data) }, function (RespuestaSAP) {
                                 switch (RespuestaSAP.Codigo) {
 
                                     case "0":
+                                        //TO DO
+                                        //LLamar motor de reglas para validar reglas y escenarios
+                                        $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(RespuestaDA.Resultado.Data) }, function (RespuestaSAP) {
+                                            switch (RespuestaSAP.Codigo) {
+
+                                                case "0":
+                                                    //TO DO
+                                                    //LLamar motor de reglas para validar reglas y escenarios
+                                                    break;
+
+
+                                                case "-1":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: RespuestaDA.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+
+                                                case "-2":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: RespuestaDA.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                                case "-3":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: RespuestaDA.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+                                            }
+                                        });
                                         break;
 
 
                                     case "-1":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: RespuestaDA.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
                                         break;
 
 
                                     case "-2":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: RespuestaDA.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
                                         break;
 
                                     case "-3":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: RespuestaDA.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
                                         break;
                                 }
                             });
@@ -78,6 +153,24 @@
                                 confirmButtonColor: '#00AFF0',
                                 allowOutsideClick: false,
                                 allowEscapeKey: false
+                            });
+                            break;
+
+                        // Error en el Servicio del DA
+                        case "-4":
+                            swal.fire({
+                                title: "Error!",
+                                text: RespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                }
                             });
                             break;
                     }

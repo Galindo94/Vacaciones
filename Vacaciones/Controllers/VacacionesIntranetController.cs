@@ -2,8 +2,8 @@
 using Newtonsoft.Json;
 using System;
 using System.Web.Mvc;
-using Vacaciones.Models;
-using Vacaciones.Models.ModelosConsumo;
+using Vacaciones.Models.ModelosGenerales;
+using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
 using Vacaciones.Utilities.IntegracionesServicios;
 
@@ -14,6 +14,7 @@ namespace Vacaciones.Controllers
         // Variable para almacenar los Log's
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
         PersonaModels oPersonaCodigo = new PersonaModels();
+        RespuestaSAPModels oRespuestaSap = new RespuestaSAPModels();
         ConsumoDA oConsumoDA = new ConsumoDA();
         ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
 
@@ -32,32 +33,21 @@ namespace Vacaciones.Controllers
             try
             {
                 //Se guarda respuesta del API del DA
-                oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
-
-                //Se serializa la respuesta que arrojo el Servicio en formato de Persona
-                oPersonaCodigo = JsonConvert.DeserializeObject<PersonaModels>(oMensajeRespuesta.Resultado.Data.ToString());
-
-                //Al mensaje que se va a retornar se le asigna el codigo y el mensaje de la persona
-                oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
-                oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
-
+                oMensajeRespuesta = oConsumoDA.ConsultarUserDA("popcano");
                 //Se retornan los valores
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception Ex)
             {
-                Logger.Error(Ex);
+                Logger.Error("Se presento un error consultando al usuario" + NombreUsuario + ". " + Ex);
 
-                PersonaModels oPersonaError = new PersonaModels()
-                {
-                    Codigo = -3,
-                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
-                };
+                oPersonaCodigo.Codigo = -3;
+                oPersonaCodigo.Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
 
-                oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
+                oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaCodigo, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
@@ -69,28 +59,18 @@ namespace Vacaciones.Controllers
             try
             {
                 oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion);
-
-                oPersonaCodigo = JsonConvert.DeserializeObject<PersonaModels>(oMensajeRespuesta.Resultado.Data.ToString());
-
-                oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
-                oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
-
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
             catch (Exception Ex)
             {
+                Logger.Error("Se presento un error consultando al usuario" + UserDA + ". " + Ex);
 
-                Logger.Error(Ex);
+                oRespuestaSap.Exeption[0].ID = "-3";
+                oRespuestaSap.Exeption[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información.Contacte al administrador del sistema.";
 
-                PersonaModels oPersonaError = new PersonaModels()
-                {
-                    Codigo = -3,
-                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
-                };
-
-                oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oMensajeRespuesta.Codigo = oRespuestaSap.Exeption[0].ID = "-3";
+                oMensajeRespuesta.Mensaje = oRespuestaSap.Exeption[0].MESSAGE;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }

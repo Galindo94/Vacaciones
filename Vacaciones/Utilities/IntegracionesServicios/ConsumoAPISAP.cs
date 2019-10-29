@@ -6,9 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web.Configuration;
 using System.Web.Mvc;
-using Vacaciones.Models.ModelosConsumo;
-using Vacaciones.Models.ModelosRespuesta;
-using Vacaciones.Utilities;
+using Vacaciones.Models.ModelosRespuestaSAP;
 
 namespace Vacaciones.Utilities.IntegracionesServicios
 {
@@ -18,9 +16,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
         // Variable para almacenar respuestas de los servicios
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        RespuestaSAP oRespuestaSAP = new RespuestaSAP();
-        // Respuesta Body
-        string oRespuestaBody = string.Empty;
+        RespuestaSAPModels oRespuestaSAP = new RespuestaSAPModels();
         readonly string URISAP = WebConfigurationManager.AppSettings["URISAP"].ToString();
         readonly string VariableAPISAP = WebConfigurationManager.AppSettings["VariableAPISAP"].ToString();
         HttpWebRequest oHttpWebRequest;
@@ -41,26 +37,69 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 if (oHttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
                     StreamReader oStreamReader = new StreamReader(oHttpWebResponse.GetResponseStream());
-                    oRespuestaBody = oStreamReader.ReadToEnd();
 
-                    oRespuestaSAP = JsonConvert.DeserializeObject<RespuestaSAP>(oRespuestaBody);
+                    //Pendiente por eliminar
+                    var daniel = oStreamReader.ReadToEnd();
 
-                    //To Do 
-                    // Validar si viene exepcion y realizar procesos pertinentes
+                    oRespuestaSAP = JsonConvert.DeserializeObject<RespuestaSAPModels>(oStreamReader.ReadToEnd());
+                    oMensajeRespuesta.Resultado = Json(oRespuestaSAP, JsonRequestBehavior.AllowGet);
 
-                    oMensajeRespuesta.Codigo = "200";
-                    oMensajeRespuesta.Mensaje = "Consumo realizado correctamente";
-                    oMensajeRespuesta.Resultado = Json(oRespuestaBody, JsonRequestBehavior.AllowGet);
+                    if (oRespuestaSAP.Exeption[0].ID != "0")
+                    {
+                        switch (oRespuestaSAP.Exeption[0].ID)
+                        {
+                            //Error en nuestra API
+                            case "-3":
 
+                                oMensajeRespuesta.Codigo = "-3";
+                                oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+
+                                //Se deja registro en el Log del error
+                                Logger.Error("Se presento un error en la API que implementa el consumo de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
+                                                "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
+                                                ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                                                ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+                                break;
+
+                            //Error consultando el Api De Marcos
+                            case "-2":
+
+                                oMensajeRespuesta.Codigo = "-2";
+                                oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+
+                                //Se deja registro en el Log del error
+                                Logger.Error("Se presento un error en la API de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
+                                                 "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
+                                                 ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                                                 ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+                                break;
+
+                            //Identificacion vacia
+                            case "-1":
+
+                                oMensajeRespuesta.Codigo = "-1";
+                                oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+
+                                break;
+                        }
+                    }
+                    else
+                    {
+                        oMensajeRespuesta.Codigo = oRespuestaSAP.Exeption[0].ID;
+                        oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+                    }
                 }
                 else
                 {
-                    oMensajeRespuesta.Codigo = oHttpWebResponse.StatusCode.ToString();
+                    oMensajeRespuesta.Codigo = "-3";
                     oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del servicio de SAP. Contacte al administrador del sistema.";
-                    oMensajeRespuesta.Resultado = Json(oRespuestaBody, JsonRequestBehavior.AllowGet);
+                    oMensajeRespuesta.Resultado = Json(oRespuestaSAP, JsonRequestBehavior.AllowGet);
 
                     //Se deja registro en el Log del error
-                    Logger.Info("Se presento un error en la disponibilidad del servicio de SAP." + "StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() + "StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+                    Logger.Error("Se presento un error en la API que implementa el consumo de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
+                                    "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
+                                    ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                                    ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
 
                 }
 
@@ -68,17 +107,16 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             }
             catch (Exception Ex)
             {
-                Logger.Error(Ex);
+                Logger.Error("Se presento un error consultando el Nro. Documento: " + Identificacion + ". " + Ex);
 
-                PersonaModels oPersonaError = new PersonaModels()
-                {
-                    Codigo = -3,
-                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
-                };
+                oRespuestaSAP = new RespuestaSAPModels();
 
-                oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oRespuestaSAP.Exeption[0].ID = "-3";
+                oRespuestaSAP.Exeption[0].MESSAGE = "Se presento un error en la disponibilidad del servicio de SAP. Contacte al administrador del sistema.";
+
+                oMensajeRespuesta.Codigo = oRespuestaSAP.Exeption[0].ID;
+                oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oRespuestaSAP, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;
             }

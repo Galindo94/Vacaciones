@@ -1,4 +1,4 @@
-﻿namespace Vacaciones.Models.ModelosConsumo
+﻿namespace Vacaciones.Models.ModelosGenerales
 {
     public class PersonaModels
     {

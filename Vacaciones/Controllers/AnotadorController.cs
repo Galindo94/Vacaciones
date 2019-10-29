@@ -4,7 +4,7 @@ using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
-using Vacaciones.Models.ModelosConsumo;
+using Vacaciones.Models.ModelosGenerales;
 using Vacaciones.Utilities;
 
 namespace Vacaciones.Controllers

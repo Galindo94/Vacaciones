@@ -6,8 +6,7 @@ using System.Net;
 using System.Text;
 using System.Web.Configuration;
 using System.Web.Mvc;
-using Vacaciones.Models.ModelosConsumo;
-using Vacaciones.Utilities;
+using Vacaciones.Models.ModelosGenerales;
 
 namespace Vacaciones.Utilities.IntegracionesServicios
 {
@@ -17,8 +16,8 @@ namespace Vacaciones.Utilities.IntegracionesServicios
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
         // Variable para almacenar respuestas de los servicios
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        // Respuesta Body
-        string oRespuestaBody = string.Empty;
+        //Persona Respuesta
+        PersonaModels oPersona = new PersonaModels();
         // URIS para consumo del servicio del DA
         readonly string URIDA = WebConfigurationManager.AppSettings["URIDA"].ToString();
         readonly string UserDA = WebConfigurationManager.AppSettings["VariableAPIDA"].ToString();
@@ -41,21 +40,24 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 if (oHttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
                     StreamReader oStreamReader = new StreamReader(oHttpWebResponse.GetResponseStream());
-                    oRespuestaBody = oStreamReader.ReadToEnd();
 
-                    oMensajeRespuesta.Codigo = "200";
-                    oMensajeRespuesta.Mensaje = "Consumo realizado correctamente";
-                    oMensajeRespuesta.Resultado = Json(oRespuestaBody, JsonRequestBehavior.AllowGet);
+                    oPersona = JsonConvert.DeserializeObject<PersonaModels>(oStreamReader.ReadToEnd());
+
+                    oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
+                    oMensajeRespuesta.Mensaje = oPersona.Respuesta;
+                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
 
                 }
                 else
                 {
-                    oMensajeRespuesta.Codigo = oHttpWebResponse.StatusCode.ToString();
+                    oMensajeRespuesta.Codigo = "-3";
                     oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del servicio del DA. Contacte al administrador del sistema.";
-                    oMensajeRespuesta.Resultado = Json(oRespuestaBody, JsonRequestBehavior.AllowGet);
+                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
 
                     //Se deja registro en el Log del error
-                    Logger.Info("Se presento un error en la disponibilidad del servicio del DA." + "StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() + "StatusDescriptionResponse: " + oHttpWebResponse.StatusDescription.ToString());
+                    Logger.Error("Se presento un error en la disponibilidad del servicio del DA consultando al usuario: " + NombreUsuario +
+                        ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                        ". StatusDescriptionResponse: " + oHttpWebResponse.StatusDescription.ToString());
 
                 }
 
@@ -64,17 +66,15 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             }
             catch (Exception Ex)
             {
-                Logger.Error(Ex);
+                Logger.Error("Se presento un error consultando al usuario" + NombreUsuario + ". " + Ex);
 
-                PersonaModels oPersonaError = new PersonaModels()
-                {
-                    Codigo = -3,
-                    Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema."
-                };
+                oPersona = new PersonaModels();
+                oPersona.Codigo = -3;
+                oPersona.Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
 
-                oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaError, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
+                oMensajeRespuesta.Mensaje = oPersona.Respuesta;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersona, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;
             };

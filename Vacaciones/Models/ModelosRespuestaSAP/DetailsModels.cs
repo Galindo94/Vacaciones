@@ -1,6 +1,6 @@
-﻿namespace Vacaciones.Models.ModelosRespuesta
+﻿namespace Vacaciones.Models.ModelosRespuestaSAP
 {
-    public class DETAILS
+    public class DetailsModels
     {
         public string TipoDocumento { get; set; }
         public string NroDocumento { get; set; }

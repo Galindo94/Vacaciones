@@ -1,7 +1,5 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Linq;
-using System.Web;
 
 namespace Vacaciones.Utilities
 {
@@ -164,7 +162,6 @@ namespace Vacaciones.Utilities
             string diasConcatenados = "";
             TimeSpan diff = endDate - startDate;
             int days = diff.Days;
-            int j = 0;
             for (var i = 0; i <= days; i++)
             {
                 var testDate = startDate.AddDays(i);
