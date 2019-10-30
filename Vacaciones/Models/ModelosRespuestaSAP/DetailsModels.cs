@@ -1,4 +1,6 @@
-﻿namespace Vacaciones.Models.ModelosRespuestaSAP
+﻿using System.Collections.Generic;
+
+namespace Vacaciones.Models.ModelosRespuestaSAP
 {
     public class DetailsModels
     {
@@ -28,8 +30,8 @@
         public string CorreoPersonalJefe { get; set; }
         public string CorreoCorpJefe { get; set; }
         public string Sociedad { get; set; }
-        public string Contingentes { get; set; }
-        public string Vacaciones { get; set; }
+        public ContingentesModels Contingentes { get; set; }
+        public VacacionesModels Vacaciones { get; set; }
 
     }
 }

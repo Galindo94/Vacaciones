@@ -17,10 +17,9 @@
                                 switch (RespuestaSAP.Codigo) {
 
                                     case "0":
-                                        //TO DO
                                         //LLamar motor de reglas para validar reglas y escenarios
-                                        $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(RespuestaDA.Resultado.Data) }, function (RespuestaSAP) {
-                                            switch (RespuestaSAP.Codigo) {
+                                        $.post("../VacacionesIntranet/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(RespuestaSAP.Resultado.Data) }, function (RespuestaMotorReglas) {
+                                            switch (RespuestaMotorReglas.Codigo) {
 
                                                 case "0":
                                                     //TO DO
@@ -171,7 +170,7 @@
                                     var url = "@Url.Action("Index", "Home", null)";
                                     window.location.href = url
                                 }
-                            });
+                                });
                             break;
                     }
                 });

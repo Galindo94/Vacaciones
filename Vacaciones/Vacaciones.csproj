@@ -203,12 +203,17 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelosMotorDeReglas\RespuestaMotorModels.cs" />
+    <Compile Include="Models\ModelosRespuestaSAP\ContigenteModels.cs" />
+    <Compile Include="Models\ModelosRespuestaSAP\ContingentesModels.cs" />
+    <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
+    <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPISAP.cs" />
     <Compile Include="Models\ModelosGenerales\EmpleadoModels.cs" />
     <Compile Include="Models\ModelosGenerales\PersonaModels.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoDA.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\DetailsModels.cs" />
-    <Compile Include="Models\ModelosRespuestaSAP\ExeptionModels.cs" />
+    <Compile Include="Models\ModelosRespuestaSAP\ExceptionModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\RespuestaSAPModels.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Utilities\FestivosColombia.cs" />
