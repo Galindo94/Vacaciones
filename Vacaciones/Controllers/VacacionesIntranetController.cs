@@ -1,6 +1,7 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
+using System.Activities;
 using System.Collections.Generic;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosGenerales;
@@ -16,8 +17,6 @@ namespace Vacaciones.Controllers
         // Variable para almacenar los Log's
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
 
-        MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-
         // GET: VacacionesIntranet
         public ActionResult Index()
         {
@@ -28,8 +27,9 @@ namespace Vacaciones.Controllers
         // GET: VacacionesIntranet/Details/5
         public JsonResult ConsultarUserDA(string NombreUsuario)
         {
-            PersonaModels oPersonaCodigo = new PersonaModels();
+            PersonaModels oPersona = new PersonaModels();
             ConsumoDA oConsumoDA = new ConsumoDA();
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
 
             try
             {
@@ -41,14 +41,17 @@ namespace Vacaciones.Controllers
             }
             catch (Exception Ex)
             {
-                Logger.Error("Se presento un error consultando al usuario: " + NombreUsuario + ". " + Ex);
+                Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                               "Nombre del usuario: " + NombreUsuario +
+                               ". Exception " + Ex);
 
-                oPersonaCodigo.Codigo = -3;
-                oPersonaCodigo.Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oPersona.Codigo = -3;
+                oPersona.Respuesta = "Ocurrió un error en el API del Directorio Activo.";
 
-                oMensajeRespuesta.Codigo = oPersonaCodigo.Codigo.ToString();
-                oMensajeRespuesta.Mensaje = oPersonaCodigo.Respuesta;
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersonaCodigo, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
+                oMensajeRespuesta.Mensaje = oPersona.Respuesta;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersona, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
@@ -58,13 +61,7 @@ namespace Vacaciones.Controllers
         public JsonResult ConsultarUserSAP(string UserDA)
         {
             ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
-            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
-            {
-                Escenario = new List<EscenarioModels>(),
-                Reglas = new List<ReglaModels>(),
-                Error = new ErrorModels()
-            };
-
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             RespuestaSAPModels oRespuestaSAP = new RespuestaSAPModels
             {
                 Details = new List<DetailsModels>(),
@@ -78,37 +75,48 @@ namespace Vacaciones.Controllers
             }
             catch (Exception Ex)
             {
-                Logger.Error("Se presento un error consultando al usuario: " + UserDA + ". " + Ex);
+                Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
+                             "Nro. Documento: " + JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion +
+                             "Exception: " + Ex);
 
                 oRespuestaSAP.Exception[0].ID = "-3";
-                oRespuestaSAP.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información.Contacte al administrador del sistema.";
+                oRespuestaSAP.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
 
                 oMensajeRespuesta.Codigo = oRespuestaSAP.Exception[0].ID = "-3";
                 oMensajeRespuesta.Mensaje = oRespuestaSAP.Exception[0].MESSAGE;
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
             }
         }
 
         public JsonResult ConsultaMotorDeReglas(string RespuestaSAP)
         {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIMotorDeReglas oConsumoAPIMotorDeReglas = new ConsumoAPIMotorDeReglas();
             RespuestaSAPModels oRespuestaSap = new RespuestaSAPModels();
-            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels();
+            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
+            {
+                Escenario = new List<EscenarioModels>(),
+                Reglas = new List<ReglaModels>(),
+                Error = new ErrorModels()
+            };
 
             try
             {
-                //oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarExcenarioYReglas(JsonConvert.DeserializeObject<PersonaModels>(RespuestaSAP).Identificacion);
-                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(RespuestaSAP);
+                oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
+                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor);
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
             catch (Exception Ex)
             {
-                //Logger.Error("Se presento un error consultando al usuario: " + UserDA + ". " + Ex);
+
+                Logger.Error("Ocurrió un error interno en el consumo del API del motor de reglas. " +
+                            "Exception: " + Ex);
 
                 oRespuestaSap.Exception[0].ID = "-3";
-                oRespuestaSap.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información.Contacte al administrador del sistema.";
+                oRespuestaSap.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
 
                 oMensajeRespuesta.Codigo = oRespuestaSap.Exception[0].ID = "-3";
                 oMensajeRespuesta.Mensaje = oRespuestaSap.Exception[0].MESSAGE;
@@ -117,8 +125,5 @@ namespace Vacaciones.Controllers
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
-
-
-
     }
 }

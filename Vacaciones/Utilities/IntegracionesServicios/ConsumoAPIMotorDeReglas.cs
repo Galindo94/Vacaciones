@@ -1,20 +1,21 @@
 ﻿using log4net;
+using Newtonsoft.Json;
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
 using System.Text;
 using System.Web.Configuration;
+using System.Web.Mvc;
 using Vacaciones.Models.ModelosMotorDeReglas;
 
 namespace Vacaciones.Utilities.IntegracionesServicios
 {
-    public class ConsumoAPIMotorDeReglas
+    public class ConsumoAPIMotorDeReglas : Controller
     {
         //Variable para almacenar los Log's
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
-        // Variable para almacenar respuestas de los servicios
-        MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels();
+        // Variable para almacenar respuestas de los servicios        
         readonly string URIMotorReglas = WebConfigurationManager.AppSettings["URIMotorReglas"].ToString();
         readonly string Variable1MotorReglas = WebConfigurationManager.AppSettings["Variable1MotorReglas"].ToString();
         readonly string Variable2MotorReglas = WebConfigurationManager.AppSettings["Variable2MotorReglas"].ToString();
@@ -22,83 +23,85 @@ namespace Vacaciones.Utilities.IntegracionesServicios
         Encoding oEncoding;
         HttpWebResponse oHttpWebResponse;
 
-        public MensajeRespuesta ConsultarEscenarioYReglas(string DetailsSAP)
+        public MensajeRespuesta ConsultarEscenarioYReglas(string clasificacion, string gestor)
         {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
+            {
+                Escenario = new List<EscenarioModels>(),
+                Reglas = new List<ReglaModels>(),
+                Error = new ErrorModels()
+            };
+
             try
             {
-                //string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor;
-                //oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
-                //oHttpWebRequest.ContentType = "application/json";
-                //oHttpWebRequest.Method = "GET";
-                //oEncoding = Encoding.GetEncoding("utf-8");
-                //oHttpWebResponse = (HttpWebResponse)oHttpWebRequest.GetResponse();
+                string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor;
+                oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                oHttpWebRequest.ContentType = "application/json";
+                oHttpWebRequest.Method = "GET";
+                oEncoding = Encoding.GetEncoding("utf-8");
+                oHttpWebResponse = (HttpWebResponse)oHttpWebRequest.GetResponse();
 
                 if (oHttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
                     StreamReader oStreamReader = new StreamReader(oHttpWebResponse.GetResponseStream());
+                    oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(oStreamReader.ReadToEnd());
 
-                    //Pendiente por eliminar
-                    var daniel = oStreamReader.ReadToEnd();
+                    oMensajeRespuesta.Codigo = oRespuestaMotor.Error.ID.ToString();
+                    oMensajeRespuesta.Resultado = Json(oRespuestaMotor, JsonRequestBehavior.AllowGet);
 
-                    //oRespuestaSAP = JsonConvert.DeserializeObject<RespuestaSAPModels>(oStreamReader.ReadToEnd());
-                    //oMensajeRespuesta.Resultado = Json(oRespuestaSAP, JsonRequestBehavior.AllowGet);
+                    switch (oRespuestaMotor.Error.ID)
+                    {
+                        case 1:
+                            oMensajeRespuesta.Mensaje = "";
+                            break;
 
-                    //if (oRespuestaSAP.Exeption[0].ID != "0")
-                    //{
-                    //    switch (oRespuestaSAP.Exeption[0].ID)
-                    //    {
-                    //        //Error en nuestra API
-                    //        case "-3":
+                        case -1:
 
-                    //            oMensajeRespuesta.Codigo = "-3";
-                    //            oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+                            Logger.Error("Ocurrió un error consultando la información del motor de reglas. Clasificacion: " +
+                              clasificacion + ". Gestor: " + gestor +
+                              ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
 
-                    //            //Se deja registro en el Log del error
-                    //            Logger.Error("Se presento un error en la API que implementa el consumo de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
-                    //                            "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
-                    //                            ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
-                    //                            ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
-                    //            break;
 
-                    //        //Error consultando el Api De Marcos
-                    //        case "-2":
+                            oMensajeRespuesta.Mensaje = "No se encontraron datos dentro del motor de reglas con los parámetros enviados. Contacte al administrador del sistema.";
 
-                    //            oMensajeRespuesta.Codigo = "-2";
-                    //            oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
 
-                    //            //Se deja registro en el Log del error
-                    //            Logger.Error("Se presento un error en la API de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
-                    //                             "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
-                    //                             ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
-                    //                             ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
-                    //            break;
+                            break;
 
-                    //        //Identificacion vacia
-                    //        case "-1":
+                        case -2:
 
-                    //            oMensajeRespuesta.Codigo = "-1";
-                    //            oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
+                            Logger.Error("No fue posible validar el escenario con los parámetros enviados. Contacte al administrador del sistema. Clasificacion: " +
+                                clasificacion + ". Gestor: " + gestor +
+                                ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
 
-                    //            break;
-                    //    }
-                    //}
-                    //else
-                    //{
-                    //    oMensajeRespuesta.Codigo = oRespuestaSAP.Exeption[0].ID;
-                    //    oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
-                    //}
+                            oMensajeRespuesta.Mensaje = "No fue posible validar el escenario con los parámetros enviados. Contacte al administrador del sistema.";
+
+                            break;
+
+                        case -3:
+
+                            Logger.Error("Ocurrió un error consultando la información del motor de reglas. Clasificacion: " +
+                                clasificacion + ". Gestor: " + gestor +
+                                ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
+
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema. ";
+
+                            break;
+                    }
+
                 }
                 else
                 {
-                    //oMensajeRespuesta.Codigo = "-3";
-                    //oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del servicio de SAP. Contacte al administrador del sistema.";
-                    //oMensajeRespuesta.Resultado = Json(oRespuestaSAP, JsonRequestBehavior.AllowGet);
 
-                    ////Se deja registro en el Log del error
-                    //Logger.Error("Se presento un error en la API que implementa el consumo de SAP. Error consultando el Nro. De Identificacion: " + Identificacion.ToString() +
-                    //                "Mensaje del API" + oRespuestaSAP.Exeption[0].MESSAGE +
-                    //                ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
-                    //                ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+                    Logger.Error("Ocurrió un error consultando la información del motor de reglas. Clasificacion: " +
+                               clasificacion + ". Gestor: " + gestor +
+                               ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                               ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+
+                    oMensajeRespuesta.Codigo = "-3";
+                    oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del motor de reglas. Contacte al administrador del sistema.";
+                    oMensajeRespuesta.Resultado = Json(oRespuestaMotor, JsonRequestBehavior.AllowGet);
+
 
                 }
 
@@ -106,16 +109,17 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             }
             catch (Exception Ex)
             {
-                //Logger.Error("Se presento un error consultando el Nro. Documento: " + Identificacion + ". " + Ex);
 
-                //oRespuestaSAP = new RespuestaSAPModels();
+                Logger.Error("Ocurrió un error consultando la información del motor de reglas. Clasificacion: " +
+                    clasificacion + ". Gestor: " + gestor +
+                    ". Exception: " + Ex);
 
-                //oRespuestaSAP.Exeption[0].ID = "-3";
-                //oRespuestaSAP.Exeption[0].MESSAGE = "Se presento un error en la disponibilidad del servicio de SAP. Contacte al administrador del sistema.";
+                oRespuestaMotor.Error.ID = -3;
+                oRespuestaMotor.Error.MESSAGE = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema. ";
 
-                //oMensajeRespuesta.Codigo = oRespuestaSAP.Exeption[0].ID;
-                //oMensajeRespuesta.Mensaje = oRespuestaSAP.Exeption[0].MESSAGE;
-                //oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oRespuestaSAP, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oMensajeRespuesta.Codigo = oRespuestaMotor.Error.ID.ToString();
+                oMensajeRespuesta.Mensaje = oRespuestaMotor.Error.MESSAGE;
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oRespuestaMotor, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;
             }

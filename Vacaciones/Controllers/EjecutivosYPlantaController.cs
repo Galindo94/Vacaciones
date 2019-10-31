@@ -14,10 +14,10 @@ namespace Vacaciones.Controllers
         List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
 
         // GET: EjecutivosYPlanta
-        public ActionResult Index(String Valores)
+        public ActionResult Index(string oDatosPersona, string oDatosFormulario, string oDatosSAP)
         {
             PersonaModels oPersona = new PersonaModels();
-            oPersona = JsonConvert.DeserializeObject<PersonaModels>(Valores);
+            oPersona = JsonConvert.DeserializeObject<PersonaModels>(oDatosPersona);
 
             ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
             ViewBag.NumeroDias = oPersona.NumeroDias;
@@ -34,7 +34,6 @@ namespace Vacaciones.Controllers
 
             // Fecha maxima que se le mostrará al usuario para pedir sus vacaciones (Esta para 60 días se puede cambiar según criterio)
             ViewBag.FinFecha = DateTime.Now.AddDays(60);
-
             return View();
         }
 

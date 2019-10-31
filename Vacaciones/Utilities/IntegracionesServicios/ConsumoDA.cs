@@ -13,11 +13,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
     public class ConsumoDA : Controller
     {
         // Variable para almacenar los Log's
-        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
-        // Variable para almacenar respuestas de los servicios
-        MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        //Persona Respuesta
-        PersonaModels oPersona = new PersonaModels();
+        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);        
         // URIS para consumo del servicio del DA
         readonly string URIDA = WebConfigurationManager.AppSettings["URIDA"].ToString();
         readonly string UserDA = WebConfigurationManager.AppSettings["VariableAPIDA"].ToString();
@@ -28,6 +24,11 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
         public MensajeRespuesta ConsultarUserDA(string NombreUsuario)
         {
+            // Variable para almacenar respuestas de los servicios
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            //Persona Respuesta
+            PersonaModels oPersona = new PersonaModels();
+
             try
             {
                 string url = URIDA + UserDA + NombreUsuario;
@@ -43,6 +44,52 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
                     oPersona = JsonConvert.DeserializeObject<PersonaModels>(oStreamReader.ReadToEnd());
 
+                    switch (oPersona.Codigo)
+                    {
+                        //Usuario consultado correctamente
+                        case 0:
+                            break;
+
+                        //Usuario vacio
+                        case -1:
+                            Logger.Error("No se envió un usuario para proceder con la consulta." +
+                                "Mensaje del servicio: " + oPersona.Respuesta);
+
+                            oPersona.Respuesta = "No se logró identificar un usuario en el directorio Activo.";
+                            break;
+
+                        //No se encontro usuario en el AD
+                        case -2:
+
+                            Logger.Error("No se encontró el usuario en el Directorio activo. " +
+                                "Nombre del usuario: " + NombreUsuario +
+                                ". Mensaje del servicio: " + oPersona.Respuesta);
+
+                            oPersona.Respuesta = "No se logró identificar un usuario en el directorio Activo.";
+
+                            break;
+
+                        //Error en el API del AD
+                        case -3:
+
+                            Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                                "Nombre del usuario: " + NombreUsuario +
+                                ". Mensaje del servicio: " + oPersona.Respuesta);
+
+                            oPersona.Respuesta = "Ocurrió un error en el API del Directorio Activo.";
+                            break;
+
+                        //Se encontro el usuario pero no tiene informacion basica
+                        case -4:
+
+                            Logger.Error("El usuario enviado no tiene la información básica para proceder (Usuario genérico). " +
+                                "Nombre del usuario: " + NombreUsuario +
+                                ". Mensaje del servicio: " + oPersona.Respuesta);
+
+                            oPersona.Respuesta = " El usuario identificado en el directorio activo no tiene la información necesaria para continuar.";
+                            break;
+                    }
+
                     oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
                     oMensajeRespuesta.Mensaje = oPersona.Respuesta;
                     oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
@@ -51,7 +98,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 else
                 {
                     oMensajeRespuesta.Codigo = "-3";
-                    oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del servicio del DA. Contacte al administrador del sistema.";
+                    oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del Directorio Activo.";
                     oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
 
                     //Se deja registro en el Log del error
@@ -66,11 +113,15 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             }
             catch (Exception Ex)
             {
-                Logger.Error("Se presento un error consultando al usuario" + NombreUsuario + ". " + Ex);
+                Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                                "Nombre del usuario: " + NombreUsuario +
+                                ". Exception " + Ex);
 
-                oPersona = new PersonaModels();
-                oPersona.Codigo = -3;
-                oPersona.Respuesta = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oPersona = new PersonaModels
+                {
+                    Codigo = -3,
+                    Respuesta = "Ocurrió un error en el API del Directorio Activo."
+                };
 
                 oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
                 oMensajeRespuesta.Mensaje = oPersona.Respuesta;
