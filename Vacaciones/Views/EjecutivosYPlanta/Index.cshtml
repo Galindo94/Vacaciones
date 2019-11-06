@@ -1,6 +1,4 @@
-﻿
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -11,13 +9,24 @@
 
         $(document).ready(function () {
 
-            Date.prototype.addDays = function (days) {
-                var date = new Date(this.valueOf());
-                date.setDate(date.getDate() + days);
-                return date;
-            }
+            //Funcion utilizada para evitar que se pongna decimales, "." y "," dentro del campo numeor de dias
+            (function ($) {
+                $.fn.inputFilter = function (inputFilter) {
+                    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                        if (inputFilter(this.value)) {
+                            this.oldValue = this.value;
+                            this.oldSelectionStart = this.selectionStart;
+                            this.oldSelectionEnd = this.selectionEnd;
+                        } else if (this.hasOwnProperty("oldValue")) {
+                            this.value = this.oldValue;
+                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                        }
+                    });
+                };
+            }(jQuery));
 
-                      //Control de kendoCalendar
+
+            //Control de kendoCalendar
             var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
             var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
             var finFecha = @Html.Raw(Json.Encode(ViewBag.FinFecha));
@@ -66,15 +75,18 @@
 
             $(".kendocalendar").attr("readonly", true);
             $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
-            $("#kendocalendar_1").attr("enable", true);
             $("input[class='kendocalendar k-input']").each(function (index) {
                 $(this).attr('id', 'kendocalendar_' + index);
+            });
+
+            $("#NumDias0").inputFilter(function (value) {
+                return /^\d*$/.test(value);
             });
 
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
-                    $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val(), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
+                    $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
 
                         switch (respuesta.Codigo) {
 
@@ -90,6 +102,7 @@
                                 }).then((result) => {
                                     if (result.value) {
                                         setTimeout(function () {
+                                            $("#kendocalendar_1").val('');
                                             $("#NumDias0").val('');
                                             $("#NumDias0").focus();
                                         }, 500)
@@ -109,6 +122,7 @@
                                 }).then((result) => {
                                     if (result.value) {
                                         setTimeout(function () {
+                                            $("#kendocalendar_1").val('');
                                             $("#NumDias0").val('');
                                             $("#NumDias0").focus();
                                         }, 500)
@@ -122,7 +136,7 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
-                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil" }, function (oRespuesta) {
+                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"}, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -153,35 +167,76 @@
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
-                if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $.post("../EjecutivosYPlanta/AgregarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val() }, function (d) {
-                        if (d.Codigo == 2) {
-                            swal.fire({
-                                title: "Advertencia!",
-                                text: d.Mensaje,
-                                type: 'warning',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            });
-                        }
-                        else {
-                            swal.fire({
-                                text: d.Mensaje,
-                                type: 'success',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                            if (result.value) {
-                                var url = "@Url.Action("Index", "Home",  null)";
-                                window.location.href = url
+                if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
+                    console.log('cargando .show');
+                    $.post("../EjecutivosYPlanta/GuardarSolicitud", {
+                        NroIdentificacion: $("#NroIdentificacionHidden").val(),
+                        NombresEmpleado: "@ViewBag.NombresEmpleado",
+                        ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",
+                        oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
+                        oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
+                        NumeroDias: $("#NumDias0").val(),
+                        SabadoHabil: "@ViewBag.DiasFestivosSabadosDomingos",
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        FechaFin: $("#kendocalendar_1").val()
+                    }, function (oRespuestaGuardar) {
+
+                        switch (oRespuestaGuardar.Codigo) {
+
+                            case "1":
+                                console.log('fin carga .hide');
+                                swal.fire({
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'success',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        var url = "@Url.Action("Index", "VacacionesIntranet",  null)";
+                                        window.location.href = url
+                                    }
+                                });
+                                break;
+
+                            case "-1":
+                                swal.fire({
+                                    title: "Error!",
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
+                            case "-2":
+                                swal.fire({
+                                    title: "Error!",
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
+                            case "-3":
+                                swal.fire({
+                                    title: "Error!",
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
                             }
-                        });
-                        }
-                    });
+                        })
                 }
                 else {
                     swal.fire({
@@ -200,10 +255,17 @@
     </script>
 </head>
 <body>
+
+    
+
+
     <div class="jumbotron">
         <div class="jumbotron-cuerpo">
             @Html.Partial("_EncabezadoEscenario")
             @Html.Partial("_CuerpoEscenario")
+
+
+
         </div>
 
     </div>

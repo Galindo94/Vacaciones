@@ -5,7 +5,7 @@
         <div class="col-md-4">
             <div class="col-md-12">
                 <label class="fieldlist-label">Nro. de d&iacute;as a tomar</label>
-                <input class="NumDias k-textbox" style="width:inherit" type="number" min="@ViewBag.MinimoDias" maxlength="2" max="@ViewBag.NumeroDias" onkeydown="return event.keyCode !== 69" />
+                <input class="NumDias k-textbox" style="width:inherit" type="text" min="@ViewBag.MinimoDias" maxlength="2" max="@ViewBag.NumeroDias" onkeydown="return event.keyCode !== 69" />
             </div>
         </div>
 
@@ -33,6 +33,6 @@
 
     <hr />
 
-    <input id="DocumentoHidden" type="hidden" value="@ViewBag.Documento" />
+    <input id="NroIdentificacionHidden" type="hidden" value="@ViewBag.NroIdentificacion" />
 
 </div>

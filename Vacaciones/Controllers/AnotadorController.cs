@@ -23,7 +23,7 @@ namespace Vacaciones.Controllers
 
             ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
             ViewBag.NumeroDias = oPersona.NumeroDias;
-            ViewBag.Documento = oPersona.Identificacion;
+            ViewBag.NroIdentificacion = oPersona.Identificacion;
 
             // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
             string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, true);

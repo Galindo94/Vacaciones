@@ -203,11 +203,15 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelosGuardarSolicitud\RespuestaGuardarSolicitudModels.cs" />
+    <Compile Include="Models\ModelosGuardarSolicitud\SolicitudDetalle.cs" />
+    <Compile Include="Models\ModelosGuardarSolicitud\Solicitudes.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\RespuestaMotorModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\ContigenteModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\ContingentesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIGuardarSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPISAP.cs" />
     <Compile Include="Models\ModelosGenerales\EmpleadoModels.cs" />

@@ -17,13 +17,17 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
             {
                 if (Contigente != null && Contigente.Count > 0)
                 {
-
                     string[] ValoresRango = oRegla.Crtro.Split('-');
+
+                    if (Double.Parse(Contigente[0].NroDias.Replace('.', ',')) >= Double.Parse(ValoresRango[0]) && Double.Parse(Contigente[0].NroDias.Replace('.', ',')) <= Double.Parse(ValoresRango[1]))
+                        Contigente[0].NroDias = oRegla.Vlr_Slda;
+
                     foreach (var item in Contigente)
                     {
-                        oRespuesta = oRespuesta + Double.Parse(item.NroDias);
+                        oRespuesta = oRespuesta + Double.Parse(item.NroDias.Replace('.', ','));
                     }
                 }
+
                 return oRespuesta;
             }
             catch (Exception)

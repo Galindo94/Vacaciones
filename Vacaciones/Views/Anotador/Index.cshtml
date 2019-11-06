@@ -1,5 +1,4 @@
-﻿@model Vacaciones.Models.Persona
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 
 <html>
 <head>
@@ -226,8 +225,8 @@
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
-                if ($("#DocumentoHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $.post("../Anotador/AgregarOEditarEmpleado", { Cedula: $("#DocumentoHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()), EsEdit: false }, function (d) {
+                if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
+                    $.post("../Anotador/AgregarOEditarEmpleado", { Cedula: $("#NroIdentificacionHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()), EsEdit: false }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
