@@ -143,12 +143,48 @@ namespace Vacaciones.Utilities
         public static string DiasFestivoSabadosDomingosConcatenado(int Anio, bool incluirSabado)
         {
             List<DateTime> dias = DiasFestivos(Anio);
+            List<DateTime> diasSegundoAnio = DiasFestivos(Anio + 1);
+            DateTime fechaCuatroMesesMas = DateTime.Now.AddMonths(4);
+            //Todo esto se hace para coger solo los días festivos desde el día de hoy hasta 4 meses despúes
+            foreach (DateTime item in diasSegundoAnio)
+            {
+                dias.Add(item);
+            }
+
+            List<DateTime> fechasAEliminar = new List<DateTime>();
+            foreach(DateTime fecha in dias)
+            {
+                if (fecha.Date < DateTime.Now)
+                {
+                    fechasAEliminar.Add(fecha);
+                }
+                else
+                {
+                    if (fecha.Date > fechaCuatroMesesMas)
+                    {
+                        fechasAEliminar.Add(fecha);
+                    }
+                }
+            }
+
+            foreach (DateTime itemEliminar in fechasAEliminar)
+            {
+                dias.Remove(itemEliminar);
+            }
+
+            string sabadosDomingoConcatenados = SabadosDomingosConcatenados(Anio, incluirSabado);
             string diasConcatenados = "";
+
             foreach(DateTime d in dias)
             {
                 diasConcatenados = diasConcatenados + d.Month + "/" + d.Day + "/" + d.Year + ",";
+                sabadosDomingoConcatenados = sabadosDomingoConcatenados.Replace(d.Month + "/" + d.Day + "/" + d.Year, "");
+                sabadosDomingoConcatenados = sabadosDomingoConcatenados.Replace(",,", ",");
+                sabadosDomingoConcatenados = sabadosDomingoConcatenados.Replace(",,,", ",");
             }
-            string sabadosDomingoConcatenados = SabadosDomingosConcatenados(Anio, incluirSabado);
+
+            
+            
             diasConcatenados = diasConcatenados.TrimEnd(',');
             if (sabadosDomingoConcatenados != "")
             {
@@ -159,8 +195,10 @@ namespace Vacaciones.Utilities
 
         public static string SabadosDomingosConcatenados(int Anio, bool incluirSabado)
         {
-            DateTime startDate = new DateTime(Anio, DateTime.Now.Month, DateTime.Now.Day);
-            DateTime endDate = new DateTime(Anio, 12, 31);
+            DateTime startDate = new DateTime();
+            startDate = DateTime.Now;
+            DateTime endDate = new DateTime();
+            endDate = DateTime.Now.AddMonths(4);
             string diasConcatenados = "";
             TimeSpan diff = endDate - startDate;
             int days = diff.Days;
