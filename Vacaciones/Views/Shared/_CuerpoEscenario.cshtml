@@ -5,7 +5,7 @@
         <div class="col-md-4">
             <div class="col-md-12">
                 <label class="fieldlist-label">Nro. de d&iacute;as a tomar</label>
-                <input class="NumDias k-textbox" style="width:inherit" type="number" min="6" maxlength="2" max="@ViewBag.NumeroDias" onkeydown="return event.keyCode !== 69" />
+                <input class="NumDias k-textbox" style="width:inherit" type="number" min="@ViewBag.MinimoDias" maxlength="2" max="@ViewBag.NumeroDias" onkeydown="return event.keyCode !== 69" />
             </div>
         </div>
 
@@ -19,7 +19,7 @@
         <div class="col-md-4">
             <div class="col-md-12">
                 <label class="fieldlist-label">Fin de vacaciones</label>
-                <input class="kendocalendar" style="width:inherit" />
+                <input class="kendocalendar" disabled="disabled" style="width:inherit" />
             </div>
         </div>
 

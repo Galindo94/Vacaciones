@@ -27,7 +27,7 @@
                                                     var url = $("#RedirectTo").val();
                                                     url = url.replace("ActionName", resultado[0]);
                                                     url = url.replace("ControllerName", resultado[1]);
-                                                    $.redirect(url, { oDatosPersona: JSON.stringify(oRespuestaDA.Resultado.Data), oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data)  }, "POST");
+                                                    $.redirect(url, {  oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data)  }, "POST");
                                                     break;
 
                                                 case "-1":

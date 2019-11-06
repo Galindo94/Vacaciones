@@ -11,54 +11,143 @@
 
         $(document).ready(function () {
 
-            //Control de kendoCalendar
+            Date.prototype.addDays = function (days) {
+                var date = new Date(this.valueOf());
+                date.setDate(date.getDate() + days);
+                return date;
+            }
+
+                      //Control de kendoCalendar
             var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
             var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
             var finFecha = @Html.Raw(Json.Encode(ViewBag.FinFecha));
             var dates = [];
             var fechas = fechasConcatendas.split(",")
+
             for (var index = 0; index < fechas.length; index++) {
                 dates.push(new Date(fechas[index]));
             }
+
             $(".kendocalendar").kendoDatePicker({
                 format: "dd/MM/yyyy",
                 min: inicioFecha,
                 max: finFecha,
                 disableDates: dates
+                ,change: function () {
+                   if ($("#NumDias0").val() != '') {
+                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                           switch (oRespuesta.Codigo) {
+
+                               case "0":
+                                   var fechas = oRespuesta.Resultado.Data.split("/");
+                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
+                                   break;
+
+                               case "-1":
+                                   swal.fire({
+                                       title: "Advertencia!",
+                                       text: respuesta.Mensaje,
+                                       type: 'warning',
+                                       confirmButtonText: "OK",
+                                       confirmButtonColor: '#00AFF0',
+                                       allowOutsideClick: false,
+                                       allowEscapeKey: false
+                                   }).then((result) => {
+                                       if (result.value) {
+                                           $("#kendocalendar_1").val('');
+                                       }
+                                   });
+                                   break;
+                           }
+                       })
+                   }
+                }
             });
 
             $(".kendocalendar").attr("readonly", true);
             $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
-
+            $("#kendocalendar_1").attr("enable", true);
             $("input[class='kendocalendar k-input']").each(function (index) {
                 $(this).attr('id', 'kendocalendar_' + index);
             });
-
 
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
                     $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val(), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
-                        if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
-                            swal.fire({
-                                title: "Advertencia!",
-                                text: respuesta.Mensaje,
-                                type: 'warning',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.value) {
-                                    setTimeout(function () {
-                                        $("#NumDias0").val('');
-                                        $("#NumDias0").focus();
-                                    }, 500)
-                                }
-                            });
+
+                        switch (respuesta.Codigo) {
+
+                            case "1":
+                                swal.fire({
+                                    title: "Advertencia!",
+                                    text: respuesta.Mensaje + " " + @ViewBag.MinimoDias + ".",
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        setTimeout(function () {
+                                            $("#NumDias0").val('');
+                                            $("#NumDias0").focus();
+                                        }, 500)
+                                    }
+                                });
+                                break;
+
+                            case "2":
+                                swal.fire({
+                                    title: "Advertencia!",
+                                    text: respuesta.Mensaje + " (" + @ViewBag.NumeroDias + ").",
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        setTimeout(function () {
+                                            $("#NumDias0").val('');
+                                            $("#NumDias0").focus();
+                                        }, 500)
+                                    }
+                                });
+                                break;
                         }
                     })
                 }
+            });
+
+            $("#NumDias0").change(function () {
+                if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
+                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil" }, function (oRespuesta) {
+                           switch (oRespuesta.Codigo) {
+
+                               case "0":
+                                   var fechas = oRespuesta.Resultado.Data.split("/");
+                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
+                                   break;
+
+                               case "-1":
+                                   swal.fire({
+                                       title: "Advertencia!",
+                                       text: respuesta.Mensaje,
+                                       type: 'warning',
+                                       confirmButtonText: "OK",
+                                       confirmButtonColor: '#00AFF0',
+                                       allowOutsideClick: false,
+                                       allowEscapeKey: false
+                                   }).then((result) => {
+                                       if (result.value) {
+                                           $("#kendocalendar_1").val('');
+                                       }
+                                   });
+                                   break;
+                           }
+                       })
+                   }
             });
 
 
@@ -91,8 +180,6 @@
                                 window.location.href = url
                             }
                         });
-
-
                         }
                     });
                 }
@@ -108,7 +195,6 @@
                     })
                 };
             });
-
         });
 
     </script>
@@ -119,6 +205,7 @@
             @Html.Partial("_EncabezadoEscenario")
             @Html.Partial("_CuerpoEscenario")
         </div>
+
     </div>
 </body>
 </html>
