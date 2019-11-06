@@ -1,0 +1,206 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script type="text/javascript">
+        $(document).ready(function () {
+            $("#btnIngresarVacacionesIntranet").click(function () {
+                $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (oRespuestaDA) {
+                    switch (oRespuestaDA.Codigo) {
+
+                        case "0":
+                            $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(oRespuestaDA.Resultado.Data) }, function (oRespuestaSAP) {
+                                switch (oRespuestaSAP.Codigo) {
+                                    case "4":
+
+                                        $.post("../VacacionesIntranet/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
+
+                                            switch (oRespuestaMotorReglas.Codigo) {
+
+                                                case "1":
+                                                    var resultado = oRespuestaMotorReglas.Resultado.Data.Escenario[0].Url.split('$');
+                                                    var url = $("#RedirectTo").val();
+                                                    url = url.replace("ActionName", resultado[0]);
+                                                    url = url.replace("ControllerName", resultado[1]);
+                                                    $.redirect(url, {  oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data)  }, "POST");
+                                                    break;
+
+                                                case "-1":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: oRespuestaMotorReglas.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                                case "-2":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: oRespuestaMotorReglas.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                                case "-3":
+                                                    swal.fire({
+                                                        title: "Error!",
+                                                        text: oRespuestaMotorReglas.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+                                            }
+
+                                        });
+                                        break;
+
+
+                                    case "3":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: oRespuestaSAP.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
+
+                                    case "2":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: oRespuestaSAP.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
+                                    case "1":
+                                        swal.fire({
+                                            title: "Error!",
+                                            text: oRespuestaSAP.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+                                }
+                            });
+                            break;
+
+                         //El usuario no puede ser vacio
+                        case "-1":
+                            swal.fire({
+                                title: "Error!",
+                                text: oRespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                }
+                            });
+                            break;
+
+                         // El usuario no se encontro en el DA
+                        case "-2":
+                            swal.fire({
+                                title: "Advertencia!",
+                                text: oRespuestaDA.Mensaje,
+                                type: 'warning',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                }
+                            });
+                            break;
+
+                        // Error en el Servicio del DA
+                        case "-3":
+                            swal.fire({
+                                title: "Error!",
+                                text: oRespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            });
+                            break;
+
+                        // Se encontro usuario pero no tiene informacion basica
+                        case "-4":
+                            swal.fire({
+                                title: "Error!",
+                                text: oRespuestaDA.Mensaje,
+                                type: 'error',
+                                confirmButtonText: "OK",
+                                confirmButtonColor: '#00AFF0',
+                                allowOutsideClick: false,
+                                allowEscapeKey: false
+                            }).then((result) => {
+                                if (result.value) {
+                                    var url = "@Url.Action("Index", "Home", null)";
+                                    window.location.href = url
+                                    }
+                                });
+                            break;
+                    }
+                });
+            });
+        });
+    </script>
+
+</head>
+<body>
+
+    @Html.Hidden("RedirectTo", Url.Action("ActionName", "ControllerName"))
+
+    <div class="jumbotron">
+        <div class="jumbotron-cuerpo">
+            <div class="container body-content">
+                <h1 class="jumbotron-encabezado center">VACACIONES APP</h1>
+                <div class="col-md-12 center">
+                    <label class="fieldlist-label">Bienvenido (a) @ViewBag.UsuarioIntranet</label>
+                    <button id="btnIngresarVacacionesIntranet" class="btn btn-lg btn-primary">Presione aqui para ingresar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+
+</body>
+
+</html>

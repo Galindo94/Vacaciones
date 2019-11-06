@@ -22,26 +22,28 @@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.mobile.all.min.css")" rel="stylesheet" />
     <script src="~/Scripts/sweetAlert.js"></script>
 
+    @*<script src="https://cdn.rawgit.com/mgalante/jquery.redirect/master/jquery.redirect.js"></script>*@
+    <script src="@Url.Content("~/Scripts/RedirecToLib.js")"></script>
+
 
     <script type="text/javascript">
         $(document).ready(function () {
-            // create DatePicker from input HTML element
-            //$(".kendocalendar").kendoDatePicker({
-            //    format: "dd/MM/yyyy"
-            //}
-            //);
-
-            //$(".kendocalendar").attr("readonly", true);
-            //$(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
-
-            //$("input[class='kendocalendar k-input']").each(function (index) {
-            //    $(this).attr('id', 'kendocalendar_' + index);
-            //});
 
             $("input[class='NumDias k-textbox']").each(function (index) {
                 $(this).attr('id', 'NumDias' + index);
             });
 
+            $("span[class='blue']").each(function (index) {
+                $(this).attr('id', 'SpanNumDias' + index);
+            });
+
+            $("span[class='SpanNombreEmpleado']").each(function (index) {
+                $(this).attr('id', 'SpanNombreEmpleado' + index);
+            });
+
+            $("button[class='btn btn-lg btn-postobon']").each(function (index) {
+                $(this).attr('id', 'btnAgregar' + index);
+            });
 
         });
     </script>
@@ -49,7 +51,6 @@
 </head>
 
 <body>
-
     <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
         <a class="navbar-brand" href="#">Vacaciones</a>
         <div class="collapse navbar-collapse" id="navbarSupportedContent">
@@ -58,24 +59,19 @@
                     @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
                 </li>
                 <li class="nav-item">
-                    @Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
                 <li class="nav-item">
-                    @Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
 
                 <li class="nav-item">
-                    @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
+                    @*@Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
-                @*<li class="nav-item">
-                        @Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })
-                    </li>*@
             </ul>
         </div>
     </nav>
-
     <br />
-
     <div class="container body-content">
         @RenderBody()
     </div>
@@ -83,11 +79,9 @@
     <footer class="footer text-center d-flex align-items-center">
         <div class="container pb-0">
             <hr />
-            <p>Copyright &copy; @DateTime.Now.Year Progress Software Corporation and/or its subsidiaries or affiliates. All Rights Reserved.</p>
+            <p>Copyright &copy; @DateTime.Now.Year All Rights Reserved.</p>
         </div>
     </footer>
 
-
 </body>
-
 </html>
