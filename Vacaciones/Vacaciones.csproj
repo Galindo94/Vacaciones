@@ -222,6 +222,7 @@
     <Compile Include="Models\ModelosMotorDeReglas\ErrorModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\EscenarioModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\ReglaModels.cs" />
+    <Compile Include="Utilities\UtilitiesGenerales\DiasContingente.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />

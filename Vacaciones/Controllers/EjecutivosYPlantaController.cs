@@ -1,15 +1,11 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
-using System.Globalization;
-using System.Linq;
 using System.Web.Mvc;
-using Vacaciones.Models.ModelosGenerales;
 using Vacaciones.Models.ModelosMotorDeReglas;
 using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
-using Vacaciones.Utilities.IntegracionesServicios;
+using Vacaciones.Utilities.UtilitiesGenerales;
 
 namespace Vacaciones.Controllers
 {
@@ -25,6 +21,7 @@ namespace Vacaciones.Controllers
             {
                 RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels();
                 RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
+                DiasContingente oDiasContingente = new DiasContingente();
 
                 oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(oDatosFormulario);
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oDatosSAP);
@@ -36,13 +33,16 @@ namespace Vacaciones.Controllers
                                          oRespuestaSAPModels.Details[0].PrimerApellido + " " + oRespuestaSAPModels.Details[0].SegundoApellido;
 
                 //Falta definir el numero de dias
-                ViewBag.NumeroDias = 22;  // Pendiente por realizar ////////////////////////
+                //ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente);  // Pendiente por realizar ////////////////////////
 
 
                 foreach (var oReglas in oRespuestaMotor.Reglas)
                 {
                     switch (oReglas.Prmtro)
                     {
+                        case "NroDias":
+                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas);  // Pendiente por realizar ////////////////////////
+                            break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
                             break;
