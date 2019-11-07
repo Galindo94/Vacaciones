@@ -43,7 +43,8 @@
                 max: finFecha,
                 disableDates: dates
                 ,change: function () {
-                   if ($("#NumDias0").val() != '') {
+                    if ($("#NumDias0").val() != '') {
+                       //Calcular la fecha fin de vacaciones
                        $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
@@ -86,14 +87,14 @@
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
-                    $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
+                    $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()), MinimoDias : "@ViewBag.MinimoDias" }, function (respuesta) {
 
                         switch (respuesta.Codigo) {
 
                             case "1":
                                 swal.fire({
                                     title: "Advertencia!",
-                                    text: respuesta.Mensaje + " " + @ViewBag.MinimoDias + ".",
+                                    text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
                                     confirmButtonColor: '#00AFF0',
@@ -113,7 +114,7 @@
                             case "2":
                                 swal.fire({
                                     title: "Advertencia!",
-                                    text: respuesta.Mensaje + " (" + @ViewBag.NumeroDias + ").",
+                                    text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
                                     confirmButtonColor: '#00AFF0',
@@ -168,7 +169,8 @@
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
                 if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    console.log('cargando .show');
+                    $("#DivFondoTrasparente").show();
+                    $("#DivCirculoAzul").show();
                     $.post("../EjecutivosYPlanta/GuardarSolicitud", {
                         NroIdentificacion: $("#NroIdentificacionHidden").val(),
                         NombresEmpleado: "@ViewBag.NombresEmpleado",
@@ -181,10 +183,12 @@
                         FechaFin: $("#kendocalendar_1").val()
                     }, function (oRespuestaGuardar) {
 
+                        $("#DivFondoTrasparente").hide();
+                        $("#DivCirculoAzul").hide();
+
                         switch (oRespuestaGuardar.Codigo) {
 
                             case "1":
-                                console.log('fin carga .hide');
                                 swal.fire({
                                     text: oRespuestaGuardar.Mensaje,
                                     type: 'success',
@@ -255,19 +259,11 @@
     </script>
 </head>
 <body>
-
-    
-
-
     <div class="jumbotron">
         <div class="jumbotron-cuerpo">
             @Html.Partial("_EncabezadoEscenario")
             @Html.Partial("_CuerpoEscenario")
-
-
-
         </div>
-
     </div>
 </body>
 </html>

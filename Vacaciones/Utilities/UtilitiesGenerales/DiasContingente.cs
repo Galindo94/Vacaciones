@@ -13,27 +13,32 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             double oRespuesta = 0;
+
             try
             {
+                string[] ValoresRango = oRegla.Crtro.Split('-');
+
                 if (Contigente != null && Contigente.Count > 0)
                 {
-                    string[] ValoresRango = oRegla.Crtro.Split('-');
-
-                    if (Double.Parse(Contigente[0].NroDias.Replace('.', ',')) >= Double.Parse(ValoresRango[0]) && Double.Parse(Contigente[0].NroDias.Replace('.', ',')) <= Double.Parse(ValoresRango[1]))
-                        Contigente[0].NroDias = oRegla.Vlr_Slda;
-
-                    foreach (var item in Contigente)
+                    if (!string.IsNullOrEmpty(Contigente[0].NroDias))
                     {
-                        oRespuesta = oRespuesta + Double.Parse(item.NroDias.Replace('.', ','));
+                        string oDiasContingenteActual = Contigente[0].NroDias.Replace('.', ',');
+                        if (Double.Parse(oDiasContingenteActual) >= Double.Parse(ValoresRango[0]) && Double.Parse(oDiasContingenteActual) <= Double.Parse(ValoresRango[1]))
+                            Contigente[0].NroDias = oRegla.Vlr_Slda;
+
+                        foreach (var item in Contigente)
+                        {
+                            string oDiasContingente = item.NroDias.Replace('.', ',');
+                            oRespuesta = oRespuesta + Double.Parse(oDiasContingente);
+                        }
                     }
                 }
 
                 return oRespuesta;
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
-
-                throw;
+                return 0;
             }
         }
     }

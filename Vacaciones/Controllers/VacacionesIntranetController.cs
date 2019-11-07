@@ -34,7 +34,7 @@ namespace Vacaciones.Controllers
             try
             {
                 //Se guarda respuesta del API del DA
-                oMensajeRespuesta = oConsumoDA.ConsultarUserDA("popcano");
+                oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
                 //Se retornan los valores
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
@@ -79,11 +79,8 @@ namespace Vacaciones.Controllers
                              "Nro. Documento: " + JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion +
                              "Exception: " + Ex);
 
-                oRespuestaSAP.Exception[0].ID = "-3";
-                oRespuestaSAP.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
-
-                oMensajeRespuesta.Codigo = oRespuestaSAP.Exception[0].ID = "-3";
-                oMensajeRespuesta.Mensaje = oRespuestaSAP.Exception[0].MESSAGE;
+                oMensajeRespuesta.Codigo = "3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);

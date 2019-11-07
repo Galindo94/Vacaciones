@@ -44,7 +44,7 @@ namespace Vacaciones.Controllers
                     switch (oReglas.Prmtro)
                     {
                         case "NroDias":
-                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas);  // Pendiente por realizar ////////////////////////
+                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
                             break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
@@ -76,16 +76,16 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public JsonResult ValidarCantidadDias(int NumeroDias, float NumDiasDisponibles)
+        public JsonResult ValidarCantidadDias(int NumeroDias, float NumDiasDisponibles, int MinimoDias)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
 
-            if (NumeroDias < 6)
+            if (NumeroDias < MinimoDias)
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser superior a",
+                    Mensaje = "La cantidad de días debe ser superior a " + MinimoDias,
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -95,7 +95,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "2",
-                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles",
+                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles (" + NumDiasDisponibles + ")",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }

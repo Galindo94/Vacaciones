@@ -154,4 +154,38 @@ span.blue {
 
 
 
+.fondoTransparente {
+    /*Div que ocupa toda la pantalla*/
+    position: absolute;
+    top: 0px;
+    left: 0px;
+    width: 100%;
+    height: 100%;
+    background-color: black;
+    filter: alpha(opacity=50);
+    opacity: .5;
+    display: none;
+    z-index: 77777;
+}
+
+.spinner-center {
+    position: absolute;
+    /*nos posicionamos en el centro del navegador*/
+    top: 50%;
+    left: 50%;
+    /*determinamos una anchura*/
+    width: 48px;
+    /*/indicamos que el margen izquierdo, es la mitad de la anchura/*/
+    margin-left: -24px;
+    /*/determinamos una altura/*/
+    height: 48px;
+    /*/indicamos que el margen superior, es la mitad de la altura/*/
+    margin-top: -24px;
+    padding: 5px;
+    display: none;
+    z-index: 99999;
+}
+
+
+
 /* #endregion */

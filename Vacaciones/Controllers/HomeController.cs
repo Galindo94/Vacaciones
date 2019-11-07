@@ -1,111 +1,80 @@
-﻿using System.Web.Mvc;
-using Vacaciones.Models.ModelosGenerales;
+﻿using log4net;
+using Newtonsoft.Json;
+using System;
+using System.Collections.Generic;
+using System.Web.Mvc;
+using Vacaciones.Models.ModelosMotorDeReglas;
+using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
+using Vacaciones.Utilities.IntegracionesServicios;
 
 namespace Vacaciones.Controllers
 {
     public class HomeController : Controller
     {
+        // Variable para almacenar los Log's
+        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
+
         public ActionResult Index()
         {
-            var user = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-
-            ViewBag.eldato = user;
-
             return View();
         }
 
-        public JsonResult Login(int Cedula)
+        public JsonResult ConsultarUserSAP(int NroDocumento)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-            bool Encontro = false;
-
-            PersonaModels oPersona = new PersonaModels()
+            ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
+            try
             {
-                Identificacion = Cedula
+                oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(NroDocumento);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
+                                             "Nro. Documento: " + NroDocumento +
+                                             "Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public JsonResult ConsultaMotorDeReglas(string RespuestaSAP)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIMotorDeReglas oConsumoAPIMotorDeReglas = new ConsumoAPIMotorDeReglas();
+            RespuestaSAPModels oRespuestaSap = new RespuestaSAPModels();
+            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
+            {
+                Escenario = new List<EscenarioModels>(),
+                Reglas = new List<ReglaModels>(),
+                Error = new ErrorModels()
             };
 
-            #region Escenario 1 planta ejecutiva
-
-
-            if (Cedula == 71625018 && !Encontro)
+            try
             {
-                oMensajeRespuesta.Codigo = "1$1";
-                oPersona.Nombres = "LUIS GILBERTO";
-                oPersona.Apellidos = "BETANCUR ZULUAGA";
-                oPersona.NumeroDias = 31.25;
-                Encontro = true;
+                oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
+                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor);
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
-
-            if (Cedula == 75095036 && !Encontro)
+            catch (Exception Ex)
             {
-                oMensajeRespuesta.Codigo = "1$1";
-                oPersona.Nombres = "OSCAR YESID";
-                oPersona.Apellidos = "ROMERO ARENAS";
-                oPersona.NumeroDias = 33.75;
-                Encontro = true;
+
+                Logger.Error("Ocurrió un error interno en el consumo del API del motor de reglas. " +
+                            "Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
-
-            #endregion
-
-            #region Empleados
-
-            if (Cedula == 98711404 && !Encontro)
-            {
-                oMensajeRespuesta.Codigo = "1$2";
-                oPersona.Nombres = "JOAN ESTEBAN";
-                oPersona.Apellidos = "BOLIVAR RESTREPO";
-                oPersona.NumeroDias = 11.25;
-                Encontro = true;
-            }
-
-            if (Cedula == 1017183009 && !Encontro)
-            {
-                oMensajeRespuesta.Codigo = "1$2";
-                oPersona.Nombres = "NATALIA ANDREA";
-                oPersona.Apellidos = "GAVIRIA OVIEDO";
-                oPersona.NumeroDias = 22.5;
-                Encontro = true;
-            }
-
-            #endregion
-
-            #region Anotador
-
-            if (Cedula == 8356830 && !Encontro)
-            {
-                oMensajeRespuesta.Codigo = "1$3";
-                oPersona.Nombres = "CRISTIAN ESTEBAN";
-                oPersona.Apellidos = "PIEDRAHITA OCAMPO";
-                oPersona.NumeroDias = 13.75;
-                Encontro = true;
-            }
-
-            if (Cedula == 15374042 && !Encontro)
-            {
-                oMensajeRespuesta.Codigo = "1$3";
-                oPersona.Nombres = "JEISON ALEJANDRO";
-                oPersona.Apellidos = "RAMIREZ RAMIREZ";
-                oPersona.NumeroDias = 8.75;
-                Encontro = true;
-            }
-
-            #endregion
-
-            if (!Encontro)
-            {
-                oMensajeRespuesta.Codigo = "-1$-1";
-                oMensajeRespuesta.Mensaje = "Documento invalido, verifiquelo e intente de nuevo.";
-                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-            }
-            else
-            {
-                //oMensajeRespuesta.Codigo = "1";
-                oMensajeRespuesta.Mensaje = "";
-                oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
-            }
-
-            return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
         }
 
 
