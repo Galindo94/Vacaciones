@@ -125,7 +125,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         Logger.Error("Ocurrió un error des serializando la respuesta del API de SAP en un Objeto de tipo RespuestaSAPModels.  " +
                                "Nro. Documento: " + Identificacion);
 
-                        oMensajeRespuesta.Codigo = "-3";
+                        oMensajeRespuesta.Codigo = "3";
                         oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
                         oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
@@ -141,7 +141,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                     ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
 
 
-                    oMensajeRespuesta.Codigo = "-3";
+                    oMensajeRespuesta.Codigo = "3";
                     oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
                     oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 
@@ -156,7 +156,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                "Nro. Documento: " + Identificacion +
                                "Exception: " + Ex);
 
-                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Codigo = "3";
                 oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
                 oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 

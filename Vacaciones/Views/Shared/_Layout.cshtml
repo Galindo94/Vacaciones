@@ -11,19 +11,22 @@
     <script src="@Url.Content("~/Scripts/kendo/2019.3.917/angular.min.js")"></script>
     <script src="@Url.Content("~/Scripts/kendo/2019.3.917/jszip.min.js")"></script>
     <script src="@Url.Content("~/Scripts/kendo/2019.3.917/kendo.all.min.js")"></script>
+
+    <script src="@Url.Content("~/Scripts/umd/popper.min.js")"></script>
     <script src="@Url.Content("~/Scripts/bootstrap.min.js")"></script>
-    <script src="@Url.Content("~/Scripts/popper.min.js")"></script>
+
     @*calendario*@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.min.css")" rel="stylesheet" />
+
     @*Grid*@
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.default.mobile.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.rtl.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.common.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.silver.min.css")" rel="stylesheet" />
     <link href="@Url.Content("~/Content/kendo/2019.3.917/kendo.mobile.all.min.css")" rel="stylesheet" />
+
     @*SweetAler*@
     <script src="@Url.Content("~/Scripts/sweetAlert.js")"></script>
-
     <script src="@Url.Content("~/Scripts/RedirecToLib.js")"></script>
 
 
@@ -46,11 +49,6 @@
                 $(this).attr('id', 'btnAgregar' + index);
             });
 
-            //$("input[class='NumDias k-textbox']").kendoNumericTextBox({
-            //    format: "#.#",
-            //    decimal: 0
-            //});
-
         });
     </script>
 
@@ -70,16 +68,6 @@
             <ul class="navbar-nav mr-auto">
                 <li class="nav-item active">
                     @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
-                </li>
-                <li class="nav-item">
-                    @*@Html.ActionLink("Nomina Especial", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
-                </li>
-                <li class="nav-item">
-                    @*@Html.ActionLink("Empleados", "Index", "EjecutivosYPlanta", new { area = "" }, new { @class = "nav-link" })*@
-                </li>
-
-                <li class="nav-item">
-                    @*@Html.ActionLink("Anotador", "Index", "Anotador", new { area = "" }, new { @class = "nav-link" })*@
                 </li>
             </ul>
         </div>

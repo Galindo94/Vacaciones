@@ -92,7 +92,6 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 }
                 else
                 {
-
                     Logger.Error("Ocurrió un error consultando la información del motor de reglas. Clasificacion: " +
                                clasificacion + ". Gestor: " + gestor +
                                ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
@@ -101,7 +100,6 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                     oMensajeRespuesta.Codigo = "-3";
                     oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del motor de reglas. Contacte al administrador del sistema.";
                     oMensajeRespuesta.Resultado = Json(oRespuestaMotor, JsonRequestBehavior.AllowGet);
-
 
                 }
 
@@ -114,11 +112,8 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                     clasificacion + ". Gestor: " + gestor +
                     ". Exception: " + Ex);
 
-                oRespuestaMotor.Error.ID = -3;
-                oRespuestaMotor.Error.MESSAGE = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema. ";
-
-                oMensajeRespuesta.Codigo = oRespuestaMotor.Error.ID.ToString();
-                oMensajeRespuesta.Mensaje = oRespuestaMotor.Error.MESSAGE;
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema.";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oRespuestaMotor, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;

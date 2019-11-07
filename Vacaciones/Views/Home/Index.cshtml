@@ -9,13 +9,47 @@
 
         $(document).ready(function () {
 
+            //Funcion utilizada para evitar que se pongna decimales, "." y "," dentro del campo numeor de dias
+            (function ($) {
+                $.fn.inputFilter = function (inputFilter) {
+                    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                        if (inputFilter(this.value)) {
+                            this.oldValue = this.value;
+                            this.oldSelectionStart = this.selectionStart;
+                            this.oldSelectionEnd = this.selectionEnd;
+                        } else if (this.hasOwnProperty("oldValue")) {
+                            this.value = this.oldValue;
+                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                        }
+                    });
+                };
+            }(jQuery));
+
+            $("#NroDocumento").inputFilter(function (value) {
+                return /^\d*$/.test(value);
+            });
+
             $("#btnAgregar0").click(function () {
                 if ($("#NroDocumento").val() != '') {
 
+                    $("#DivFondoTrasparente").show();
+                    $("#DivCirculoAzul").show();
+
                     $.getJSON("/Home/ConsultarUserSAP", { NroDocumento: parseInt($("#NroDocumento").val()) }, function (oRespuestaSAP) {
+
+                        $("#DivFondoTrasparente").hide();
+                        $("#DivCirculoAzul").hide();
+
                         switch (oRespuestaSAP.Codigo) {
                             case "4":
+
+                                $("#DivFondoTrasparente").show();
+                                $("#DivCirculoAzul").show();
+
                                 $.post("../Home/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
 
                                     switch (oRespuestaMotorReglas.Codigo) {
                                         case "1":
@@ -129,7 +163,7 @@
                 <div class="col-md-12 center">
                     <h6>No hemos identificado un usuario en el directorio activo. Por favor ingrese su n&uacute;mero de documento</h6>
                     <label class="fieldlist-label">Documento de identidad</label>
-                    <input id="NroDocumento" class="k-textbox" type="number" onkeydown="return event.keyCode !== 69" />
+                    <input id="NroDocumento" class="k-textbox" type="text" onkeydown="return event.keyCode !== 69" />
                     <br />
                     <br />
                     <button class="btn btn-lg btn-postobon">Ingresar</button>
