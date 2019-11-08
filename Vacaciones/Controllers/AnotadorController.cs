@@ -1,74 +1,167 @@
-﻿using Newtonsoft.Json;
+﻿using log4net;
+using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosGenerales;
+using Vacaciones.Models.ModelosGuardarSolicitud;
+using Vacaciones.Models.ModelosMotorDeReglas;
+using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
+using Vacaciones.Utilities.IntegracionesServicios;
+using Vacaciones.Utilities.UtilitiesGenerales;
 
 namespace Vacaciones.Controllers
 {
     public class AnotadorController : Controller
     {
-        List<EmpleadoModels> oLstEmpleados = new List<EmpleadoModels>();
+
+        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
+
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         PersonaModels oPersona = new PersonaModels();
 
+        List<RespuestaSAPModels> oLstRespuestaSAPModels = new List<RespuestaSAPModels>();
+
+
+
         // GET: Anotador
-        public ActionResult Index(string Valores)
-        {
-            PersonaModels oPersona = new PersonaModels();
-            oPersona = JsonConvert.DeserializeObject<PersonaModels>(Valores);
-
-            ViewBag.NombreEmpleado = oPersona.Nombres + oPersona.Apellidos;
-            ViewBag.NumeroDias = oPersona.NumeroDias;
-            ViewBag.NroIdentificacion = oPersona.Identificacion;
-
-            // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
-            string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, true);
-            ViewBag.DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos;
-
-            // Fecha donde el usuario puede iniciar sus vacaciones (Se le agregan los días según condicion, 1 o 15 días)
-            ViewBag.InicioFecha = DateTime.Now.AddDays(15);
-
-
-            // Fecha maxima que se le mostrará al usuario para pedir sus vacaciones (Esta para 60 días se puede cambiar según criterio)
-            ViewBag.FinFecha = DateTime.Now.AddDays(60);
-
-
-            return View();
-        }
-
-        public JsonResult AgregarOEditarEmpleado(string Cedula, string NumeroDias, string FechaInicio, string FechaFin, string DataActual, bool EsEdit)
+        public ActionResult Index(string oDatosFormulario, string oDatosSAP)
         {
             try
             {
-                oLstEmpleados = JsonConvert.DeserializeObject<List<EmpleadoModels>>(DataActual);
+
+                RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels();
+                RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
+                List<RespuestaSAPModels> oLstRespuestaSAPModels = new List<RespuestaSAPModels>();
+                DiasContingente oDiasContingente = new DiasContingente();
+
+                oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(oDatosFormulario);
+                ViewBag.oRespuestaMotor = JsonConvert.SerializeObject(oRespuestaMotor);
+
+                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oDatosSAP);
+                ViewBag.oRespuestaSAPModels = JsonConvert.SerializeObject(oRespuestaSAPModels);
+
+                oLstRespuestaSAPModels.Add(oRespuestaSAPModels);
+                ViewBag.oLstRespuestaSAPModels = JsonConvert.SerializeObject(oLstRespuestaSAPModels);
+
+                ViewBag.NroIdentificacion = oRespuestaSAPModels.Details[0].NroDocumento;
+
+                //Asignacion dle nombre del Empleado
+                ViewBag.NombresEmpleado = oRespuestaSAPModels.Details[0].PrimerNombre + " " + oRespuestaSAPModels.Details[0].SegundoNombre + " ";
+                ViewBag.ApellidosEmpleado = oRespuestaSAPModels.Details[0].PrimerApellido + " " + oRespuestaSAPModels.Details[0].SegundoApellido;
+
+
+                foreach (var oReglas in oRespuestaMotor.Reglas)
+                {
+                    switch (oReglas.Prmtro)
+                    {
+                        case "NroDias":
+                            ViewBag.NumeroDias = 30; // oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
+                            break;
+                        case "NroMinDias":
+                            ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
+                            break;
+
+                        case "DiasMinCalendario":
+                            ViewBag.InicioFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                            break;
+
+                        case "DiasMaxCalendario":
+                            ViewBag.FinFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                            break;
+
+                    }
+                }
+
+                ViewBag.SabadoHabil = oRespuestaSAPModels.Details[0].SabadoHabil;
+
+                // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
+                string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? true : false);
+                ViewBag.DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos;
+
+
+                return View();
+            }
+            catch (Exception Ex)
+            {
+                return null;
+            }
+        }
+
+
+
+        public JsonResult AgregarOEditarEmpleado(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
+                                                 string NumeroDias, string NumeroDiasDisponibles, bool EsEdit,
+                                                 string FechaInicio, string FechaFin, string DataActual, string oLstRespuestaSAP, string Dani)
+        {
+            try
+            {
+                RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
+                List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+
+                oLstSolicitudDetalle = JsonConvert.DeserializeObject<List<SolicitudDetalle>>(DataActual);
+
+
+
+
 
                 if (!EsEdit)
                 {
 
-                    EmpleadoModels oEmpleado = new EmpleadoModels
-                    {
-                        Cedula = Cedula,
-                        NumeroDias = Convert.ToInt32(NumeroDias),
-                        FechaInicio = FechaInicio,
-                        FechaFin = FechaFin
-                    };
-
                     //Se valida si ya la cedula ha sido agregada
-                    int Existe = oLstEmpleados
-                        .Where(w => w.Cedula == oEmpleado.Cedula).Count();
+                    int Existe = oLstSolicitudDetalle
+                        .Where(w => w.nmroDcmnto == NroIdentificacion).Count();
+
                     if (Existe == 0)
                     {
-                        oLstEmpleados.Add(oEmpleado);
+                        if (oLstRespuestaSAP != null && oLstRespuestaSAP.Count() > 0)
+                        {
+                            oLstRespuestaSAPModels = JsonConvert.DeserializeObject<List<RespuestaSAPModels>>(oLstRespuestaSAP);
+
+                            if (oLstRespuestaSAPModels != null && oLstRespuestaSAPModels.Count > 0)
+                            {
+                                foreach (RespuestaSAPModels item in oLstRespuestaSAPModels)
+                                {
+                                    if (item.Details[0].NroDocumento == NroIdentificacion)
+                                    {
+                                        oRespuestaSAPModels = item;
+                                        break;
+                                    }
+                                }
+                            }
+                        }
+
+
+                        oLstSolicitudDetalle.Add(new SolicitudDetalle
+                        {
+                            nmroDcmnto = NroIdentificacion,
+                            nmbrs_slctnte = NombresEmpleado,
+                            apllds_slctnte = ApellidosEmpleado,
+                            nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
+                            fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
+                            fcha_fn_vcc = Convert.ToDateTime(FechaFin),
+                            nmro_ds = int.Parse(NumeroDias),
+                            sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
+                            fcha_hra_aprvc = DateTime.Now,
+                            fcha_hra_rgstro_nvdd = DateTime.Now,
+                            crreo_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal,
+                            crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
+                            codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
+                            idEstdoSlctd = 1,
+                            scdd = oRespuestaSAPModels.Details[0].Sociedad,
+                            nmro_ds_dspnbls = int.Parse(NumeroDiasDisponibles)
+                        });
+
+
 
                         oMensajeRespuesta = new MensajeRespuesta
                         {
                             Codigo = "1",
-                            Mensaje = "Empleado agregado correctamente.",
-                            Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+                            Mensaje = "Empleado agregado correctamente",
+                            Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                         };
                     }
@@ -77,7 +170,7 @@ namespace Vacaciones.Controllers
                         oMensajeRespuesta = new MensajeRespuesta
                         {
                             Codigo = "2",
-                            Mensaje = "El empleado ya ha sido agregado a la lista.",
+                            Mensaje = "El empleado ya ha sido agregado a la lista",
                             Resultado = Json("", JsonRequestBehavior.AllowGet)
                         };
 
@@ -90,15 +183,18 @@ namespace Vacaciones.Controllers
                 else
                 {
 
-                    if (oLstEmpleados != null && oLstEmpleados.Count > 0)
+                    SolicitudDetalle oSolicitudDetalle = new SolicitudDetalle();
+
+                    if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
                     {
-                        foreach (var item in oLstEmpleados)
+                        foreach (var item in oLstSolicitudDetalle)
                         {
-                            if (item.Cedula == Cedula)
+                            if (item.nmroDcmnto == NroIdentificacion)
                             {
-                                item.NumeroDias = Convert.ToInt32(NumeroDias);
-                                item.FechaInicio = FechaInicio;
-                                item.FechaFin = FechaFin;
+                                item.nmro_ds = int.Parse(NumeroDias);
+                                item.fcha_inco_vccns = Convert.ToDateTime(FechaInicio);
+                                item.fcha_fn_vcc = Convert.ToDateTime(FechaFin);
+                                break;
                             }
                         }
                     }
@@ -106,8 +202,8 @@ namespace Vacaciones.Controllers
                     oMensajeRespuesta = new MensajeRespuesta
                     {
                         Codigo = "1",
-                        Mensaje = "Empleado actualizado correctamente.",
-                        Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+                        Mensaje = "Empleado actualizado correctamente",
+                        Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                     };
 
@@ -115,13 +211,13 @@ namespace Vacaciones.Controllers
                 }
 
             }
-            catch (Exception)
+            catch (Exception Ex)
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "-1",
                     Mensaje = "Ocurrió un error. Por favor contacte al administrador del sistema.",
-                    Resultado = Json(oLstEmpleados, JsonRequestBehavior.AllowGet)
+                    Resultado = Json("", JsonRequestBehavior.AllowGet)
 
                 };
 
@@ -130,24 +226,17 @@ namespace Vacaciones.Controllers
 
         }
 
-        public JsonResult ConsultarListaEmpleado()
-        {
-            if (oLstEmpleados == null)
-            {
-                oLstEmpleados = new List<EmpleadoModels>();
-            }
 
-            return Json(oLstEmpleados, JsonRequestBehavior.AllowGet);
-        }
-
-        public JsonResult ValidarCantidadDias(int NumeroDias, float NumDiasDisponibles)
+        public JsonResult ValidarCantidadDias(int NumeroDias, float NumDiasDisponibles, int MinimoDias)
         {
-            if (NumeroDias < 6)
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+
+            if (NumeroDias < MinimoDias)
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser superior a 6.",
+                    Mensaje = "La cantidad de días debe ser superior a " + MinimoDias,
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -156,14 +245,15 @@ namespace Vacaciones.Controllers
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
-                    Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles.",
+                    Codigo = "2",
+                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles (" + NumDiasDisponibles + ")",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
 
             return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
         }
+
 
         public JsonResult ConsultarEmpleadosAnotador(int Cedula)
         {
@@ -294,5 +384,128 @@ namespace Vacaciones.Controllers
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult CalcularFechaFin(int NumeroDias, string FechaInicio, string SabadoHabil, string DiasFestivosSabadosDomingos)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            try
+            {
+                //string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, SabadoHabil == "NO" ? true : false);
+                DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias - 1);
+                int contador = 0;
+                string[] Fechas;
+                Fechas = DiasFestivosSabadosDomingos.Split(',');
+                foreach (var item in Fechas)
+                {
+                    string[] DatosFechaItem = item.Split('/');
+
+                    var FechaItem = new DateTime(Convert.ToInt32(DatosFechaItem[2]), Convert.ToInt32(DatosFechaItem[0]), Convert.ToInt32(DatosFechaItem[1])).ToShortDateString();
+
+
+                    if (Convert.ToDateTime(FechaItem) >= Convert.ToDateTime(FechaInicio) && Convert.ToDateTime(FechaItem) <= FechaFin)
+                        contador++;
+                }
+
+                FechaFin = CalcularFechaFinHabil(Fechas, Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, NumeroDias - contador);
+
+                oMensajeRespuesta.Codigo = "0";
+                oMensajeRespuesta.Mensaje = "";
+                oMensajeRespuesta.Resultado = Json(FechaFin.ToShortDateString());
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error calculando la fecha de fin. Fecha de inicio: " +
+                   FechaInicio + ". Número de días: " + NumeroDias +
+                   ". Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-1";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(DateTime.Now.ToShortDateString(), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+        public DateTime CalcularFechaFinHabil(string[] Fechas, DateTime FechaInicio, DateTime FechaFin, int NumeroDias, int NumeroDiasHabiles)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+
+            try
+            {
+                TimeSpan tSpan = new TimeSpan();
+                int contador = 0;
+
+                foreach (var item in Fechas)
+                {
+                    string[] DatosFechaItem = item.Split('/');
+
+                    var FechaItem = new DateTime(Convert.ToInt32(DatosFechaItem[2]), Convert.ToInt32(DatosFechaItem[0]), Convert.ToInt32(DatosFechaItem[1])).ToShortDateString();
+
+                    if (Convert.ToDateTime(FechaItem) == FechaFin)
+                    {
+                        FechaFin = FechaFin.AddDays(1);
+                        tSpan = FechaFin - FechaInicio;
+                    }
+
+                    if (Convert.ToDateTime(FechaItem) >= Convert.ToDateTime(FechaInicio) && Convert.ToDateTime(FechaItem) <= FechaFin)
+                        contador++;
+
+                }
+
+                TimeSpan oCalculo = FechaFin - FechaInicio;
+                int Resultado = oCalculo.Days - contador;
+
+                if (Resultado < NumeroDias)
+                {
+                    FechaFin = FechaFin.AddDays(1);
+                    FechaFin = CalcularFechaFinHabil(Fechas, FechaInicio, FechaFin, NumeroDias, Resultado);
+
+                }
+
+                return FechaFin;
+
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error calculando la fecha de fin. Fecha de inicio: " +
+                  FechaInicio + ". Número de días: " + NumeroDias +
+                  ". Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-1";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+
+                return DateTime.Now;
+            }
+
+        }
+
+        public JsonResult ConsultarUserSAP(int NroDocumento)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
+            try
+            {
+                oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(NroDocumento);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
+                                             "Nro. Documento: " + NroDocumento +
+                                             "Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
+
     }
 }

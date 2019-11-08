@@ -28,6 +28,10 @@
                 return /^\d*$/.test(value);
             });
 
+            $("#txtCedulaOtros").inputFilter(function (value) {
+                return /^\d*$/.test(value);
+            });
+
              //Control de kendoCalendar
             var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
             var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
@@ -42,11 +46,40 @@
                 min: inicioFecha,
                 max: finFecha,
                 disableDates: dates
+                ,change: function () {
+                    if ($("#NumDias0").val() != '') {
+                       //Calcular la fecha fin de vacaciones
+                       $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                           switch (oRespuesta.Codigo) {
+
+                               case "0":
+                                   var fechas = oRespuesta.Resultado.Data.split("/");
+                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
+                                   break;
+
+                               case "-1":
+                                   swal.fire({
+                                       title: "Advertencia!",
+                                       text: respuesta.Mensaje,
+                                       type: 'warning',
+                                       confirmButtonText: "OK",
+                                       confirmButtonColor: '#00AFF0',
+                                       allowOutsideClick: false,
+                                       allowEscapeKey: false
+                                   }).then((result) => {
+                                       if (result.value) {
+                                           $("#kendocalendar_1").val('');
+                                       }
+                                   });
+                                   break;
+                           }
+                       })
+                   }
+                }
             });
 
             $(".kendocalendar").attr("readonly", true);
             $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
-
             $("input[class='kendocalendar k-input']").each(function (index) {
                 $(this).attr('id', 'kendocalendar_' + index);
             });
@@ -60,13 +93,14 @@
                     pageSize: 10
                 },
                 selectable: "single",
+                resizable: true,
                 pageable: {
                     buttonCount: 5
                 },
                 scrollable: true,
                 columns: [
                     {
-                        field: "Cedula",
+                        field: "nmroDcmnto",
                         title: "Documento",
                         width: 100,
                         media: "(min-width: 50px)",
@@ -75,28 +109,149 @@
                         },
                     },
                     {
-                        field: "NumeroDias",
+                        field: "nmbre_cmplto",
+                        title: "Nombre completo",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                    },
+                    {
+                        field: "nmro_ds",
                         title: "Nro. de días a tomar",
                         width: 100,
-                        media: "(min-width: 100px)",
+                        media: "(min-width: 50px)",
                         headerAttributes: {
                             style: "text-align: center"
                         }
                     },
                     {
-                        field: "FechaInicio",
+                        field: "fcha_inco_vccns",
                         title: "Inicio de vacaciones",
                         width: 100,
                         media: "(min-width: 50px)",
                         headerAttributes: {
                             style: "text-align: center"
-                        }
+                        },
+                        template: "#= kendo.toString(kendo.parseDate(fcha_inco_vccns), 'dd/MM/yyyy') #"
                     },
                     {
-                        field: "FechaFin",
+                        field: "fcha_fn_vcc",
                         title: "Fin de vacaciones",
                         width: 100,
                         media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                        template: "#= kendo.toString(kendo.parseDate(fcha_fn_vcc), 'dd/MM/yyyy') #"
+                    },
+                    {
+                        field: "nmbrs_slctnte",
+                        title: "Nombres",
+                        width: 100,
+                        media: "(min-width: 100px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "apllds_slctnte",
+                        title: "Apellidos",
+                        width: 100,
+                        media: "(min-width: 100px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "sbdo_hbl",
+                        title: "Sabado Habil",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "fcha_hra_aprvc",
+                        title: "Fecha Aprobacion",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "fcha_hra_rgstro_nvdd",
+                        title: "Fecha Registro",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "crreo_slctnte",
+                        title: "Correo Solicitante",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "crreo_jfe_slctnte",
+                        title: "Correo Jefe Solicitante",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "codEmpldo",
+                        title: "Codigo Empleado",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "idEstdoSlctd",
+                        title: "Estado Solicitud",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "scdd",
+                        title: "Sociedad",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "nmro_ds_dspnbls",
+                        title: "Numero de dias disponibles",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
                         headerAttributes: {
                             style: "text-align: center"
                         }
@@ -115,51 +270,30 @@
                                         text: "Editar",
                                         click: function (e) {
 
+                                            //Se identifica la fila en la cual se le dio click al boton editar
                                             var item = this.dataItem($(e.currentTarget).closest("tr"));
 
-                                            $.getJSON("/Anotador/EditarEmpleado", { Cedula: item.Cedula, DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()) }, function (respuesta) {
-                                                if (respuesta.Codigo == 1) {
-                                                    $("#ModalOtrosColaboradores").modal({
-                                                        //Evitar que se cierre la modal cuando se da click por fuera de ella
-                                                        backdrop: 'static'
-                                                    });
-
-
-                                                    $("#txtCedulaOtros").val(item.Cedula);
-                                                    $("#SpanNombreEmpleado1").html(respuesta.Resultado.Data.NombrePersona);
-                                                    $("#SpanNumDias1").html(respuesta.Resultado.Data.NumeroDias);
-                                                    $("#NumDias1").val(item.NumeroDias);
-                                                    $("#kendocalendar_2").val(item.FechaInicio);
-                                                    $("#kendocalendar_3").val(item.FechaFin);
-
-                                                    $("#btnAgregar2").hide();
-                                                    $("#btnAgregarModal").hide();
-                                                    $("#btnCancelarModal").hide();
-                                                    $("#btnEditarModal").show();
-
-                                                }
-                                                else if (respuesta.Codigo == 2) {
-                                                    swal.fire({
-                                                        title: "Advertencia!",
-                                                        text: respuesta.Mensaje,
-                                                        type: 'warning',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    });
-                                                } else if (respuesta.Codigo == -1) {
-                                                    swal.fire({
-                                                        title: "Error!",
-                                                        text: respuesta.Mensaje,
-                                                        type: 'error',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    });
-                                                };
+                                            console.log(item);
+                                            //Se abre la pantalla modal
+                                            $("#ModalOtrosColaboradores").modal({
+                                                //Evitar que se cierre la modal cuando se da click por fuera de ella
+                                                backdrop: 'static'
                                             });
+
+                                            //Se asignan los valores correspondientes
+                                            $("#txtCedulaOtros").val(item.nmroDcmnto);
+                                            $("#SpanNombreEmpleado1").html(item.nmbre_cmplto);
+                                            $("#SpanNumDias1").html(item.nmro_ds_dspnbls);
+                                            $("#NumDias1").val(item.nmro_ds);
+                                            $("#kendocalendar_2").val(kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy') );
+                                            $("#kendocalendar_3").val(kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'));
+
+                                            //Se muestran los botones nesesarios y se ocultan los que no se nesesitan
+                                            $("#btnAgregar2").hide();
+                                            $("#btnAgregarModal").hide();
+                                            $("#btnCancelarModal").hide();
+                                            $("#btnEditarModal").show();
+
                                         }
                                     }
                                 ]
@@ -215,37 +349,103 @@
                 ]
             });
 
-            //Validacion del campo numero de dias en pantalla principal
+             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
-                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: $("#NumDias0").val(), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()) }, function (respuesta) {
-                        if (respuesta.Codigo == 1 || respuesta.Codigo == 2) {
-                            swal.fire({
-                                title: "Advertencia!",
-                                text: respuesta.Mensaje,
-                                type: 'warning',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.value) {
-                                    setTimeout(function () {
-                                        $("#NumDias0").val('');
-                                        $("#NumDias0").focus();
-                                    }, 500)
-                                }
-                            });
+                    $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()), MinimoDias : "@ViewBag.MinimoDias" }, function (respuesta) {
+
+                        switch (respuesta.Codigo) {
+
+                            case "1":
+                                swal.fire({
+                                    title: "Advertencia!",
+                                    text: respuesta.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        setTimeout(function () {
+                                            $("#kendocalendar_1").val('');
+                                            $("#NumDias0").val('');
+                                            $("#NumDias0").focus();
+                                        }, 500)
+                                    }
+                                });
+                                break;
+
+                            case "2":
+                                swal.fire({
+                                    title: "Advertencia!",
+                                    text: respuesta.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        setTimeout(function () {
+                                            $("#kendocalendar_1").val('');
+                                            $("#NumDias0").val('');
+                                            $("#NumDias0").focus();
+                                        }, 500)
+                                    }
+                                });
+                                break;
                         }
                     })
                 }
+            });
+
+            $("#NumDias0").change(function () {
+                if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
+                    $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                        switch (oRespuesta.Codigo) {
+
+                               case "0":
+                                   var fechas = oRespuesta.Resultado.Data.split("/");
+                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
+                                   break;
+
+                               case "-1":
+                                   swal.fire({
+                                       title: "Advertencia!",
+                                       text: respuesta.Mensaje,
+                                       type: 'warning',
+                                       confirmButtonText: "OK",
+                                       confirmButtonColor: '#00AFF0',
+                                       allowOutsideClick: false,
+                                       allowEscapeKey: false
+                                   }).then((result) => {
+                                       if (result.value) {
+                                           $("#kendocalendar_1").val('');
+                                       }
+                                   });
+                                   break;
+                           }
+                       })
+                   }
             });
 
 
             //Evento del boton aregar dentro de la ventana Principal
             $("#btnAgregar0").click(function () {
                 if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $.post("../Anotador/AgregarOEditarEmpleado", { Cedula: $("#NroIdentificacionHidden").val(), NumeroDias: $("#NumDias0").val(), FechaInicio: $("#kendocalendar_0").val(), FechaFin: $("#kendocalendar_1").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()), EsEdit: false }, function (d) {
+                    $.post("../Anotador/AgregarOEditarEmpleado", {
+                        NroIdentificacion: $("#NroIdentificacionHidden").val(),
+                        NombresEmpleado: "@ViewBag.NombresEmpleado",
+                        ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",
+                        oLstRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oLstRespuestaSAPModels)),
+                        NumeroDias: $("#NumDias0").val(),
+                        NumeroDiasDisponibles: $("#SpanNumDias1").html(),
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        FechaFin: $("#kendocalendar_1").val(),
+                        DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
+                        EsEdit: false
+                    }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
@@ -259,6 +459,11 @@
                         }
                         else {
                             $('#rowSelection').data("kendoGrid").dataSource.data(d.Resultado.Data);
+
+                            $("#NumDias0").val('');
+                            $("#kendocalendar_0").val('');
+                            $("#kendocalendar_1").val('');
+
                             swal.fire({
                                 text: d.Mensaje,
                                 type: 'success',
@@ -437,6 +642,7 @@
 
             //Evento del boton aregar dentro de la ventana modal
             $("#btnAgregarModal").click(function () {
+                console.log("Si es desde aqui");
                 if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' ) {
                     $.post("../Anotador/AgregarOEditarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()), EsEdit: false }, function (d) {
                         if (d.Codigo == 2) {
@@ -478,8 +684,21 @@
 
             //Evento del boton Editar dentro de la ventana modal
             $("#btnEditarModal").click(function () {
-                if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' ) {
-                    $.post("../Anotador/AgregarOEditarEmpleado", { Cedula: $("#txtCedulaOtros").val(), NumeroDias: $("#NumDias1").val(), FechaInicio: $("#kendocalendar_2").val(), FechaFin: $("#kendocalendar_3").val(), DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()), EsEdit: true   }, function (d) {
+                if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#kendocalendar_2").val() != '' && $("#kendocalendar_3").val() != '' ) {
+                    $.post("../Anotador/AgregarOEditarEmpleado", {
+                        NroIdentificacion: $("#txtCedulaOtros").val(),
+                        //NombresEmpleado: "",
+                        //ApellidosEmpleado: "",
+                        NumeroDias: $("#NumDias1").val(),
+                        NumeroDiasDisponibles: $("#SpanNumDias1").html(),
+                        EsEdit: true,
+                        FechaInicio: $("#kendocalendar_2").val(),
+                        FechaFin: $("#kendocalendar_3").val(),
+                        DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
+
+                        @*oLstRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oLstRespuestaSAPModels))*@
+
+                    }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
                                 title: "Advertencia!",
@@ -530,6 +749,8 @@
             @Html.Partial("_OtrosColaboradoresEscenario")
             @Html.Partial("_GridEmpleados")
         </div>
+
+
 
         <div class="modal fade  bd-example-modal-lg " id="ModalOtrosColaboradores" role="dialog">
             <div class="modal-dialog modal-lg">

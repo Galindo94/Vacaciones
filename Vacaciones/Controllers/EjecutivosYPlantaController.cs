@@ -173,7 +173,7 @@ namespace Vacaciones.Controllers
             try
             {
                 //string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, SabadoHabil == "NO" ? true : false);
-                DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias);
+                DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias - 1);
                 int contador = 0;
                 string[] Fechas;
                 Fechas = DiasFestivosSabadosDomingos.Split(',');

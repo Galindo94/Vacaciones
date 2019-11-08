@@ -29,5 +29,12 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
         public int idEstdoSlctd { get; set; }
 
         public string scdd { get; set; }
+
+
+        //Campos adicionales para el manejo en la grid de Anotadores
+
+        public string nmroDcmnto { get; set; }
+        public string nmbre_cmplto { get; set; }
+        public int nmro_ds_dspnbls { get; set; }
     }
 }
