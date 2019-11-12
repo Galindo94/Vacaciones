@@ -173,18 +173,7 @@ namespace Vacaciones.Controllers
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             try
             {
-                //string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, SabadoHabil == "NO" ? true : false);
                 DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias);
-
-                //{
-                //    string[] DatosFechaItem = item.Split('/');
-
-                //    var FechaItem = new DateTime(Convert.ToInt32(DatosFechaItem[2]), Convert.ToInt32(DatosFechaItem[0]), Convert.ToInt32(DatosFechaItem[1])).ToShortDateString();
-
-
-                //    if (Convert.ToDateTime(FechaItem) >= Convert.ToDateTime(FechaInicio) && Convert.ToDateTime(FechaItem) <= FechaFin)
-                //        contador++;
-                //}
 
                 FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
 

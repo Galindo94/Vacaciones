@@ -54,7 +54,7 @@
                         $.getJSON("/Anotador/CalcularFechaFin", {
                             NumeroDias: parseInt($("#NumDias0").val()),
                             FechaInicio: $("#kendocalendar_0").val(),
-                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"                            
+                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
                         }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
@@ -372,7 +372,7 @@
                                                         $.getJSON("/Anotador/CalcularFechaFin", {
                                                             NumeroDias: parseInt($("#NumDias1").val()),
                                                             FechaInicio: $("#datepicker").val(),
-                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),  
+                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),
                                                         }, function (oRespuesta) {
                                                             switch (oRespuesta.Codigo) {
 
@@ -436,7 +436,7 @@
                                                     var grid = $("#rowSelection").data("kendoGrid");
 
                                                     $(grid.dataSource.data()).each(function (index) {
-                                                        if (this.nmroDcmnto == item.Cedula) {
+                                                        if (this.nmroDcmnto == item.nmroDcmnto) {
                                                             rowIndex = index;
                                                             row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(rowIndex);
                                                             grid.removeRow(row);
