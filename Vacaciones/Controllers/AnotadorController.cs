@@ -562,6 +562,68 @@ namespace Vacaciones.Controllers
             }
         }
 
+        public JsonResult GuardarSolicitud(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
+                                         string oRespuestaSAP, string oRespuestaMotor, string NumeroDias, string SabadoHabil, string FechaInicio, string FechaFin)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
+            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
+            RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
+            List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+            Solicitudes oSolicitudes = new Solicitudes();
+
+            try
+            {
+
+                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
+                oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
+
+                oLstSolicitudDetalle.Add(new SolicitudDetalle
+                {
+                    nmbrs_slctnte = NombresEmpleado,
+                    apllds_slctnte = ApellidosEmpleado,
+                    fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
+                    fcha_fn_vcc = Convert.ToDateTime(FechaFin),
+                    nmro_ds = double.Parse(NumeroDias),
+                    sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
+                    fcha_hra_aprvc = DateTime.Now,
+                    fcha_hra_rgstro_nvdd = DateTime.Now,
+                    crreo_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal,
+                    crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
+                    codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
+                    idEstdoSlctd = 1,
+                    scdd = oRespuestaSAPModels.Details[0].Sociedad
+                });
+
+
+                oSolicitudes.fcha_hra_slctd = DateTime.Now;
+                oSolicitudes.nmbrs_slctnte = NombresEmpleado;
+                oSolicitudes.apllds_slctnte = ApellidosEmpleado;
+                oSolicitudes.nmro_idntfccn = NroIdentificacion;
+                oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
+                oSolicitudes.detalle = oLstSolicitudDetalle;
+
+                oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+            }
+            catch (Exception Ex)
+            {
+
+                Logger.Error("Ocurrió un error almacenando la solicitud de vacaciones. Nro Documento Encabezado: " +
+                            oSolicitudes.nmro_idntfccn +
+                            ". Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+
+        }
+
 
     }
 }
