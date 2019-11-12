@@ -41,12 +41,12 @@ namespace Vacaciones.Controllers
             }
             catch (Exception Ex)
             {
-                Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                Logger.Error("Ocurrió un error consultando la información del Directorio Activo" +
                                "Nombre del usuario: " + NombreUsuario +
                                ". Exception " + Ex);
 
                 oPersona.Codigo = -3;
-                oPersona.Respuesta = "Ocurrió un error en el API del Directorio Activo.";
+                oPersona.Respuesta = "Ocurrió un error en el api del directorio activo";
 
 
                 oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
@@ -80,7 +80,7 @@ namespace Vacaciones.Controllers
                              "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -113,7 +113,7 @@ namespace Vacaciones.Controllers
                             "Exception: " + Ex);
 
                 oRespuestaSap.Exception[0].ID = "-3";
-                oRespuestaSap.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oRespuestaSap.Exception[0].MESSAGE = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
 
                 oMensajeRespuesta.Codigo = oRespuestaSap.Exception[0].ID = "-3";
                 oMensajeRespuesta.Mensaje = oRespuestaSap.Exception[0].MESSAGE;

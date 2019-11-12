@@ -80,6 +80,17 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         {
                             //Procesado correctamente
                             case "4":
+                                if (oRespuestaSAPCliente.Details[0].Contingentes.Contigente != null && oRespuestaSAPCliente.Details[0].Contingentes.Contigente.Count > 0)
+                                {
+                                    foreach (var item in oRespuestaSAPCliente.Details[0].Contingentes.Contigente)
+                                    {
+                                        if (string.IsNullOrEmpty(item.NroDias))
+                                        {
+                                            oRespuestaSAPCliente.Exception[0].ID = "5";
+                                            oRespuestaSAPCliente.Exception[POS].MESSAGE = "Usted no cuenta con días disponibles para disfrute de vacaciones";
+                                        }
+                                    }
+                                }
                                 break;
 
                             //Error: Favor Enviar Nro.(s) de Identificación
@@ -88,7 +99,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                 Logger.Error("El número de identificación enviado al servicio de SAP estaba vacío. " +
                                     ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
 
-                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se logro identificar un documento de identidad valido para realizar la consulta pertinente. Por favor contacte al administrador del sistema.";
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se logro identificar un documento de identidad valido para realizar la consulta pertinente. Por favor contacte al administrador del sistema";
 
                                 break;
 
@@ -99,7 +110,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                     Identificacion +
                                    ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
 
-                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "Se presento un error consultando la fecha del contingente. Por favor contacte al administrador del sistema.";
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "Se presento un error consultando la fecha del contingente. Por favor contacte al administrador del sistema";
 
                                 break;
 
@@ -110,7 +121,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                     Identificacion +
                                    ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
 
-                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se encontraron datos con el número del documento enviado.";
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se encontraron datos con el número del documento enviado";
 
                                 break;
                         }
@@ -126,7 +137,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                "Nro. Documento: " + Identificacion);
 
                         oMensajeRespuesta.Codigo = "3";
-                        oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
+                        oMensajeRespuesta.Mensaje = "Ocurrió un error en el api del servicio de sap";
                         oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
 
@@ -142,7 +153,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
 
                     oMensajeRespuesta.Codigo = "3";
-                    oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
+                    oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de sap";
                     oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 
 
@@ -157,7 +168,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error en el api del servicio de sap";
                 oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;

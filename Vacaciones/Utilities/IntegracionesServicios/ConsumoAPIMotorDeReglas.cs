@@ -63,7 +63,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                               ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
 
 
-                            oMensajeRespuesta.Mensaje = "No se encontraron datos dentro del motor de reglas con los parámetros enviados. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "No se encontraron datos dentro del motor de reglas con los parámetros enviados. Contacte al administrador del sistema";
 
 
                             break;
@@ -74,7 +74,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                 clasificacion + ". Gestor: " + gestor +
                                 ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
 
-                            oMensajeRespuesta.Mensaje = "No fue posible validar el escenario con los parámetros enviados. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "No fue posible validar el escenario con los parámetros enviados. Contacte al administrador del sistema";
 
                             break;
 
@@ -84,7 +84,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                 clasificacion + ". Gestor: " + gestor +
                                 ". Mensaje del servicio: " + oRespuestaMotor.Error.MESSAGE + ". ");
 
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema. ";
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema";
 
                             break;
                     }
@@ -98,7 +98,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
 
                     oMensajeRespuesta.Codigo = "-3";
-                    oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del motor de reglas. Contacte al administrador del sistema.";
+                    oMensajeRespuesta.Mensaje = "Se presento un error en la disponibilidad del motor de reglas. Contacte al administrador del sistema";
                     oMensajeRespuesta.Resultado = Json(oRespuestaMotor, JsonRequestBehavior.AllowGet);
 
                 }
@@ -113,7 +113,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                     ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oRespuestaMotor, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;

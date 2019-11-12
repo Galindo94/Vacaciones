@@ -23,8 +23,6 @@ namespace Vacaciones.Controllers
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
 
-
-
         // GET: Anotador
         public ActionResult Index(string oDatosFormulario, string oDatosSAP)
         {
@@ -85,6 +83,7 @@ namespace Vacaciones.Controllers
             }
             catch (Exception Ex)
             {
+                Logger.Error("Ocurrió un error construyendo el View de Anotador." + "Exception: " + Ex);
                 return null;
             }
         }
@@ -105,10 +104,7 @@ namespace Vacaciones.Controllers
 
             try
             {
-
-
                 oLstSolicitudDetalle = JsonConvert.DeserializeObject<List<SolicitudDetalle>>(DataActual);
-
 
                 if (!EsEdit)
                 {
@@ -177,7 +173,7 @@ namespace Vacaciones.Controllers
                                 oMensajeRespuesta = new MensajeRespuesta
                                 {
                                     Codigo = "1",
-                                    Mensaje = "Empleado agregado correctamente a la lista.",
+                                    Mensaje = "Empleado agregado correctamente a la lista",
                                     Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                                 };
@@ -188,7 +184,7 @@ namespace Vacaciones.Controllers
                                 oMensajeRespuesta = new MensajeRespuesta
                                 {
                                     Codigo = "2",
-                                    Mensaje = "No fue posible adicionar el empleado a la lista. Contacte al administrador del sistema.",
+                                    Mensaje = "No fue posible adicionar el empleado a la lista. Contacte al administrador del sistema",
                                     Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
                                 };
 
@@ -227,7 +223,7 @@ namespace Vacaciones.Controllers
                             oMensajeRespuesta = new MensajeRespuesta
                             {
                                 Codigo = "1",
-                                Mensaje = "Empleado agregado correctamente a la lista.",
+                                Mensaje = "Empleado agregado correctamente a la lista",
                                 Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                             };
@@ -238,7 +234,7 @@ namespace Vacaciones.Controllers
                         oMensajeRespuesta = new MensajeRespuesta
                         {
                             Codigo = "3",
-                            Mensaje = "El empleado ya se encuentra agregado en la lista. Verifique la información e inténtelo de nuevo.",
+                            Mensaje = "El empleado ya se encuentra agregado en la lista. Verifique la información e inténtelo de nuevo",
                             Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
                         };
 
@@ -283,7 +279,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "-1",
-                    Mensaje = "Ocurrió un error. Por favor contacte al administrador del sistema.",
+                    Mensaje = "Ocurrió un error. Por favor contacte al administrador del sistema",
                     Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                 };
@@ -351,7 +347,6 @@ namespace Vacaciones.Controllers
                 FechaFin = CalcularFechaFinHabil(Fechas, Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, NumeroDias - contador);
 
                 oMensajeRespuesta.Codigo = "0";
-                oMensajeRespuesta.Mensaje = "";
                 oMensajeRespuesta.Resultado = Json(FechaFin.ToShortDateString());
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -363,7 +358,7 @@ namespace Vacaciones.Controllers
                    ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(DateTime.Now.ToShortDateString(), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -416,7 +411,7 @@ namespace Vacaciones.Controllers
                   ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
                 return DateTime.Now;
@@ -442,7 +437,7 @@ namespace Vacaciones.Controllers
                                              "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -474,7 +469,7 @@ namespace Vacaciones.Controllers
                             "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -555,59 +550,69 @@ namespace Vacaciones.Controllers
                             "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
 
-        public JsonResult GuardarSolicitud(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
-                                         string oRespuestaSAP, string oRespuestaMotor, string NumeroDias, string SabadoHabil, string FechaInicio, string FechaFin)
+        public JsonResult GuardarSolicitud(string NroIdentificacionAnotador, string NombresEmpleadoAnotador, string ApellidosEmpleadoAnotador,
+                                           string FechaInicioAnotador, string FechaFinAnotador, string oRespuestaSAP,
+                                           string oRespuestaMotor, string oDataActual)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
             RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
             RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+            List<SolicitudDetalle> oLstSolicitudesGrid = new List<SolicitudDetalle>();
             Solicitudes oSolicitudes = new Solicitudes();
 
             try
             {
-
-                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
-                oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
-
-                oLstSolicitudDetalle.Add(new SolicitudDetalle
+                if (!string.IsNullOrEmpty(oDataActual))
                 {
-                    nmbrs_slctnte = NombresEmpleado,
-                    apllds_slctnte = ApellidosEmpleado,
-                    fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
-                    fcha_fn_vcc = Convert.ToDateTime(FechaFin),
-                    nmro_ds = double.Parse(NumeroDias),
-                    sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
-                    fcha_hra_aprvc = DateTime.Now,
-                    fcha_hra_rgstro_nvdd = DateTime.Now,
-                    crreo_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal,
-                    crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
-                    codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
-                    idEstdoSlctd = 1,
-                    scdd = oRespuestaSAPModels.Details[0].Sociedad
-                });
+                    oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
+                    oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
+                    oLstSolicitudesGrid = JsonConvert.DeserializeObject<List<SolicitudDetalle>>(oDataActual);
 
+                    if (oLstSolicitudesGrid != null && oLstSolicitudesGrid.Count > 0)
+                    {
+                        foreach (var item in oLstSolicitudesGrid)
+                        {
+                            oLstSolicitudDetalle.Add(new SolicitudDetalle
+                            {
+                                nmbrs_slctnte = item.nmbrs_slctnte,
+                                apllds_slctnte = item.apllds_slctnte,
+                                fcha_inco_vccns = item.fcha_inco_vccns,
+                                fcha_fn_vcc = item.fcha_fn_vcc,
+                                nmro_ds = item.nmro_ds,
+                                sbdo_hbl = item.sbdo_hbl,
+                                fcha_hra_aprvc = DateTime.Now,
+                                fcha_hra_rgstro_nvdd = DateTime.Now,
+                                crreo_slctnte = item.crreo_slctnte,
+                                crreo_jfe_slctnte = item.crreo_jfe_slctnte,
+                                codEmpldo = item.codEmpldo,
+                                idEstdoSlctd = 1,
+                                scdd = item.scdd
+                            });
+                        }
 
-                oSolicitudes.fcha_hra_slctd = DateTime.Now;
-                oSolicitudes.nmbrs_slctnte = NombresEmpleado;
-                oSolicitudes.apllds_slctnte = ApellidosEmpleado;
-                oSolicitudes.nmro_idntfccn = NroIdentificacion;
-                oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
-                oSolicitudes.detalle = oLstSolicitudDetalle;
+                        oSolicitudes.fcha_hra_slctd = DateTime.Now;
+                        oSolicitudes.nmbrs_slctnte = NombresEmpleadoAnotador;
+                        oSolicitudes.apllds_slctnte = ApellidosEmpleadoAnotador;
+                        oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
+                        oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
+                        oSolicitudes.detalle = oLstSolicitudDetalle;
 
-                oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
+                        oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
+                    }
+                }
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
             }
+
             catch (Exception Ex)
             {
 
@@ -616,7 +621,7 @@ namespace Vacaciones.Controllers
                             ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);

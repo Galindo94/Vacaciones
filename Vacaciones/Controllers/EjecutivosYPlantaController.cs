@@ -72,6 +72,7 @@ namespace Vacaciones.Controllers
             }
             catch (Exception Ex)
             {
+                Logger.Error("Ocurrió un error construyendo el View de Ejecutivos y Planta." + "Exception: " + Ex);
                 return null;
             }
         }
@@ -158,7 +159,7 @@ namespace Vacaciones.Controllers
                             ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -203,7 +204,7 @@ namespace Vacaciones.Controllers
                    ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json(DateTime.Now.ToShortDateString(), JsonRequestBehavior.AllowGet);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -256,7 +257,7 @@ namespace Vacaciones.Controllers
                   ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema.";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema";
                 oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
                 return DateTime.Now;

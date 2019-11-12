@@ -14,6 +14,18 @@
                         case "0":
                             $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(oRespuestaDA.Resultado.Data) }, function (oRespuestaSAP) {
                                 switch (oRespuestaSAP.Codigo) {
+
+                                    case "5":
+                                        swal.fire({
+                                            text: oRespuestaSAP.Mensaje,
+                                            type: 'warning',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
                                     case "4":
 
                                         $.post("../VacacionesIntranet/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
@@ -30,7 +42,6 @@
 
                                                 case "-1":
                                                     swal.fire({
-                                                        title: "Error!",
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
                                                         confirmButtonText: "OK",
@@ -42,7 +53,6 @@
 
                                                 case "-2":
                                                     swal.fire({
-                                                        title: "Error!",
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
                                                         confirmButtonText: "OK",
@@ -54,7 +64,6 @@
 
                                                 case "-3":
                                                     swal.fire({
-                                                        title: "Error!",
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
                                                         confirmButtonText: "OK",
@@ -72,7 +81,6 @@
                                     case "3":
                                         console.log()
                                         swal.fire({
-                                            title: "Error!",
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
                                             confirmButtonText: "OK",
@@ -85,7 +93,6 @@
 
                                     case "2":
                                         swal.fire({
-                                            title: "Error!",
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
                                             confirmButtonText: "OK",
@@ -97,7 +104,6 @@
 
                                     case "1":
                                         swal.fire({
-                                            title: "Error!",
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
                                             confirmButtonText: "OK",
@@ -113,7 +119,6 @@
                          //El usuario no puede ser vacio
                         case "-1":
                             swal.fire({
-                                title: "Error!",
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
                                 confirmButtonText: "OK",
@@ -131,7 +136,6 @@
                          // El usuario no se encontro en el DA
                         case "-2":
                             swal.fire({
-                                title: "Advertencia!",
                                 text: oRespuestaDA.Mensaje,
                                 type: 'warning',
                                 confirmButtonText: "OK",
@@ -149,7 +153,6 @@
                         // Error en el Servicio del DA
                         case "-3":
                             swal.fire({
-                                title: "Error!",
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
                                 confirmButtonText: "OK",
@@ -162,7 +165,6 @@
                         // Se encontro usuario pero no tiene informacion basica
                         case "-4":
                             swal.fire({
-                                title: "Error!",
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
                                 confirmButtonText: "OK",
