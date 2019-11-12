@@ -76,7 +76,5 @@ namespace Vacaciones.Controllers
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
-
-
     }
 }
