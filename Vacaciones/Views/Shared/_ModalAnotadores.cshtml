@@ -1,4 +1,44 @@
 ﻿<div class="col-md-12 row">
     @Html.Partial("_EncabezadoEscenario")
-    @Html.Partial("_CuerpoEscenario")
+    <div class="col-md-12 center">
+
+        <div class="col-md-12 row">
+
+            <div class="col-md-4">
+                <div class="col-md-12">
+                    <label class="fieldlist-label">Nro. de d&iacute;as a tomar</label>
+                    <input class="NumDias k-textbox" style="width:inherit" type="text" min="@ViewBag.MinimoDias" maxlength="2" max="@ViewBag.NumeroDias" onkeydown="return event.keyCode !== 69" />
+                </div>
+            </div>
+
+            <div class="col-md-4" style="">
+                <div class="col-md-12">
+                    <label class="fieldlist-label">Inicio de vacaciones</label>
+                    <div id="datepickerDiv">
+                        <input id="datepicker" style="width:inherit" />
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="col-md-12">
+                    <label class="fieldlist-label">Fin de vacaciones</label>
+                    <input class="kendocalendar" style="width:inherit" disabled="disabled" />
+                </div>
+            </div>
+        </div>
+
+        <br />
+
+        <div class="col-md-12">
+            <button class="btn btn-lg btn-postobon">Enviar</button>
+        </div>
+
+        <hr />
+
+        @*<input id="NroIdentificacionHidden" type="hidden" value="@ViewBag.NroIdentificacion" />*@
+
+    </div>
 </div>
+
+

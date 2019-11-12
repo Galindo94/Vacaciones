@@ -12,7 +12,7 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
 
         public DateTime fcha_fn_vcc { get; set; }
 
-        public int nmro_ds { get; set; }
+        public double nmro_ds { get; set; }
 
         public bool sbdo_hbl { get; set; }
 
@@ -35,6 +35,13 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
 
         public string nmroDcmnto { get; set; }
         public string nmbre_cmplto { get; set; }
-        public int nmro_ds_dspnbls { get; set; }
+        public double nmro_ds_dspnbls { get; set; }
+        public double MinimoDias { get; set; }
+        public DateTime InicioFecha { get; set; }
+        public DateTime FinFecha { get; set; }
+        public string DiasFestivosSabadosDomingos { get; set; }
+
+
+
     }
 }

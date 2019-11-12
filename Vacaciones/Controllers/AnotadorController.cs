@@ -21,9 +21,7 @@ namespace Vacaciones.Controllers
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
 
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-        PersonaModels oPersona = new PersonaModels();
-
-        List<RespuestaSAPModels> oLstRespuestaSAPModels = new List<RespuestaSAPModels>();
+        RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
 
 
 
@@ -95,17 +93,21 @@ namespace Vacaciones.Controllers
 
         public JsonResult AgregarOEditarEmpleado(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
                                                  string NumeroDias, string NumeroDiasDisponibles, bool EsEdit,
-                                                 string FechaInicio, string FechaFin, string DataActual, string oLstRespuestaSAP, string Dani)
+                                                 bool EsModal, string FechaInicio, string FechaFin,
+                                                 string DataActual, string oRespuestaSAP, string SabadoHabil,
+                                                 string CorreoSolicitante, string CorreoJefeSolicitante, string CodigoEmpleado,
+                                                 string Sociedad, string MinimoDias, string InicioFecha,
+                                                 string FinFecha, string DiasFestivosSabadosDomingos, string oRespuestaMotor)
         {
+            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
+            RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
+            List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+
             try
             {
-                RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
-                List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+
 
                 oLstSolicitudDetalle = JsonConvert.DeserializeObject<List<SolicitudDetalle>>(DataActual);
-
-
-
 
 
                 if (!EsEdit)
@@ -117,72 +119,135 @@ namespace Vacaciones.Controllers
 
                     if (Existe == 0)
                     {
-                        if (oLstRespuestaSAP != null && oLstRespuestaSAP.Count() > 0)
+                        if (!EsModal)
                         {
-                            oLstRespuestaSAPModels = JsonConvert.DeserializeObject<List<RespuestaSAPModels>>(oLstRespuestaSAP);
+                            oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
 
-                            if (oLstRespuestaSAPModels != null && oLstRespuestaSAPModels.Count > 0)
+                            oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
+                            double oMinimoDias = 0;
+                            DateTime oInicioFecha = new DateTime();
+                            DateTime oFinFecha = new DateTime();
+
+                            foreach (var oReglas in oRespuestaMotorModels.Reglas)
                             {
-                                foreach (RespuestaSAPModels item in oLstRespuestaSAPModels)
+                                switch (oReglas.Prmtro)
                                 {
-                                    if (item.Details[0].NroDocumento == NroIdentificacion)
-                                    {
-                                        oRespuestaSAPModels = item;
+                                    case "NroMinDias":
+                                        oMinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
                                         break;
-                                    }
+
+                                    case "DiasMinCalendario":
+                                        oInicioFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                                        break;
+
+                                    case "DiasMaxCalendario":
+                                        oFinFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                                        break;
+
                                 }
                             }
+
+                            //Aqui se agregan los items desde la pantalla principal
+                            if (oRespuestaSAPModels != null && oRespuestaSAPModels.Details.Count > 0)
+                            {
+                                oLstSolicitudDetalle.Add(new SolicitudDetalle
+                                {
+                                    nmroDcmnto = NroIdentificacion,
+                                    nmbrs_slctnte = NombresEmpleado,
+                                    apllds_slctnte = ApellidosEmpleado,
+                                    nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
+                                    fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
+                                    fcha_fn_vcc = Convert.ToDateTime(FechaFin),
+                                    nmro_ds = double.Parse(NumeroDias),
+                                    sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
+                                    fcha_hra_aprvc = DateTime.Now,
+                                    fcha_hra_rgstro_nvdd = DateTime.Now,
+                                    crreo_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal,
+                                    crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
+                                    codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
+                                    idEstdoSlctd = 1,
+                                    scdd = oRespuestaSAPModels.Details[0].Sociedad,
+                                    nmro_ds_dspnbls = double.Parse(NumeroDiasDisponibles),
+                                    MinimoDias = oMinimoDias,
+                                    InicioFecha = oInicioFecha,
+                                    FinFecha = oFinFecha,
+                                    DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos
+                                });
+
+                                oMensajeRespuesta = new MensajeRespuesta
+                                {
+                                    Codigo = "1",
+                                    Mensaje = "Empleado agregado correctamente a la lista.",
+                                    Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
+
+                                };
+
+                            }
+                            else
+                            {
+                                oMensajeRespuesta = new MensajeRespuesta
+                                {
+                                    Codigo = "2",
+                                    Mensaje = "No fue posible adicionar el empleado a la lista. Contacte al administrador del sistema.",
+                                    Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
+                                };
+
+                                Logger.Error("No fue posible deserializar el Objeto de la respuesta de SAP " +
+                                            "Nro. Documento: " + NroIdentificacion +
+                                            "Era Modal Anotadores: " + EsModal);
+                            }
                         }
-
-
-                        oLstSolicitudDetalle.Add(new SolicitudDetalle
+                        else
                         {
-                            nmroDcmnto = NroIdentificacion,
-                            nmbrs_slctnte = NombresEmpleado,
-                            apllds_slctnte = ApellidosEmpleado,
-                            nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
-                            fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
-                            fcha_fn_vcc = Convert.ToDateTime(FechaFin),
-                            nmro_ds = int.Parse(NumeroDias),
-                            sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
-                            fcha_hra_aprvc = DateTime.Now,
-                            fcha_hra_rgstro_nvdd = DateTime.Now,
-                            crreo_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal,
-                            crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
-                            codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
-                            idEstdoSlctd = 1,
-                            scdd = oRespuestaSAPModels.Details[0].Sociedad,
-                            nmro_ds_dspnbls = int.Parse(NumeroDiasDisponibles)
-                        });
+                            //Aqui se agrega desde la pantalla modal
+                            oLstSolicitudDetalle.Add(new SolicitudDetalle
+                            {
+                                nmroDcmnto = NroIdentificacion,
+                                nmbrs_slctnte = NombresEmpleado,
+                                apllds_slctnte = ApellidosEmpleado,
+                                nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
+                                fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
+                                fcha_fn_vcc = Convert.ToDateTime(FechaFin),
+                                nmro_ds = double.Parse(NumeroDias),
+                                sbdo_hbl = SabadoHabil == "NO" ? false : true,
+                                fcha_hra_aprvc = DateTime.Now,
+                                fcha_hra_rgstro_nvdd = DateTime.Now,
+                                crreo_slctnte = CorreoSolicitante,
+                                crreo_jfe_slctnte = CorreoJefeSolicitante,
+                                codEmpldo = CodigoEmpleado,
+                                idEstdoSlctd = 1,
+                                scdd = Sociedad,
+                                nmro_ds_dspnbls = double.Parse(NumeroDiasDisponibles),
+                                MinimoDias = double.Parse(MinimoDias),
+                                InicioFecha = Convert.ToDateTime(InicioFecha),
+                                FinFecha = Convert.ToDateTime(FinFecha),
+                                DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos
+                            });
 
+                            oMensajeRespuesta = new MensajeRespuesta
+                            {
+                                Codigo = "1",
+                                Mensaje = "Empleado agregado correctamente a la lista.",
+                                Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
-
-                        oMensajeRespuesta = new MensajeRespuesta
-                        {
-                            Codigo = "1",
-                            Mensaje = "Empleado agregado correctamente",
-                            Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
-
-                        };
+                            };
+                        }
                     }
                     else
                     {
                         oMensajeRespuesta = new MensajeRespuesta
                         {
-                            Codigo = "2",
-                            Mensaje = "El empleado ya ha sido agregado a la lista",
-                            Resultado = Json("", JsonRequestBehavior.AllowGet)
+                            Codigo = "3",
+                            Mensaje = "El empleado ya se encuentra agregado en la lista. Verifique la información e inténtelo de nuevo.",
+                            Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
                         };
 
-
                     }
-
-                    return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
                 }
                 else
                 {
-
+                    //Aqui se hacen las ediciones
                     SolicitudDetalle oSolicitudDetalle = new SolicitudDetalle();
 
                     if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
@@ -191,7 +256,7 @@ namespace Vacaciones.Controllers
                         {
                             if (item.nmroDcmnto == NroIdentificacion)
                             {
-                                item.nmro_ds = int.Parse(NumeroDias);
+                                item.nmro_ds = double.Parse(NumeroDias);
                                 item.fcha_inco_vccns = Convert.ToDateTime(FechaInicio);
                                 item.fcha_fn_vcc = Convert.ToDateTime(FechaFin);
                                 break;
@@ -207,8 +272,10 @@ namespace Vacaciones.Controllers
 
                     };
 
-                    return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
                 }
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
             }
             catch (Exception Ex)
@@ -217,9 +284,13 @@ namespace Vacaciones.Controllers
                 {
                     Codigo = "-1",
                     Mensaje = "Ocurrió un error. Por favor contacte al administrador del sistema.",
-                    Resultado = Json("", JsonRequestBehavior.AllowGet)
+                    Resultado = Json(oLstSolicitudDetalle, JsonRequestBehavior.AllowGet)
 
                 };
+
+                Logger.Error("Ocurrió un error interno agregando o editando el empleado en la pantalla de anotador. " +
+                                                        "Nro. Documento: " + NroIdentificacion +
+                                                        "Exception: " + Ex);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
@@ -255,135 +326,6 @@ namespace Vacaciones.Controllers
         }
 
 
-        public JsonResult ConsultarEmpleadosAnotador(int Cedula)
-        {
-            try
-            {
-                bool Encontro = false;
-
-                #region Escenario 1 planta ejecutiva
-
-
-                if (Cedula == 98714393 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Identificacion = Cedula;
-                    oPersona.Nombres = "NELSON ENRIQUE";
-                    oPersona.Apellidos = "USUGA MESA";
-                    oPersona.NumeroDias = 19.42;
-                    Encontro = true;
-                }
-
-                if (Cedula == 1045138486 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Identificacion = Cedula;
-                    oPersona.Nombres = "JOHN FREDIS";
-                    oPersona.Apellidos = "CORDOBA VASQUEZ";
-                    oPersona.NumeroDias = 19.67;
-                    Encontro = true;
-                }
-
-                #endregion
-
-                if (!Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "2";
-                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontró en el sistema. Verifíquelo e inténtelo de nuevo.";
-                    oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    oMensajeRespuesta.Mensaje = "";
-                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
-                }
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
-            }
-            catch (Exception)
-            {
-                oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error al consultar el documento. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        public JsonResult EditarEmpleado(int Cedula)
-        {
-            try
-            {
-                bool Encontro = false;
-
-                #region Escenario 1 planta ejecutiva
-
-                if (Cedula == 8356830 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Nombres = "CRISTIAN ESTEBAN";
-                    oPersona.Apellidos = "PIEDRAHITA OCAMPO";
-                    oPersona.NumeroDias = 13.75;
-                    Encontro = true;
-                }
-
-                if (Cedula == 98714393 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Identificacion = Cedula;
-                    oPersona.Nombres = "NELSON ENRIQUE";
-                    oPersona.Apellidos = "USUGA MESA";
-                    oPersona.NumeroDias = 19.42;
-                    Encontro = true;
-                }
-
-                if (Cedula == 15374042 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Nombres = "JEISON ALEJANDRO";
-                    oPersona.Apellidos = "RAMIREZ RAMIREZ";
-                    oPersona.NumeroDias = 8.75;
-                    Encontro = true;
-                }
-
-
-                if (Cedula == 1045138486 && !Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "1";
-                    oPersona.Identificacion = Cedula;
-                    oPersona.Nombres = "JOHN FREDIS";
-                    oPersona.Apellidos = "CORDOBA VASQUEZ";
-                    oPersona.NumeroDias = 19.67;
-                    Encontro = true;
-                }
-
-                #endregion
-
-                if (!Encontro)
-                {
-                    oMensajeRespuesta.Codigo = "2";
-                    oMensajeRespuesta.Mensaje = "El documento ingresado no se encontró en el sistema. Verifíquelo e inténtelo de nuevo.";
-                    oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-                }
-                else
-                {
-                    oMensajeRespuesta.Mensaje = "";
-                    oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
-                }
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
-            }
-            catch (Exception)
-            {
-                oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error al consultar el documento. Contacte al administrador del sistema.";
-                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-            }
-        }
 
         public JsonResult CalcularFechaFin(int NumeroDias, string FechaInicio, string SabadoHabil, string DiasFestivosSabadosDomingos)
         {
@@ -506,6 +448,120 @@ namespace Vacaciones.Controllers
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
         }
+
+        public JsonResult ConsultaMotorDeReglas(string RespuestaSAP)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIMotorDeReglas oConsumoAPIMotorDeReglas = new ConsumoAPIMotorDeReglas();
+            RespuestaSAPModels oRespuestaSap = new RespuestaSAPModels();
+            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
+            {
+                Escenario = new List<EscenarioModels>(),
+                Reglas = new List<ReglaModels>(),
+                Error = new ErrorModels()
+            };
+
+            try
+            {
+                oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
+                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor);
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+
+                Logger.Error("Ocurrió un error interno en el consumo del API del motor de reglas. " +
+                            "Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
+
+
+        public JsonResult ArmarObjetoPantallaModal(string RespuestaMotor, string RespuestaSAP)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            RespuestaSAPModels oRespuestaSap = new RespuestaSAPModels();
+            RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
+            {
+                Escenario = new List<EscenarioModels>(),
+                Reglas = new List<ReglaModels>(),
+                Error = new ErrorModels()
+            };
+
+            DiasContingente oDiasContingente = new DiasContingente();
+            ModalAnotadoresModels oModalAnotadoresModels = new ModalAnotadoresModels();
+
+            try
+            {
+                oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(RespuestaMotor);
+                oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
+
+
+                oModalAnotadoresModels.NombreEmpleado = oRespuestaSap.Details[0].PrimerNombre + " " +
+                                                        oRespuestaSap.Details[0].SegundoNombre + " ";
+
+                oModalAnotadoresModels.ApellidoEmpleado = oRespuestaSap.Details[0].PrimerApellido + " " +
+                                                        oRespuestaSap.Details[0].SegundoApellido;
+
+
+
+                foreach (var oReglas in oRespuestaMotor.Reglas)
+                {
+                    switch (oReglas.Prmtro)
+                    {
+                        case "NroDias":
+                            oModalAnotadoresModels.NroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSap.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
+                            break;
+                        case "NroMinDias":
+                            oModalAnotadoresModels.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
+                            break;
+
+                        case "DiasMinCalendario":
+                            oModalAnotadoresModels.InicioFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                            break;
+
+                        case "DiasMaxCalendario":
+                            oModalAnotadoresModels.FinFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                            break;
+
+                    }
+                }
+
+                oModalAnotadoresModels.SabadoHabil = oRespuestaSap.Details[0].SabadoHabil;
+
+                // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
+                string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, oModalAnotadoresModels.SabadoHabil == "NO" ? true : false);
+                oModalAnotadoresModels.DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos;
+
+                oModalAnotadoresModels.CorreoSolicitante = !string.IsNullOrEmpty(oRespuestaSap.Details[0].CorreoCorp) ? oRespuestaSap.Details[0].CorreoCorp : oRespuestaSap.Details[0].CorreoPersonal;
+                oModalAnotadoresModels.CorreoJefeSolicitante = !string.IsNullOrEmpty(oRespuestaSap.Details[0].CorreoCorpJefe) ? oRespuestaSap.Details[0].CorreoCorpJefe : oRespuestaSap.Details[0].CorreoPersonalJefe;
+                oModalAnotadoresModels.CodigoEmpleado = oRespuestaSap.Details[0].NroPersonal;
+                oModalAnotadoresModels.Sociedad = oRespuestaSap.Details[0].Sociedad;
+
+                oMensajeRespuesta.Codigo = "1";
+                oMensajeRespuesta.Resultado = Json(oModalAnotadoresModels, JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+
+                Logger.Error("Ocurrió un error interno en el consumo del API del motor de reglas. " +
+                            "Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema.";
+                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
+
 
     }
 }
