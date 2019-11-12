@@ -13,7 +13,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
     public class ConsumoDA : Controller
     {
         // Variable para almacenar los Log's
-        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);        
+        private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
         // URIS para consumo del servicio del DA
         readonly string URIDA = WebConfigurationManager.AppSettings["URIDA"].ToString();
         readonly string UserDA = WebConfigurationManager.AppSettings["VariableAPIDA"].ToString();
@@ -61,7 +61,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         //No se encontro usuario en el AD
                         case -2:
 
-                            Logger.Error("No se encontró el usuario en el Directorio activo. " +
+                            Logger.Error("No se encontró el usuario en el directorio activo. " +
                                 "Nombre del usuario: " + NombreUsuario +
                                 ". Mensaje del servicio: " + oPersona.Respuesta);
 
@@ -72,7 +72,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         //Error en el API del AD
                         case -3:
 
-                            Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                            Logger.Error("Ocurrió un error consultando la información del directorio Activo " +
                                 "Nombre del usuario: " + NombreUsuario +
                                 ". Mensaje del servicio: " + oPersona.Respuesta);
 
@@ -102,7 +102,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                     oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
 
                     //Se deja registro en el Log del error
-                    Logger.Error("Se presento un error en la disponibilidad del servicio del DA consultando al usuario: " + NombreUsuario +
+                    Logger.Error("Se presento un error en la disponibilidad del servicio del directorio activo consultando al usuario: " + NombreUsuario +
                         ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
                         ". StatusDescriptionResponse: " + oHttpWebResponse.StatusDescription.ToString());
 
@@ -113,7 +113,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             }
             catch (Exception Ex)
             {
-                Logger.Error("Ocurrió un error consultando la información del Directorio Activo " +
+                Logger.Error("Ocurrió un error consultando la información del directorio activo " +
                                 "Nombre del usuario: " + NombreUsuario +
                                 ". Exception " + Ex);
 
