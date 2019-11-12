@@ -46,7 +46,7 @@ namespace Vacaciones.Controllers
                                ". Exception " + Ex);
 
                 oPersona.Codigo = -3;
-                oPersona.Respuesta = "Ocurrió un error en el api del directorio activo";
+                oPersona.Respuesta = "Ocurrió un error en el API del directorio activo";
 
 
                 oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
