@@ -43,8 +43,6 @@
                 dates.push(new Date(fechas[index]));
             }
 
-            console.log(fechas);
-
             $(".kendocalendar").kendoDatePicker({
                 format: "dd/MM/yyyy",
                 min: inicioFecha,
@@ -53,7 +51,11 @@
                 ,change: function () {
                     if ($("#NumDias0").val() != '') {
                        //Calcular la fecha fin de vacaciones
-                       $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                        $.getJSON("/Anotador/CalcularFechaFin", {
+                            NumeroDias: parseInt($("#NumDias0").val()),
+                            FechaInicio: $("#kendocalendar_0").val(),
+                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"                            
+                        }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -63,7 +65,6 @@
 
                                case "-1":
                                    swal.fire({
-                                       title: "Advertencia!",
                                        text: respuesta.Mensaje,
                                        type: 'warning',
                                        confirmButtonText: "OK",
@@ -126,7 +127,7 @@
                     },
                     {
                         field: "nmro_ds",
-                        title: "Nro. de días a tomar",
+                        title: "Nro. de días a disfrutar",
                         width: 100,
                         media: "(min-width: 50px)",
                         headerAttributes: {
@@ -320,7 +321,6 @@
 
                                             //Se identifica la fila en la cual se le dio click al boton editar
                                             var item = this.dataItem($(e.currentTarget).closest("tr"));
-                                            console.log(item);
 
                                             //Se abre la pantalla modal
                                             $("#ModalOtrosColaboradores").modal({
@@ -355,8 +355,6 @@
                                             for (var index = 0; index < fechasModal.length; index++) {
                                                 datesModal.push(new Date(fechasModal[index]));
                                             }
-                                            console.log(fechasModal);
-
 
                                             var kendoDatePicker = $("#datepicker").data("kendoDatePicker");
                                             kendo.destroy(kendoDatePicker);
@@ -374,8 +372,7 @@
                                                         $.getJSON("/Anotador/CalcularFechaFin", {
                                                             NumeroDias: parseInt($("#NumDias1").val()),
                                                             FechaInicio: $("#datepicker").val(),
-                                                            SabadoHabil: $("#SabadoHabilModal").val(),
-                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),
+                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),  
                                                         }, function (oRespuesta) {
                                                             switch (oRespuesta.Codigo) {
 
@@ -387,7 +384,6 @@
 
                                                                 case "-1":
                                                                     swal.fire({
-                                                                        title: "Advertencia!",
                                                                         text: oRespuesta.Mensaje,
                                                                         type: 'warning',
                                                                         confirmButtonText: "OK",
@@ -445,7 +441,7 @@
                                                             row = grid.tbody.find(">tr:not(.k-grouping-row)").eq(rowIndex);
                                                             grid.removeRow(row);
                                                             swal.fire({
-                                                                text: "Registro eliminado correctamente.",
+                                                                text: "Registro eliminado correctamente",
                                                                 type: 'success',
                                                                 confirmButtonText: "OK",
                                                                 confirmButtonColor: '#00AFF0',
@@ -474,7 +470,6 @@
 
                             case "1":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -494,7 +489,6 @@
 
                             case "2":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -518,7 +512,11 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                    $.getJSON("/Anotador/CalcularFechaFin", {
+                        NumeroDias: parseInt($("#NumDias0").val()),
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                    }, function (oRespuesta) {
                         switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -528,7 +526,6 @@
 
                                case "-1":
                                    swal.fire({
-                                       title: "Advertencia!",
                                        text: oRespuesta.Mensaje,
                                        type: 'warning',
                                        confirmButtonText: "OK",
@@ -632,8 +629,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones.",
+                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones",
                         type: 'warning',
                         confirmButtonText: "Ok",
                         confirmButtonColor: '#00AFF0',
@@ -654,7 +650,6 @@
 
                             case "1":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -674,7 +669,6 @@
 
                             case "2":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -701,7 +695,6 @@
                     $.getJSON("/Anotador/CalcularFechaFin", {
                         NumeroDias: parseInt($("#NumDias1").val()),
                         FechaInicio: $("#datepicker").val(),
-                        SabadoHabil: $("#SabadoHabilModal").val(),
                         DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val()
                     }, function (oRespuesta) {
                         switch (oRespuesta.Codigo) {
@@ -713,7 +706,6 @@
 
                                case "-1":
                                    swal.fire({
-                                       title: "Advertencia!",
                                        text: oRespuesta.Mensaje,
                                        type: 'warning',
                                        confirmButtonText: "OK",
@@ -819,7 +811,6 @@
                                                                         $.getJSON("/Anotador/CalcularFechaFin", {
                                                                             NumeroDias: parseInt($("#NumDias1").val()),
                                                                             FechaInicio: $("#datepicker").val(),
-                                                                            SabadoHabil: $("#SabadoHabilModal").val(),
                                                                             DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val()
                                                                         }, function (oRespuesta) {
                                                                             switch (oRespuesta.Codigo) {
@@ -832,7 +823,6 @@
 
                                                                                 case "-1":
                                                                                     swal.fire({
-                                                                                        title: "Advertencia!",
                                                                                         text: oRespuesta.Mensaje,
                                                                                         type: 'warning',
                                                                                         confirmButtonText: "OK",
@@ -872,7 +862,6 @@
 
                                             case "-1":
                                                 swal.fire({
-                                                    title: "Error!",
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
                                                     confirmButtonText: "OK",
@@ -884,7 +873,6 @@
 
                                             case "-2":
                                                 swal.fire({
-                                                    title: "Error!",
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
                                                     confirmButtonText: "OK",
@@ -896,7 +884,6 @@
 
                                             case "-3":
                                                 swal.fire({
-                                                    title: "Error!",
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
                                                     confirmButtonText: "OK",
@@ -911,7 +898,6 @@
 
                                 case "3":
                                     swal.fire({
-                                        title: "Error!",
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
                                         confirmButtonText: "OK",
@@ -923,7 +909,6 @@
 
                                 case "2":
                                     swal.fire({
-                                        title: "Error!",
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
                                         confirmButtonText: "OK",
@@ -935,7 +920,6 @@
 
                                 case "1":
                                     swal.fire({
-                                        title: "Error!",
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
                                         confirmButtonText: "OK",
@@ -949,7 +933,7 @@
                     }
                     else {
                         swal.fire({
-                            text: "El empleado ya se encuentra agregado en la lista. Verifique la información e inténtelo de nuevo.",
+                            text: "El empleado ya se encuentra agregado en la lista. Verifique la información e inténtelo de nuevo",
                             type: 'warning',
                             confirmButtonText: "OK",
                             confirmButtonColor: '#00AFF0',
@@ -961,8 +945,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar una cedula.",
+                        text: "Debe ingresar un Nro. de identificación",
                         type: 'warning',
                         confirmButtonText: "OK",
                         confirmButtonColor: '#00AFF0',
@@ -974,26 +957,51 @@
 
             //BTN GUARDAR
             $("#btnAgregar1").click(function () {
-                if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0 ) {
-                    swal.fire({
-                        text: "Solicitud enviada satisfactoriamente.",
-                        type: 'success',
-                        confirmButtonText: "OK",
-                        confirmButtonColor: '#00AFF0',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    }).then((result) => {
-                        if (result.value) {
-                            var url = "@Url.Action("Index", "Home",  null)";
-                            window.location.href = url
-                            }
-                        });
-                }
+                if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0) {
 
+                    $.post("../Anotador/GuardarSolicitud", {
+                        NroIdentificacionAnotador: $("#NroIdentificacionHidden").val(),
+                        NombresEmpleadoAnotador: $("#SpanNombreEmpleado0").html(),
+                        ApellidosEmpleadoAnotador: $("#SpanApellidoEmpleado0").html(),
+                        oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
+                        oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
+                        oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
+
+                    }, function (oRespuestaGuardar) {
+                        switch (oRespuestaGuardar.Codigo) {
+                            case "1":
+                                //Aqui se debe hacer el envio de la notificacion
+                                swal.fire({
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'success',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                }).then((result) => {
+                                    if (result.value) {
+                                        var url = "@Url.Action("Index", "Home",  null)";
+                                        window.location.href = url
+                                        }
+                                    });
+                                break
+
+                            case "-3":
+                                swal.fire({
+                                    text: oRespuestaGuardar.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break
+                        }
+                    });
+                }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar mínimo un ítem a la lista.",
+                        text: "Debe ingresar mínimo un ítem a la lista",
                         type: 'warning',
                         confirmButtonText: "Ok",
                         confirmButtonColor: '#00AFF0',
@@ -1118,8 +1126,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones.",
+                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones",
                         type: 'warning',
                         confirmButtonText: "Ok",
                         confirmButtonColor: '#00AFF0',
@@ -1157,7 +1164,6 @@
                     }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
-                                title: "Advertencia!",
                                 text: d.Mensaje,
                                 type: 'warning',
                                 allowOutsideClick: false,
@@ -1178,8 +1184,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones.",
+                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones",
                         type: 'warning',
                         confirmButtonText: "Ok",
                         confirmButtonColor: '#00AFF0',

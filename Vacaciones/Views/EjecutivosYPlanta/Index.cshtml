@@ -45,7 +45,12 @@
                 ,change: function () {
                     if ($("#NumDias0").val() != '') {
                        //Calcular la fecha fin de vacaciones
-                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+
+                        $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                            NumeroDias: parseInt($("#NumDias0").val()),
+                            FechaInicio: $("#kendocalendar_0").val(),
+                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                        }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -55,7 +60,6 @@
 
                                case "-1":
                                    swal.fire({
-                                       title: "Advertencia!",
                                        text: respuesta.Mensaje,
                                        type: 'warning',
                                        confirmButtonText: "OK",
@@ -93,7 +97,6 @@
 
                             case "1":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -113,7 +116,6 @@
 
                             case "2":
                                 swal.fire({
-                                    title: "Advertencia!",
                                     text: respuesta.Mensaje,
                                     type: 'warning',
                                     confirmButtonText: "OK",
@@ -137,7 +139,11 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
-                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"}, function (oRespuesta) {
+                    $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                        NumeroDias: parseInt($("#NumDias0").val()),
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                    }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -147,7 +153,6 @@
 
                                case "-1":
                                    swal.fire({
-                                       title: "Advertencia!",
                                        text: respuesta.Mensaje,
                                        type: 'warning',
                                        confirmButtonText: "OK",
@@ -206,7 +211,6 @@
 
                             case "-1":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaGuardar.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -218,7 +222,6 @@
 
                             case "-2":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaGuardar.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -230,7 +233,6 @@
 
                             case "-3":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaGuardar.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -244,8 +246,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones.",
+                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones",
                         type: 'warning',
                         confirmButtonText: "OK",
                         confirmButtonColor: '#00AFF0',

@@ -56,7 +56,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                     switch (oRespuestaGuardarSolicitudModels.Codigo)
                     {
                         case 1:
-                            oMensajeRespuesta.Mensaje = "Solicitud almacenada satisfactoriamente.";
+                            oMensajeRespuesta.Mensaje = "Solicitud enviada satisfactoriamente";
                             break;
 
                         case -1:
@@ -77,7 +77,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                              oSolicitud.nmro_idntfccn +
                              ". Mensaje del servicio: " + oRespuestaGuardarSolicitudModels.Respuesta + ". ");
 
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
                             break;
 
@@ -87,7 +87,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                              oSolicitud.nmro_idntfccn +
                              ". Mensaje del servicio: " + oRespuestaGuardarSolicitudModels.Respuesta + ". ");
 
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
                             break;
                     }
@@ -118,7 +118,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                             ". Exception: " + Ex);
 
                 oRespuestaGuardarSolicitudModels.Codigo = -3;
-                oRespuestaGuardarSolicitudModels.Respuesta = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                oRespuestaGuardarSolicitudModels.Respuesta = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
                 oMensajeRespuesta.Codigo = oRespuestaGuardarSolicitudModels.Codigo.ToString();
                 oMensajeRespuesta.Mensaje = oRespuestaGuardarSolicitudModels.Respuesta;

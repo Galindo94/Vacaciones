@@ -41,6 +41,18 @@
                         $("#DivCirculoAzul").hide();
 
                         switch (oRespuestaSAP.Codigo) {
+
+                            case "5":
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
                             case "4":
 
                                 $("#DivFondoTrasparente").show();
@@ -62,7 +74,6 @@
 
                                         case "-1":
                                             swal.fire({
-                                                title: "Error!",
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
                                                 confirmButtonText: "OK",
@@ -74,7 +85,6 @@
 
                                         case "-2":
                                             swal.fire({
-                                                title: "Error!",
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
                                                 confirmButtonText: "OK",
@@ -86,7 +96,6 @@
 
                                         case "-3":
                                             swal.fire({
-                                                title: "Error!",
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
                                                 confirmButtonText: "OK",
@@ -101,7 +110,6 @@
 
                             case "3":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -113,7 +121,6 @@
 
                             case "2":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -125,7 +132,6 @@
 
                             case "1":
                                 swal.fire({
-                                    title: "Error!",
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
@@ -139,8 +145,7 @@
                 }
                 else {
                     swal.fire({
-                        title: "Advertencia!",
-                        text: "El campo documento es obligatorio.",
+                        text: "El campo Nro. de identificación es obligatorio",
                         type: 'warning',
                         confirmButtonText: "OK",
                         confirmButtonColor: '#00AFF0',
@@ -161,8 +166,8 @@
             <div class="container body-content">
                 <h1 class="jumbotron-encabezado center">Login</h1>
                 <div class="col-md-12 center">
-                    <h6>No hemos identificado un usuario en el directorio activo. Por favor ingrese su n&uacute;mero de documento</h6>
-                    <label class="fieldlist-label">Documento de identidad</label>
+                    <h6>No hemos identificado un usuario en el directorio activo <br /> Por favor ingrese su n&uacute;mero de documento de identidad</h6>
+                    @*<label class="fieldlist-label">Documento de identidad</label>*@
                     <input id="NroDocumento" class="k-textbox" type="text" onkeydown="return event.keyCode !== 69" />
                     <br />
                     <br />
