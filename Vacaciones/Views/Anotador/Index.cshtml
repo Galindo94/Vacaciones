@@ -43,8 +43,6 @@
                 dates.push(new Date(fechas[index]));
             }
 
-            console.log(fechas);
-
             $(".kendocalendar").kendoDatePicker({
                 format: "dd/MM/yyyy",
                 min: inicioFecha,
@@ -53,7 +51,11 @@
                 ,change: function () {
                     if ($("#NumDias0").val() != '') {
                        //Calcular la fecha fin de vacaciones
-                       $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                        $.getJSON("/Anotador/CalcularFechaFin", {
+                            NumeroDias: parseInt($("#NumDias0").val()),
+                            FechaInicio: $("#kendocalendar_0").val(),
+                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"                            
+                        }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -319,7 +321,6 @@
 
                                             //Se identifica la fila en la cual se le dio click al boton editar
                                             var item = this.dataItem($(e.currentTarget).closest("tr"));
-                                            console.log(item);
 
                                             //Se abre la pantalla modal
                                             $("#ModalOtrosColaboradores").modal({
@@ -354,8 +355,6 @@
                                             for (var index = 0; index < fechasModal.length; index++) {
                                                 datesModal.push(new Date(fechasModal[index]));
                                             }
-                                            console.log(fechasModal);
-
 
                                             var kendoDatePicker = $("#datepicker").data("kendoDatePicker");
                                             kendo.destroy(kendoDatePicker);
@@ -373,8 +372,7 @@
                                                         $.getJSON("/Anotador/CalcularFechaFin", {
                                                             NumeroDias: parseInt($("#NumDias1").val()),
                                                             FechaInicio: $("#datepicker").val(),
-                                                            SabadoHabil: $("#SabadoHabilModal").val(),
-                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),
+                                                            DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),  
                                                         }, function (oRespuesta) {
                                                             switch (oRespuesta.Codigo) {
 
@@ -514,7 +512,11 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $.getJSON("/Anotador/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+                    $.getJSON("/Anotador/CalcularFechaFin", {
+                        NumeroDias: parseInt($("#NumDias0").val()),
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                    }, function (oRespuesta) {
                         switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -693,7 +695,6 @@
                     $.getJSON("/Anotador/CalcularFechaFin", {
                         NumeroDias: parseInt($("#NumDias1").val()),
                         FechaInicio: $("#datepicker").val(),
-                        SabadoHabil: $("#SabadoHabilModal").val(),
                         DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val()
                     }, function (oRespuesta) {
                         switch (oRespuesta.Codigo) {
@@ -810,7 +811,6 @@
                                                                         $.getJSON("/Anotador/CalcularFechaFin", {
                                                                             NumeroDias: parseInt($("#NumDias1").val()),
                                                                             FechaInicio: $("#datepicker").val(),
-                                                                            SabadoHabil: $("#SabadoHabilModal").val(),
                                                                             DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val()
                                                                         }, function (oRespuesta) {
                                                                             switch (oRespuesta.Codigo) {

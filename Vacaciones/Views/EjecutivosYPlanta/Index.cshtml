@@ -45,7 +45,12 @@
                 ,change: function () {
                     if ($("#NumDias0").val() != '') {
                        //Calcular la fecha fin de vacaciones
-                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos" }, function (oRespuesta) {
+
+                        $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                            NumeroDias: parseInt($("#NumDias0").val()),
+                            FechaInicio: $("#kendocalendar_0").val(),
+                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                        }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
@@ -134,7 +139,11 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
-                       $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", { NumeroDias: parseInt($("#NumDias0").val()), FechaInicio: $("#kendocalendar_0").val(), SabadoHabil: "@ViewBag.SabadoHabil", DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"}, function (oRespuesta) {
+                    $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                        NumeroDias: parseInt($("#NumDias0").val()),
+                        FechaInicio: $("#kendocalendar_0").val(),
+                        DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
+                    }, function (oRespuesta) {
                            switch (oRespuesta.Codigo) {
 
                                case "0":
