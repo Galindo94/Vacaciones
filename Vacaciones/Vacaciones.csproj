@@ -128,6 +128,9 @@
       <Private>True</Private>
       <Private>True</Private>
     </Reference>
+    <Reference Include="System.Net.Http.Formatting, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Client.5.2.4\lib\net45\System.Net.Http.Formatting.dll</HintPath>
+    </Reference>
     <Reference Include="System.Net.Http.WebRequest" />
     <Reference Include="System.Net.Sockets, Version=4.1.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.Net.Sockets.4.3.0\lib\net46\System.Net.Sockets.dll</HintPath>
@@ -159,6 +162,12 @@
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="System.Web.Helpers, Version=3.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.WebPages.3.2.7\lib\net45\System.Web.Helpers.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.Core.5.2.4\lib\net45\System.Web.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Web.Http.WebHost, Version=5.2.4.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
+      <HintPath>..\packages\Microsoft.AspNet.WebApi.WebHost.5.2.4\lib\net45\System.Web.Http.WebHost.dll</HintPath>
     </Reference>
     <Reference Include="System.Web.Mvc, Version=5.2.7.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL">
       <HintPath>..\packages\Microsoft.AspNet.Mvc.5.2.7\lib\net45\System.Web.Mvc.dll</HintPath>
@@ -206,6 +215,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelosAproRechazo\SolicitudAR.cs" />
     <Compile Include="Models\ModelosGenerales\ModalAnotadoresModels.cs" />
     <Compile Include="Models\ModelosGuardarSolicitud\RespuestaGuardarSolicitudModels.cs" />
     <Compile Include="Models\ModelosGuardarSolicitud\SolicitudDetalle.cs" />
@@ -215,6 +225,7 @@
     <Compile Include="Models\ModelosRespuestaSAP\ContingentesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIAprobacion.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIGuardarSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPISAP.cs" />
