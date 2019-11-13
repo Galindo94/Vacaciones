@@ -137,7 +137,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                "Nro. Documento: " + Identificacion);
 
                         oMensajeRespuesta.Codigo = "3";
-                        oMensajeRespuesta.Mensaje = "Ocurrió un error en el api del servicio de sap";
+                        oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP";
                         oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
 
 
@@ -153,7 +153,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
 
                     oMensajeRespuesta.Codigo = "3";
-                    oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de sap";
+                    oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP";
                     oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 
 
@@ -168,7 +168,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error en el api del servicio de sap";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error en el API del servicio de SAP";
                 oMensajeRespuesta.Resultado = Json(oRespuestaSAPCliente, JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;

@@ -46,7 +46,7 @@ namespace Vacaciones.Controllers
                                ". Exception " + Ex);
 
                 oPersona.Codigo = -3;
-                oPersona.Respuesta = "Ocurrió un error en el api del directorio activo";
+                oPersona.Respuesta = "Ocurrió un error en el API del directorio activo";
 
 
                 oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
@@ -103,7 +103,7 @@ namespace Vacaciones.Controllers
             try
             {
                 oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
-                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor);
+                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor, oRespuestaSap.Details[0].DesCargo);
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
             catch (Exception Ex)

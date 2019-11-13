@@ -449,7 +449,7 @@ namespace Vacaciones.Controllers
             try
             {
                 oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
-                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor);
+                oMensajeRespuesta = oConsumoAPIMotorDeReglas.ConsultarEscenarioYReglas(oRespuestaSap.Details[0].Clasificacion, oRespuestaSap.Details[0].IdGestor, oRespuestaSap.Details[0].DesCargo);
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
             }
             catch (Exception Ex)
@@ -547,24 +547,15 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public JsonResult GuardarSolicitud(string NroIdentificacionAnotador, string NombresEmpleadoAnotador, string ApellidosEmpleadoAnotador,
-                                           string FechaInicioAnotador, string FechaFinAnotador, string oRespuestaSAP,
-                                           string oRespuestaMotor, string oDataActual)
+        public List<SolicitudDetalle> GenerarObjetoSolicitudDetalle(string oDataActual)
         {
-            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-            ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
-            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
-            RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
             List<SolicitudDetalle> oLstSolicitudesGrid = new List<SolicitudDetalle>();
-            Solicitudes oSolicitudes = new Solicitudes();
 
             try
             {
                 if (!string.IsNullOrEmpty(oDataActual))
                 {
-                    oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
-                    oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
                     oLstSolicitudesGrid = JsonConvert.DeserializeObject<List<SolicitudDetalle>>(oDataActual);
 
                     if (oLstSolicitudesGrid != null && oLstSolicitudesGrid.Count > 0)
@@ -589,15 +580,63 @@ namespace Vacaciones.Controllers
                             });
                         }
 
-                        oSolicitudes.fcha_hra_slctd = DateTime.Now;
-                        oSolicitudes.nmbrs_slctnte = NombresEmpleadoAnotador;
-                        oSolicitudes.apllds_slctnte = ApellidosEmpleadoAnotador;
-                        oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
-                        oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
-                        oSolicitudes.detalle = oLstSolicitudDetalle;
+                    }
+                }
 
+                return oLstSolicitudDetalle;
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error generando el Objeto solicitud detalle en la clase: AnotadorController. Método GenerarObjetoSolicitudDetalle" +
+                           ". Exception: " + Ex);
+
+                return oLstSolicitudDetalle;
+            }
+        }
+
+        public JsonResult GuardarSolicitud(string NroIdentificacionAnotador, string NombresEmpleadoAnotador, string ApellidosEmpleadoAnotador,
+                                           string oRespuestaMotor, string oDataActual)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
+            RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
+            Solicitudes oSolicitudes = new Solicitudes();
+
+            try
+            {
+                if (!string.IsNullOrEmpty(oRespuestaMotor))
+                {
+                    oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
+
+                    oSolicitudes.fcha_hra_slctd = DateTime.Now;
+                    oSolicitudes.nmbrs_slctnte = NombresEmpleadoAnotador;
+                    oSolicitudes.apllds_slctnte = ApellidosEmpleadoAnotador;
+                    oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
+                    oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
+                    oSolicitudes.detalle = GenerarObjetoSolicitudDetalle(oDataActual);
+                    if (oSolicitudes.detalle != null && oSolicitudes.detalle.Count > 0)
+                    {
                         oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
                     }
+                    else
+                    {
+                        Logger.Error("Ocurrió un error almacenando la solicitud de vacaciones. Nro Documento Encabezado: " +
+                             oSolicitudes.nmro_idntfccn +
+                             ". Especificacion: Ocurrió un error generando el Objeto solicitud detalle en la clase AnotadorController método GenerarObjetoSolicitudDetalle" + ". ");
+
+                        oMensajeRespuesta.Codigo = "-1";
+                        oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
+                    }
+
+
+                }
+                else
+                {
+                    oMensajeRespuesta.Codigo = "-1";
+                    oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
+
+                    Logger.Error("Ocurrió un error almacenando la solicitud de vacaciones. Nro Documento Encabezado: " +
+                             NroIdentificacionAnotador + ". ");
                 }
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -619,6 +658,45 @@ namespace Vacaciones.Controllers
 
         }
 
+        public JsonResult EnviarNotificacionFlow(string oDataActual)
+        {
+            List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+            List<string> oLstCorreos = new List<string>();
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            try
+            {
+                oLstSolicitudDetalle = GenerarObjetoSolicitudDetalle(oDataActual);
 
+                if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
+                {
+                    foreach (SolicitudDetalle oSolicitudDetalle in oLstSolicitudDetalle)
+                    {
+                        if (oLstCorreos == null && oLstCorreos.Count == 0)
+                            oLstCorreos.Add(oSolicitudDetalle.crreo_jfe_slctnte);
+                        else
+                        {
+                            int Count = oLstCorreos.Count(element => element == oSolicitudDetalle.crreo_jfe_slctnte);
+                            if (Count == 0)
+                                oLstCorreos.Add(oSolicitudDetalle.crreo_jfe_slctnte);
+                        }
+                    }
+                }
+
+                oMensajeRespuesta.Codigo = "1";
+                oMensajeRespuesta.Mensaje = "Se genero la lista de correos satisfactoriamente";
+                oMensajeRespuesta.Resultado = Json(oLstCorreos, JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico." +
+                           ". Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-1";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error enviando las notificaciones por correo electrónico. Contacte al administrador del sistema";
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+        }
     }
 }

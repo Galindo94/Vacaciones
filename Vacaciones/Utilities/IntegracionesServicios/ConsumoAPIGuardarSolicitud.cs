@@ -1,12 +1,9 @@
 ﻿using log4net;
 using Newtonsoft.Json;
 using System;
-using System.Collections.Generic;
 using System.IO;
-using System.Linq;
 using System.Net;
 using System.Text;
-using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosGuardarSolicitud;
@@ -66,7 +63,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                               ". Mensaje del servicio: " + oRespuestaGuardarSolicitudModels.Respuesta + ". ");
 
 
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
 
                             break;
