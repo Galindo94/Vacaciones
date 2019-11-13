@@ -4,7 +4,9 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Web.Configuration;
 using System.Web.Mvc;
+using Vacaciones.Models.ModelosFlow;
 using Vacaciones.Models.ModelosGenerales;
 using Vacaciones.Models.ModelosGuardarSolicitud;
 using Vacaciones.Models.ModelosMotorDeReglas;
@@ -19,7 +21,7 @@ namespace Vacaciones.Controllers
     {
 
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
-
+        readonly string URIAprobacion = WebConfigurationManager.AppSettings["URIAprobacion"].ToString();
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
 
@@ -663,8 +665,15 @@ namespace Vacaciones.Controllers
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
             List<string> oLstCorreos = new List<string>();
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIFlow oConsumoApiFlow = new ConsumoAPIFlow();
+            FlowModels oFlow = new FlowModels();
             try
             {
+                string URIAprobacionyRechazo = Request.Url.Scheme + //Https
+                                               "://" + Request.Url.Authority + //WWW.
+                                               Request.ApplicationPath.TrimEnd('/') + "/" + //Base del sitio
+                                               URIAprobacion; // AprobacionYRechazo/Index
+
                 oLstSolicitudDetalle = GenerarObjetoSolicitudDetalle(oDataActual);
 
                 if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
@@ -681,6 +690,68 @@ namespace Vacaciones.Controllers
                         }
                     }
                 }
+
+
+
+
+                foreach (var oCorreo in oLstCorreos)
+                {
+                    string correo = "<Table>";
+                    correo += "<tr>" +
+                                    "<th> Código del empleado </th>" +
+                                    "<th> Nombres y apellidos </th>" +
+                                    "<th> Fecha de inicio </th>" +
+                                    "<th> Fecha de fin </th>" +
+                                    "<th> Nro. Días </th> " +
+                               "</tr>";
+
+                    foreach (var oDetalle in oLstSolicitudDetalle)
+                    {
+                        correo += "<tr>" +
+                                        "<th>" + oDetalle.codEmpldo + "</th>" +
+                                        "<th>" + oDetalle.nmbre_cmplto + "</th>" +
+                                        "<th>" + oDetalle.fcha_inco_vccns + "</th>" +
+                                        "<th>" + oDetalle.fcha_fn_vcc + "</th>" +
+                                        "<th>" + oDetalle.nmro_ds + "</th>" +
+                                  "</tr>";
+
+
+                        oFlow.correoSolicitante = oDetalle.crreo_slctnte;
+                        oFlow.nombreSolicitante = oDetalle.nmbrs_slctnte + " " + oDetalle.apllds_slctnte;
+                        oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
+                        oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
+                        oFlow.opt = 4;
+
+
+                        //Aqui se debe enviar notificacion individual
+                        oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+                        if (oMensajeRespuesta.Codigo != "1")
+                        {
+                            Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
+                                oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+                        }
+                    }
+
+                    correo += "</Table>";
+
+                    oFlow = new FlowModels
+                    {
+                        CorreoJefe = oCorreo,
+                        lista = correo,
+                        url = URIAprobacionyRechazo,
+                        opt = 3
+                    };
+
+                    //Aqui se debe enviar notificacion individual
+                    oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+                    if (oMensajeRespuesta.Codigo != "1")
+                        Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);
+
+                }
+
+
 
                 oMensajeRespuesta.Codigo = "1";
                 oMensajeRespuesta.Mensaje = "Se genero la lista de correos satisfactoriamente";

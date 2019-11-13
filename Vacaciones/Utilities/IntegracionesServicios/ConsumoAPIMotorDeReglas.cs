@@ -36,7 +36,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
             try
             {
-                string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor + Variable3MotorReglas + DesCargo;
+                string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor + "&" + Variable3MotorReglas + DesCargo;
                 oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 oHttpWebRequest.ContentType = "application/json";
                 oHttpWebRequest.Method = "GET";

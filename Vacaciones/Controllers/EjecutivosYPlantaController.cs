@@ -3,6 +3,7 @@ using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
 using System.Web.Mvc;
+using Vacaciones.Models.ModelosFlow;
 using Vacaciones.Models.ModelosGuardarSolicitud;
 using Vacaciones.Models.ModelosMotorDeReglas;
 using Vacaciones.Models.ModelosRespuestaSAP;
@@ -114,6 +115,7 @@ namespace Vacaciones.Controllers
             RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
             Solicitudes oSolicitudes = new Solicitudes();
+            ConsumoAPIFlow oConsumoApiFlow = new ConsumoAPIFlow();
 
             try
             {
@@ -147,6 +149,19 @@ namespace Vacaciones.Controllers
                 oSolicitudes.detalle = oLstSolicitudDetalle;
 
                 oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
+
+                FlowModels oFlow = new FlowModels
+                {
+                    correoSolicitante = oLstSolicitudDetalle[0].crreo_slctnte,
+                    nombreSolicitante = oLstSolicitudDetalle[0].nmbrs_slctnte + " " + oLstSolicitudDetalle[0].apllds_slctnte,
+                    fecha_fin = oLstSolicitudDetalle[0].fcha_fn_vcc.ToShortDateString(),
+                    fecha_inicio = oLstSolicitudDetalle[0].fcha_inco_vccns.ToShortDateString(),
+                    CorreoJefe = oLstSolicitudDetalle[0].crreo_jfe_slctnte,
+                    url = "<a href='www.google.com'>Haga clic aqui </a>",
+                    opt = 1
+                };
+
+                oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
@@ -253,6 +268,116 @@ namespace Vacaciones.Controllers
             }
 
         }
+
+        //public JsonResult EnviarNotificacionFlow(string oDataActual)
+        //{
+        //    List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
+        //    List<string> oLstCorreos = new List<string>();
+        //    MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+        //    ConsumoAPIFlow oConsumoApiFlow = new ConsumoAPIFlow();
+        //    FlowModels oFlow = new FlowModels();
+        //    try
+        //    {
+        //        string URIAprobacionyRechazo = Request.Url.Scheme + //Https
+        //                                       "://" + Request.Url.Authority + //WWW.
+        //                                       Request.ApplicationPath.TrimEnd('/') + "/" + //Base del sitio
+        //                                       URIAprobacion; // AprobacionYRechazo/Index
+
+        //        oLstSolicitudDetalle = GenerarObjetoSolicitudDetalle(oDataActual);
+
+        //        if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
+        //        {
+        //            foreach (SolicitudDetalle oSolicitudDetalle in oLstSolicitudDetalle)
+        //            {
+        //                if (oLstCorreos == null && oLstCorreos.Count == 0)
+        //                    oLstCorreos.Add(oSolicitudDetalle.crreo_jfe_slctnte);
+        //                else
+        //                {
+        //                    int Count = oLstCorreos.Count(element => element == oSolicitudDetalle.crreo_jfe_slctnte);
+        //                    if (Count == 0)
+        //                        oLstCorreos.Add(oSolicitudDetalle.crreo_jfe_slctnte);
+        //                }
+        //            }
+        //        }
+
+
+
+
+        //        foreach (var oCorreo in oLstCorreos)
+        //        {
+        //            string correo = "<Table>";
+        //            correo += "<tr>" +
+        //                            "<th> Código del empleado </th>" +
+        //                            "<th> Nombres y apellidos </th>" +
+        //                            "<th> Fecha de inicio </th>" +
+        //                            "<th> Fecha de fin </th>" +
+        //                            "<th> Nro. Días </th> " +
+        //                       "</tr>";
+
+        //            foreach (var oDetalle in oLstSolicitudDetalle)
+        //            {
+        //                correo += "<tr>" +
+        //                                "<th>" + oDetalle.codEmpldo + "</th>" +
+        //                                "<th>" + oDetalle.nmbre_cmplto + "</th>" +
+        //                                "<th>" + oDetalle.fcha_inco_vccns + "</th>" +
+        //                                "<th>" + oDetalle.fcha_fn_vcc + "</th>" +
+        //                                "<th>" + oDetalle.nmro_ds + "</th>" +
+        //                          "</tr>";
+
+
+        //                oFlow.correoSolicitante = oDetalle.crreo_slctnte;
+        //                oFlow.nombreSolicitante = oDetalle.nmbre_cmplto;
+        //                oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
+        //                oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
+        //                oFlow.opt = 4;
+
+
+        //                //Aqui se debe enviar notificacion individual
+        //                oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+        //                if (oMensajeRespuesta.Codigo != "1")
+        //                {
+        //                    Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
+        //                        oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+        //                }
+        //            }
+
+        //            correo += "</Table>";
+
+        //            oFlow = new FlowModels
+        //            {
+        //                CorreoJefe = oCorreo,
+        //                lista = correo,
+        //                url = URIAprobacionyRechazo,
+        //                opt = 3
+        //            };
+
+        //            //Aqui se debe enviar notificacion individual
+        //            oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+        //            if (oMensajeRespuesta.Codigo != "1")
+        //                Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);
+
+        //        }
+
+
+
+        //        oMensajeRespuesta.Codigo = "1";
+        //        oMensajeRespuesta.Mensaje = "Se genero la lista de correos satisfactoriamente";
+        //        oMensajeRespuesta.Resultado = Json(oLstCorreos, JsonRequestBehavior.AllowGet);
+
+        //        return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+        //    }
+        //    catch (Exception Ex)
+        //    {
+        //        Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico." +
+        //                   ". Exception: " + Ex);
+
+        //        oMensajeRespuesta.Codigo = "-1";
+        //        oMensajeRespuesta.Mensaje = "Ocurrió un error enviando las notificaciones por correo electrónico. Contacte al administrador del sistema";
+        //        return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+        //    }
+        //}
     }
 
 }

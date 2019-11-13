@@ -9,6 +9,7 @@ using Vacaciones.Models.ModelosMotorDeReglas;
 using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
 using Vacaciones.Utilities.IntegracionesServicios;
+using System.Security.Principal;
 
 namespace Vacaciones.Controllers
 {
@@ -20,7 +21,7 @@ namespace Vacaciones.Controllers
         // GET: VacacionesIntranet
         public ActionResult Index()
         {
-            ViewBag.UsuarioIntranet = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
+            ViewBag.UsuarioIntranet = System.Web.HttpContext.Current.User.Identity.Name;
             return View();
         }
 

@@ -28,7 +28,8 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
             try
             {
-                string url = URIFlow;
+                
+                string url = URIFlow + "?api-version=2016-06-01&sp=%2Ftriggers%2Fmanual%2Frun&sv=1.0&sig=gD1TRTuzW8O4kJzHKcaUkU7r35l4-F736v2s3F76QmI";
                 oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 oHttpWebRequest.ContentType = "application/json";
                 oHttpWebRequest.Method = "POST";
@@ -50,29 +51,13 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
                     oMensajeRespuesta.Resultado = Json(oRespuestaFlow, JsonRequestBehavior.AllowGet);
 
-                    switch (oRespuestaFlow.status)
-                    {
-                        case "success":
-                            oMensajeRespuesta.Codigo = "1";
-                            oMensajeRespuesta.Mensaje = "Solicitud enviada satisfactoriamente";
 
-                            Logger.Info("La notificación de correo electrónico ha sido enviada satisfactoriamente para la solicitud con Id Nro: " +
-                              oFlowModels.cnsctvo_slctd +
-                              ". Mensaje del servicio: " + oRespuestaFlow.status + ". ");
+                    oMensajeRespuesta.Codigo = "1";
+                    oMensajeRespuesta.Mensaje = "Solicitud enviada satisfactoriamente";
 
-                            break;
-
-                        case "error":
-
-                            oMensajeRespuesta.Codigo = "-3";
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error realizando el envío de la notificación. Contacte al administrador del sistema";
-
-                            Logger.Error("Ocurrió un error realizando el envió de la notificación para la solicitud con el Id Nro: " +
-                               oFlowModels.cnsctvo_slctd +
-                              ". Mensaje del servicio: " + oRespuestaFlow.status + ". ");
-
-                            break;
-                    }
+                    Logger.Info("La notificación de correo electrónico ha sido enviada satisfactoriamente para la solicitud con Id Nro: " +
+                      oFlowModels.cnsctvo_slctd +
+                      ". Mensaje del servicio: " + oRespuestaFlow.status + ". ");
 
                 }
                 else
