@@ -206,6 +206,8 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelosFlow\FlowModels.cs" />
+    <Compile Include="Models\ModelosFlow\RespuestaFlowModels.cs" />
     <Compile Include="Models\ModelosGenerales\ModalAnotadoresModels.cs" />
     <Compile Include="Models\ModelosGuardarSolicitud\RespuestaGuardarSolicitudModels.cs" />
     <Compile Include="Models\ModelosGuardarSolicitud\SolicitudDetalle.cs" />
@@ -215,6 +217,7 @@
     <Compile Include="Models\ModelosRespuestaSAP\ContingentesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIFlow.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIGuardarSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPISAP.cs" />

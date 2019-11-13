@@ -66,7 +66,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                               ". Mensaje del servicio: " + oRespuestaGuardarSolicitudModels.Respuesta + ". ");
 
 
-                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema.";
+                            oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
 
                             break;
