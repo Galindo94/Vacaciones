@@ -19,11 +19,12 @@ namespace Vacaciones.Utilities.IntegracionesServicios
         readonly string URIMotorReglas = WebConfigurationManager.AppSettings["URIMotorReglas"].ToString();
         readonly string Variable1MotorReglas = WebConfigurationManager.AppSettings["Variable1MotorReglas"].ToString();
         readonly string Variable2MotorReglas = WebConfigurationManager.AppSettings["Variable2MotorReglas"].ToString();
+        readonly string Variable3MotorReglas = WebConfigurationManager.AppSettings["Variable3MotorReglas"].ToString();
         HttpWebRequest oHttpWebRequest;
         Encoding oEncoding;
         HttpWebResponse oHttpWebResponse;
 
-        public MensajeRespuesta ConsultarEscenarioYReglas(string clasificacion, string gestor)
+        public MensajeRespuesta ConsultarEscenarioYReglas(string clasificacion, string gestor, string DesCargo)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels
@@ -35,7 +36,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
             try
             {
-                string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor;
+                string url = URIMotorReglas + Variable1MotorReglas + clasificacion + "&" + Variable2MotorReglas + gestor + Variable3MotorReglas + DesCargo;
                 oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
                 oHttpWebRequest.ContentType = "application/json";
                 oHttpWebRequest.Method = "GET";
