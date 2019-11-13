@@ -1,13 +1,12 @@
-﻿
-@{
-    ViewBag.Title = "Index";
-    Layout = "~/Views/Shared/_Layout.cshtml";
-}
+﻿<!DOCTYPE html>
+
+<html>
 <head>
-    <meta charset="utf-8"/>
-    <meta name="viewport" content="width=device-width, initial-scale=1"/>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
     <script>
         $(document).ready(function () {
+
             //Creacion de la grid
             $("#rowSelection").kendoGrid({
                 dataSource: {
@@ -28,7 +27,7 @@
                         media: "(min-width: 50px)",
                         headerAttributes: {
                             style: "text-align: center"
-                        },
+                        }
                     },
                     {
                         field: "nmbre_cmplto",
@@ -37,7 +36,7 @@
                         media: "(min-width: 50px)",
                         headerAttributes: {
                             style: "text-align: center"
-                        },
+                        }
                     },
                     {
                         field: "nmro_ds",
@@ -75,41 +74,45 @@
                         },
                         columns: [
                             {
-                            width: 80,
-                            command: [
-                                {
-                                    name: "Aprobar",
-                                    text: "Aprobar",
-                                    click: function (e) {
-                                    //Se identifica la fila en la cual se le dio click al boton editar
+                                width: 80,
+                                command: [
+                                    {
+                                        name: "Aprobar",
+                                        text: "Aprobar",
+                                        click: function (e) {
+                                        //Se identifica la fila en la cual se le dio click al boton editar
                                         var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                        }
                                     }
-                                }
-                            ]
+                                ]
                             },
                             {
-                            width: 90,
-                            command: [
-                                {
-                                    name: "Rechazar",
-                                    text: "Rechazar",
-                                    click: function (e) {
-                                        var item = this.dataItem($(e.currentTarget).closest("tr"));
-                                        var grid = $("#rowSelection").data("kendoGrid");                                
+                                width: 90,
+                                command: [
+                                    {
+                                        name: "Rechazar",
+                                        text: "Rechazar",
+                                        click: function (e) {
+                                            var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                            var grid = $("#rowSelection").data("kendoGrid");     
+                                        }
                                     }
-                                }
-                            ]
+                                ]
                             }
                         ]
                     }
                 ]
             });
+
+            $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta)));
+
         });
     </script>
 </head>
+
 <body>
     <div class="jumbotron">
-        <div class="jumbotron-cuerpo">  
+        <div class="jumbotron-cuerpo">
             <br />
             <div class="col-md-12 center">
                 <div class="col-md-12 jumbotron-encabezado">
@@ -123,3 +126,5 @@
         </div>
     </div>
 </body>
+
+</html>
