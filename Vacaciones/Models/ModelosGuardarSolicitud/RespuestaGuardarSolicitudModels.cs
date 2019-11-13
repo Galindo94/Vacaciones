@@ -1,9 +1,4 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Web;
-
-namespace Vacaciones.Models.ModelosGuardarSolicitud
+﻿namespace Vacaciones.Models.ModelosGuardarSolicitud
 {
     public class RespuestaGuardarSolicitudModels
     {

@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-
-namespace Vacaciones.Models.ModelosRespuestaSAP
+﻿namespace Vacaciones.Models.ModelosRespuestaSAP
 {
     public class DetailsModels
     {
