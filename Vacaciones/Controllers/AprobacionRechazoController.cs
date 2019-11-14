@@ -16,11 +16,11 @@ namespace Vacaciones.Controllers
         // GET: AprobacionRechazo
         public ActionResult Index(int csctvo_slctd, string crreo_jfe_slctnte)
         {
-            //ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
-            //MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-            //oMensajeRespuesta = cons.ConsultarAprobacionRechazo(csctvo_slctd,crreo_jfe_slctnte);
+            ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            oMensajeRespuesta = cons.ConsultarAprobacionRechazo(csctvo_slctd, crreo_jfe_slctnte);
 
-            //ViewBag.Respuesta = Json(oMensajeRespuesta.Resultado.Data, JsonRequestBehavior.AllowGet).Data;
+            ViewBag.Respuesta = Json(oMensajeRespuesta.Resultado.Data, JsonRequestBehavior.AllowGet).Data;
             return View();
         }
 
