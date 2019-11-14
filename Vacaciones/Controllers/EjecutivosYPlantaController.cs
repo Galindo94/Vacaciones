@@ -129,7 +129,7 @@ namespace Vacaciones.Controllers
                     apllds_slctnte = ApellidosEmpleado,
                     fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                     fcha_fn_vcc = Convert.ToDateTime(FechaFin),
-                    nmro_ds = double.Parse(NumeroDias),
+                    nmro_ds = int.Parse(NumeroDias),
                     sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
                     fcha_hra_aprvc = DateTime.Now,
                     fcha_hra_rgstro_nvdd = DateTime.Now,

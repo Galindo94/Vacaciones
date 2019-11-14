@@ -21,7 +21,10 @@ namespace Vacaciones.Controllers
         // GET: VacacionesIntranet
         public ActionResult Index()
         {
-            ViewBag.UsuarioIntranet = System.Web.HttpContext.Current.User.Identity.Name;
+            string NombreUser = System.Web.HttpContext.Current.User.Identity.Name;
+            int backSlash = NombreUser.IndexOf("\\");
+            string userName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
+            ViewBag.UsuarioIntranet = userName;
             return View();
         }
 

@@ -8,6 +8,10 @@
     <script type="text/javascript">
         $(document).ready(function () {
             $("#btnIngresarVacacionesIntranet").click(function () {
+
+                $("#DivFondoTrasparente").show();
+                $("#DivCirculoAzul").show();
+
                 $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (oRespuestaDA) {
                     switch (oRespuestaDA.Codigo) {
 
@@ -16,6 +20,10 @@
                                 switch (oRespuestaSAP.Codigo) {
 
                                     case "5":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
                                         swal.fire({
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'warning',
@@ -30,9 +38,13 @@
 
                                         $.post("../VacacionesIntranet/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
 
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
                                             switch (oRespuestaMotorReglas.Codigo) {
 
-                                                case "1":
+                                                case "1":                                                 
+
                                                     var resultado = oRespuestaMotorReglas.Resultado.Data.Escenario[0].Url.split('$');
                                                     var url = $("#RedirectTo").val();
                                                     url = url.replace("ActionName", resultado[0]);
@@ -41,6 +53,7 @@
                                                     break;
 
                                                 case "-1":
+                                                    
                                                     swal.fire({
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
@@ -79,6 +92,10 @@
 
 
                                     case "3":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
                                         swal.fire({
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
@@ -91,6 +108,10 @@
 
 
                                     case "2":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
                                         swal.fire({
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
@@ -102,6 +123,10 @@
                                         break;
 
                                     case "1":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
                                         swal.fire({
                                             text: oRespuestaSAP.Mensaje,
                                             type: 'error',
@@ -117,6 +142,10 @@
 
                          //El usuario no puede ser vacio
                         case "-1":
+
+                            $("#DivFondoTrasparente").hide();
+                            $("#DivCirculoAzul").hide();
+
                             swal.fire({
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
@@ -134,6 +163,10 @@
 
                          // El usuario no se encontro en el DA
                         case "-2":
+
+                            $("#DivFondoTrasparente").hide();
+                            $("#DivCirculoAzul").hide();
+
                             swal.fire({
                                 text: oRespuestaDA.Mensaje,
                                 type: 'warning',
@@ -151,6 +184,10 @@
 
                         // Error en el Servicio del DA
                         case "-3":
+
+                            $("#DivFondoTrasparente").hide();
+                            $("#DivCirculoAzul").hide();
+
                             swal.fire({
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
@@ -163,6 +200,10 @@
 
                         // Se encontro usuario pero no tiene informacion basica
                         case "-4":
+
+                            $("#DivFondoTrasparente").hide();
+                            $("#DivCirculoAzul").hide();
+
                             swal.fire({
                                 text: oRespuestaDA.Mensaje,
                                 type: 'error',
@@ -179,6 +220,8 @@
                             break;
                     }
                 });
+
+               
             });
         });
     </script>

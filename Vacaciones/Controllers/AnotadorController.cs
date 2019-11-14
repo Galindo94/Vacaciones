@@ -22,6 +22,8 @@ namespace Vacaciones.Controllers
 
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
         readonly string URIAprobacion = WebConfigurationManager.AppSettings["URIAprobacion"].ToString();
+        readonly string IdSolicitud = WebConfigurationManager.AppSettings["IdSolicitud"].ToString();
+        readonly string CorreoJefe = WebConfigurationManager.AppSettings["CorreoJefe"].ToString();
         MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
         RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
 
@@ -57,7 +59,7 @@ namespace Vacaciones.Controllers
                     switch (oReglas.Prmtro)
                     {
                         case "NroDias":
-                            ViewBag.NumeroDias = 30; // oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
+                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
                             break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
@@ -156,7 +158,7 @@ namespace Vacaciones.Controllers
                                     nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
                                     fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                                     fcha_fn_vcc = Convert.ToDateTime(FechaFin),
-                                    nmro_ds = double.Parse(NumeroDias),
+                                    nmro_ds = int.Parse(NumeroDias),
                                     sbdo_hbl = oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? false : true,
                                     fcha_hra_aprvc = DateTime.Now,
                                     fcha_hra_rgstro_nvdd = DateTime.Now,
@@ -206,7 +208,7 @@ namespace Vacaciones.Controllers
                                 nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
                                 fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                                 fcha_fn_vcc = Convert.ToDateTime(FechaFin),
-                                nmro_ds = double.Parse(NumeroDias),
+                                nmro_ds = int.Parse(NumeroDias),
                                 sbdo_hbl = SabadoHabil == "NO" ? false : true,
                                 fcha_hra_aprvc = DateTime.Now,
                                 fcha_hra_rgstro_nvdd = DateTime.Now,
@@ -254,7 +256,7 @@ namespace Vacaciones.Controllers
                         {
                             if (item.nmroDcmnto == NroIdentificacion)
                             {
-                                item.nmro_ds = double.Parse(NumeroDias);
+                                item.nmro_ds = int.Parse(NumeroDias);
                                 item.fcha_inco_vccns = Convert.ToDateTime(FechaInicio);
                                 item.fcha_fn_vcc = Convert.ToDateTime(FechaFin);
                                 break;
@@ -660,7 +662,7 @@ namespace Vacaciones.Controllers
 
         }
 
-        public JsonResult EnviarNotificacionFlow(string oDataActual)
+        public JsonResult EnviarNotificacionFlow(string oDataActual, string oIdSolicitud)
         {
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
             List<string> oLstCorreos = new List<string>();
@@ -672,7 +674,10 @@ namespace Vacaciones.Controllers
                 string URIAprobacionyRechazo = Request.Url.Scheme + //Https
                                                "://" + Request.Url.Authority + //WWW.
                                                Request.ApplicationPath.TrimEnd('/') + "/" + //Base del sitio
-                                               URIAprobacion; // AprobacionYRechazo/Index
+                                               URIAprobacion + // AprobacionYRechazo/Index
+                                               IdSolicitud + int.Parse(oIdSolicitud) + "&" +
+                                               CorreoJefe;
+
 
                 oLstSolicitudDetalle = GenerarObjetoSolicitudDetalle(oDataActual);
 
@@ -710,8 +715,8 @@ namespace Vacaciones.Controllers
                         correo += "<tr>" +
                                         "<th>" + oDetalle.codEmpldo + "</th>" +
                                         "<th>" + oDetalle.nmbre_cmplto + "</th>" +
-                                        "<th>" + oDetalle.fcha_inco_vccns + "</th>" +
-                                        "<th>" + oDetalle.fcha_fn_vcc + "</th>" +
+                                        "<th>" + oDetalle.fcha_inco_vccns.ToShortDateString() + "</th>" +
+                                        "<th>" + oDetalle.fcha_fn_vcc.ToShortDateString() + "</th>" +
                                         "<th>" + oDetalle.nmro_ds + "</th>" +
                                   "</tr>";
 
@@ -739,7 +744,7 @@ namespace Vacaciones.Controllers
                     {
                         CorreoJefe = oCorreo,
                         lista = correo,
-                        url = URIAprobacionyRechazo,
+                        url = URIAprobacionyRechazo + oCorreo,
                         opt = 3
                     };
 

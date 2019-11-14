@@ -679,8 +679,8 @@
                                     if (result.value) {
                                         setTimeout(function () {
                                             $("#kendocalendar_1").val('');
-                                            $("#NumDias0").val('');
-                                            $("#NumDias0").focus();
+                                            $("#NumDias1").val('');
+                                            $("#NumDias1").focus();
                                         }, 500)
                                     }
                                 });
@@ -961,6 +961,8 @@
 
                     $.post("../Anotador/GuardarSolicitud", {
                         NroIdentificacionAnotador: $("#NroIdentificacionHidden").val(),
+                        NombresEmpleadoAnotador: $("#SpanNombreEmpleado0").html(),
+                        ApellidosEmpleadoAnotador: $("#SpanApellidoEmpleado0").html(),
                         oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
                         oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
 
@@ -970,6 +972,7 @@
 
                                 $.post("../Anotador/EnviarNotificacionFlow", {
                                     oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
+                                    oIdSolicitud: oRespuestaGuardar.Resultado.Data.Resultado,
                                 });
 
                                 //Aqui se debe hacer el envio de la notificacion

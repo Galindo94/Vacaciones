@@ -12,7 +12,7 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
 
         public DateTime fcha_fn_vcc { get; set; }
 
-        public double nmro_ds { get; set; }
+        public int nmro_ds { get; set; }
 
         public bool sbdo_hbl { get; set; }
 
