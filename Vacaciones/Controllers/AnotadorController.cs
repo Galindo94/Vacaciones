@@ -701,7 +701,7 @@ namespace Vacaciones.Controllers
 
                 foreach (var oCorreo in oLstCorreos)
                 {
-                    string correo = "<Table>";
+                    string correo = "<Table cellpadding=0 cellspacing=0 border=1>";
                     correo += "<tr>" +
                                     "<th> Código del empleado </th>" +
                                     "<th> Nombres y apellidos </th>" +
@@ -715,15 +715,15 @@ namespace Vacaciones.Controllers
                         if (oDetalle.crreo_jfe_slctnte == oCorreo)
                         {
                             correo += "<tr>" +
-                                        "<th>" + oDetalle.codEmpldo + "</th>" +
-                                        "<th>" + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte + "</th>" +
-                                        "<th>" + oDetalle.fcha_inco_vccns.ToShortDateString() + "</th>" +
-                                        "<th>" + oDetalle.fcha_fn_vcc.ToShortDateString() + "</th>" +
-                                        "<th>" + oDetalle.nmro_ds + "</th>" +
+                                        "<td>" + oDetalle.codEmpldo + "</td>" +
+                                        "<td>" + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte + "</td>" +
+                                        "<td>" + oDetalle.fcha_inco_vccns.ToShortDateString() + "</td>" +
+                                        "<td>" + oDetalle.fcha_fn_vcc.ToShortDateString() + "</td>" +
+                                        "<td>" + oDetalle.nmro_ds + "</td>" +
                                         "</tr>";
 
 
-                            oFlow.correoSolicitante = "luis.aragon@mvm.com.co"; //oDetalle.crreo_slctnte;
+                            oFlow.correoSolicitante = oDetalle.crreo_slctnte;
                             oFlow.nombreSolicitante = oDetalle.nmbrs_slctnte + " " + oDetalle.apllds_slctnte;
                             oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
                             oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
@@ -731,7 +731,7 @@ namespace Vacaciones.Controllers
 
 
                             //Aqui se debe enviar notificacion individual
-                            //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                            oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                             if (oMensajeRespuesta.Codigo != "1")
                             {
@@ -739,12 +739,7 @@ namespace Vacaciones.Controllers
                                     oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
                             }
 
-
                         }
-
-
-
-
                     }
 
                     correo += "</Table>";
@@ -753,14 +748,14 @@ namespace Vacaciones.Controllers
                     {
                         CorreoJefe = oCorreo,
                         lista = correo,
-                        url = URIAprobacionyRechazo + oCorreo,
+                        url = "<a href=" + URIAprobacionyRechazo + oCorreo + ">Haga clic aqui </a>",
                         opt = 3
                     };
 
                     correo = string.Empty;
 
                     //Aqui se debe enviar notificacion individual
-                    //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                     if (oMensajeRespuesta.Codigo != "1")
                         Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);

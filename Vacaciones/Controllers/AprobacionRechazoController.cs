@@ -37,8 +37,8 @@ namespace Vacaciones.Controllers
                 ConsumoAPIFlow consFlow = new ConsumoAPIFlow();
                 FlowModels item = new FlowModels();
                 item.cnsctvo_slctd = fk_slctd_encbzdo;
-                item.CorreoJefe = crreo_slctnte;
-                item.correoSolicitante = crreo_jfe_slctnte;
+                item.CorreoJefe = crreo_jfe_slctnte;
+                item.correoSolicitante = crreo_slctnte;
                 item.fecha_inicio = fcha_inco_vccns.ToString();
                 item.fecha_fin = fcha_fn_vcc.ToString();
                 item.opt = 2;
