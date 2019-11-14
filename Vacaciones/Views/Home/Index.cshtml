@@ -36,13 +36,13 @@
                     $("#DivCirculoAzul").show();
 
                     $.getJSON("/Home/ConsultarUserSAP", { NroDocumento: parseInt($("#NroDocumento").val()) }, function (oRespuestaSAP) {
-
-                        $("#DivFondoTrasparente").hide();
-                        $("#DivCirculoAzul").hide();
-
                         switch (oRespuestaSAP.Codigo) {
 
                             case "5":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
                                 swal.fire({
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'warning',
@@ -54,25 +54,28 @@
                                 break;
 
                             case "4":
-
-                                $("#DivFondoTrasparente").show();
-                                $("#DivCirculoAzul").show();
-
                                 $.post("../Home/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
 
-                                    $("#DivFondoTrasparente").hide();
-                                    $("#DivCirculoAzul").hide();
-
                                     switch (oRespuestaMotorReglas.Codigo) {
+
                                         case "1":
+
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
                                             var resultado = oRespuestaMotorReglas.Resultado.Data.Escenario[0].Url.split('$');
                                             var url = $("#RedirectTo").val();
                                             url = url.replace("ActionName", resultado[0]);
                                             url = url.replace("ControllerName", resultado[1]);
                                             $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST");
+
                                             break;
 
                                         case "-1":
+
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
                                             swal.fire({
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
@@ -84,6 +87,10 @@
                                             break;
 
                                         case "-2":
+
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
                                             swal.fire({
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
@@ -95,6 +102,10 @@
                                             break;
 
                                         case "-3":
+
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
                                             swal.fire({
                                                 text: oRespuestaMotorReglas.Mensaje,
                                                 type: 'error',
@@ -109,6 +120,10 @@
                                 break;
 
                             case "3":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
                                 swal.fire({
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',
@@ -120,6 +135,10 @@
                                 break;
 
                             case "2":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
                                 swal.fire({
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',
@@ -131,6 +150,10 @@
                                 break;
 
                             case "1":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
                                 swal.fire({
                                     text: oRespuestaSAP.Mensaje,
                                     type: 'error',

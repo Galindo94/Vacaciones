@@ -66,22 +66,13 @@
         </div>
     </div>
 
-    <nav class="navbar navbar-expand-lg navbar-dark bg-dark">
-        <a class="navbar-brand" href="#">Vacaciones</a>
-        <div class="collapse navbar-collapse" id="navbarSupportedContent">
-            <ul class="navbar-nav mr-auto">
-                <li class="nav-item active">
-                    @Html.ActionLink("Inicio", "Index", "Home", new { area = "" }, new { @class = "nav-link" })
-                </li>
-            </ul>
-        </div>
-    </nav>
+    
     <br />
     <div class="container body-content">
         @RenderBody()
     </div>
 
-    <footer class="footer text-center d-flex align-items-center">
+    <footer class="footer text-center d-flex align-items-center center">
         <div class="container pb-0">
             <hr />
             <p>Copyright &copy; @DateTime.Now.Year All Rights Reserved.</p>
