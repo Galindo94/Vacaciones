@@ -24,7 +24,7 @@ namespace Vacaciones.Controllers
             return View();
         }
 
-        public JsonResult EnviarCambioEstado(int Id, int estado, int csctvo_slctd, string crreo_jfe_slctnte, DateTime fcha_inco_vccns, DateTime fcha_fn_vcc, string nmbre_cmplto, int fk_slctd_encbzdo)
+        public JsonResult EnviarCambioEstado(int Id, int estado, int csctvo_slctd, string crreo_jfe_slctnte, DateTime fcha_inco_vccns, DateTime fcha_fn_vcc, string nmbre_cmplto, int fk_slctd_encbzdo, string crreo_slctnte)
         {
             ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
             ResultadoCambioEstado oMensajeRespuesta = new ResultadoCambioEstado();
@@ -37,8 +37,8 @@ namespace Vacaciones.Controllers
                 ConsumoAPIFlow consFlow = new ConsumoAPIFlow();
                 FlowModels item = new FlowModels();
                 item.cnsctvo_slctd = fk_slctd_encbzdo;
-                item.CorreoJefe = "montoyacesar88@gmail.com";
-                item.correoSolicitante = "montoyacesar88@hotmail.com";
+                item.CorreoJefe = crreo_slctnte;
+                item.correoSolicitante = crreo_jfe_slctnte;
                 item.fecha_inicio = fcha_inco_vccns.ToString();
                 item.fecha_fin = fcha_fn_vcc.ToString();
                 item.opt = 2;

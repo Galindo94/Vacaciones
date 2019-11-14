@@ -41,6 +41,16 @@
                         hidden: true
                     },
                     {
+                        field: "crreo_slctnte",
+                        title: "Correo Solicitante",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                        hidden: true
+                    },
+                    {
                         field: "nmroDcmnto",
                         title: "Documento",
                         width: 100,
@@ -116,7 +126,8 @@
                                                             fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
                                                             fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                             nmbre_cmplto: item.nmbre_cmplto,
-                                                            fk_slctd_encbzdo: item.fk_slctd_encbzdo
+                                                            fk_slctd_encbzdo: item.fk_slctd_encbzdo,
+                                                            crreo_slctnte: item.crreo_slctnte
                                                         },
                                                         function (Resultado) {
                                                             if (Resultado.Resultado.Data == "[]") {
@@ -173,7 +184,8 @@
                                                         fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
                                                         fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                         nmbre_cmplto: item.nmbre_cmplto,
-                                                        fk_slctd_encbzdo: item.fk_slctd_encbzdo
+                                                        fk_slctd_encbzdo: item.fk_slctd_encbzdo,
+                                                        crreo_slctnte: item.crreo_slctnte
                                                     },
                                                         function (Resultado) {
                                                             if (Resultado.Codigo == 1) {

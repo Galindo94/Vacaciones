@@ -14,6 +14,7 @@ namespace Vacaciones.Models.ModelosAproRechazo
         public int nmro_ds { get; set; }
         public DateTime fcha_inco_vccns { get; set; }
         public DateTime fcha_fn_vcc { get; set; }
+        public string crreo_slctnte { get; set; }
     }
 
     public class ResultadoCambioEstado
