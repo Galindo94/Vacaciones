@@ -80,7 +80,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         {
                             //Procesado correctamente
                             case "4":
-                                if (oRespuestaSAPCliente.Details[0].Contingentes.Contigente != null && oRespuestaSAPCliente.Details[0].Contingentes.Contigente.Count > 0)
+                                if (oRespuestaSAPCliente.Details[0].Contingentes.Contigente != null && oRespuestaSAPCliente.Details[0].Contingentes.Contigente.Count > 0 && oRespuestaSAPCliente.Details[0].IdGestor == "NO")
                                 {
                                     foreach (var item in oRespuestaSAPCliente.Details[0].Contingentes.Contigente)
                                     {
