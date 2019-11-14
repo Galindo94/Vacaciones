@@ -12,7 +12,7 @@
                 $("#DivFondoTrasparente").show();
                 $("#DivCirculoAzul").show();
 
-                $.post("../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (oRespuestaDA) {
+                $.post("../../VacacionesIntranet/ConsultarUserDA", { NombreUsuario: "@ViewBag.UsuarioIntranet" }, function (oRespuestaDA) {
                     switch (oRespuestaDA.Codigo) {
 
                         case "0":

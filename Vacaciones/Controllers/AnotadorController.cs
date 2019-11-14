@@ -705,37 +705,46 @@ namespace Vacaciones.Controllers
                     correo += "<tr>" +
                                     "<th> Código del empleado </th>" +
                                     "<th> Nombres y apellidos </th>" +
-                                    "<th> Fecha de inicio </th>" +
-                                    "<th> Fecha de fin </th>" +
-                                    "<th> Nro. Días </th> " +
+                                    "<th> Inicio de vacaciones </th>" +
+                                    "<th> Fin de vacaciones </th>" +
+                                    "<th> Nro. de días a disfrutar </th> " +
                                "</tr>";
 
                     foreach (var oDetalle in oLstSolicitudDetalle)
                     {
-                        correo += "<tr>" +
+                        if (oDetalle.crreo_jfe_slctnte == oCorreo)
+                        {
+                            correo += "<tr>" +
                                         "<th>" + oDetalle.codEmpldo + "</th>" +
-                                        "<th>" + oDetalle.nmbre_cmplto + "</th>" +
+                                        "<th>" + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte + "</th>" +
                                         "<th>" + oDetalle.fcha_inco_vccns.ToShortDateString() + "</th>" +
                                         "<th>" + oDetalle.fcha_fn_vcc.ToShortDateString() + "</th>" +
                                         "<th>" + oDetalle.nmro_ds + "</th>" +
-                                  "</tr>";
+                                        "</tr>";
 
 
-                        oFlow.correoSolicitante = oDetalle.crreo_slctnte;
-                        oFlow.nombreSolicitante = oDetalle.nmbrs_slctnte + " " + oDetalle.apllds_slctnte;
-                        oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
-                        oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
-                        oFlow.opt = 4;
+                            oFlow.correoSolicitante = "luis.aragon@mvm.com.co"; //oDetalle.crreo_slctnte;
+                            oFlow.nombreSolicitante = oDetalle.nmbrs_slctnte + " " + oDetalle.apllds_slctnte;
+                            oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
+                            oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
+                            oFlow.opt = 4;
 
 
-                        //Aqui se debe enviar notificacion individual
-                        oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                            //Aqui se debe enviar notificacion individual
+                            //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
-                        if (oMensajeRespuesta.Codigo != "1")
-                        {
-                            Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
-                                oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+                            if (oMensajeRespuesta.Codigo != "1")
+                            {
+                                Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
+                                    oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+                            }
+
+
                         }
+
+
+
+
                     }
 
                     correo += "</Table>";
@@ -748,8 +757,10 @@ namespace Vacaciones.Controllers
                         opt = 3
                     };
 
+                    correo = string.Empty;
+
                     //Aqui se debe enviar notificacion individual
-                    oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                     if (oMensajeRespuesta.Codigo != "1")
                         Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);
