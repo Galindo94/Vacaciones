@@ -22,7 +22,9 @@ namespace Vacaciones.Controllers
         public ActionResult Index()
         {
             string NombreUser = System.Web.HttpContext.Current.User.Identity.Name;
-            ViewBag.UsuarioIntranet = NombreUser.Split('\')[1];
+            int backSlash = NombreUser.IndexOf("\\");
+            string userName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
+            ViewBag.UsuarioIntranet = userName;
             return View();
         }
 
