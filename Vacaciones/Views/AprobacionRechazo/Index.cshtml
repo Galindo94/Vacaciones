@@ -188,6 +188,12 @@
                                                         crreo_slctnte: item.crreo_slctnte
                                                     },
                                                         function (Resultado) {
+                                                            if (Resultado.Resultado.Data == "[]") {
+                                                                $("#rowSelection").data('kendoGrid').dataSource.data([]);
+                                                            }
+                                                            else {
+                                                                $('#rowSelection').data("kendoGrid").dataSource.data(Resultado.Resultado.Data);
+                                                            }
                                                             if (Resultado.Codigo == 1) {
                                                                 swal.fire({
                                                                     text: Resultado.Mensaje,
@@ -197,7 +203,6 @@
                                                                     allowOutsideClick: false,
                                                                     allowEscapeKey: false
                                                                 });
-                                                                $('#rowSelection').data("kendoGrid").dataSource.data(Resultado.Resultado.Data);
                                                             }
                                                             else {
                                                                 swal.fire({
