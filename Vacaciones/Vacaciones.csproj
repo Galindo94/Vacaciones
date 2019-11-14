@@ -16,7 +16,7 @@
     <AssemblyName>Vacaciones</AssemblyName>
     <TargetFrameworkVersion>v4.6.1</TargetFrameworkVersion>
     <MvcBuildViews>false</MvcBuildViews>
-    <UseIISExpress>true</UseIISExpress>
+    <UseIISExpress>false</UseIISExpress>
     <Use64BitIISExpress />
     <IISExpressSSLPort />
     <IISExpressAnonymousAuthentication />
@@ -215,6 +215,7 @@
     <Compile Include="Global.asax.cs">
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
+    <Compile Include="Models\ModelosAproRechazo\SolicitudAR.cs" />
     <Compile Include="Models\ModelosFlow\FlowModels.cs" />
     <Compile Include="Models\ModelosFlow\RespuestaFlowModels.cs" />
     <Compile Include="Models\ModelosGenerales\ModalAnotadoresModels.cs" />
@@ -226,6 +227,7 @@
     <Compile Include="Models\ModelosRespuestaSAP\ContingentesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIAprobacion.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIFlow.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIGuardarSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
@@ -1081,7 +1083,7 @@
           <AutoAssignPort>True</AutoAssignPort>
           <DevelopmentServerPort>51372</DevelopmentServerPort>
           <DevelopmentServerVPath>/</DevelopmentServerVPath>
-          <IISUrl>http://localhost:51372/</IISUrl>
+          <IISUrl>http://localhost/Vacaciones</IISUrl>
           <NTLMAuthentication>False</NTLMAuthentication>
           <UseCustomServer>False</UseCustomServer>
           <CustomServerUrl>

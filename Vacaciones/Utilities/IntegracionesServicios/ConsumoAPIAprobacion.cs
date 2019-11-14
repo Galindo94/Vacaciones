@@ -18,6 +18,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
         readonly string URIAproRecha = WebConfigurationManager.AppSettings["URIAprobacionRechazo"].ToString();
         readonly string cons = WebConfigurationManager.AppSettings["consecutivo"].ToString();
         readonly string correo = WebConfigurationManager.AppSettings["correo_jefe"].ToString();
+        readonly string URICambioEstado = WebConfigurationManager.AppSettings["URICambiarEstado"].ToString();
         HttpWebRequest oHttpWebRequest;
         Encoding oEncoding;
         HttpWebResponse oHttpWebResponse;
@@ -70,6 +71,53 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oAprobacion, Formatting.Indented), JsonRequestBehavior.AllowGet);
 
                 return oMensajeRespuesta;
+            }
+        }
+
+        public ResultadoCambioEstado CambiarEstadoSolicitud(int Id, int estado)
+        {
+            ResultadoCambioEstado ResultadoAPI = new ResultadoCambioEstado();
+            try
+            {
+                string url = URICambioEstado + "Id=" + Id + "&estado=" + estado;
+
+                oHttpWebRequest = (HttpWebRequest)WebRequest.Create(url);
+                oHttpWebRequest.ContentType = "application/json";
+                oHttpWebRequest.Method = "GET";
+                oEncoding = Encoding.GetEncoding("utf-8");
+                oHttpWebResponse = (HttpWebResponse)oHttpWebRequest.GetResponse();
+
+                if (oHttpWebResponse.StatusCode == HttpStatusCode.OK)
+                {
+                    StreamReader oStreamReader = new StreamReader(oHttpWebResponse.GetResponseStream());
+                    var Resultado = oStreamReader.ReadToEnd();
+                    ResultadoAPI = JsonConvert.DeserializeObject<ResultadoCambioEstado>(Resultado);
+
+                    //oMensajeRespuesta.Codigo = oAprobacion.Error.ID.ToString();
+                    return ResultadoAPI;
+                }
+                else
+                {
+                    Logger.Error("Ocurrió un error tratando de consultar la API de cambio de estado (api/Solicitud/ActualizarEstadoSolicitud). Id: " +
+                    Id + ". Id Estado: " + estado +
+                               ". StatusCodeResponse: " + oHttpWebResponse.StatusCode.ToString() +
+                               ". StatusDescription: " + oHttpWebResponse.StatusDescription.ToString());
+
+                    ResultadoAPI.Codigo = -4;
+                    ResultadoAPI.Respuesta = "Se presento un error tratando de consultar la API de cambio de estado. Contacte al administrador del sistema";
+                    return ResultadoAPI;
+                }
+            }
+            catch(Exception Ex)
+            {
+                Logger.Error("Ocurrió un error interno. Id : " + Id +
+                    ". Id Estado: " + estado +
+                    ". Exception: " + Ex);
+
+                ResultadoAPI.Codigo = -5;
+                ResultadoAPI.Respuesta = "Ocurrió un error interno. Contacte al administrador del sistema";
+
+                return ResultadoAPI;
             }
         }
     }

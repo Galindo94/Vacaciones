@@ -21,6 +21,26 @@
                 scrollable: true,
                 columns: [
                     {
+                        field: "id",
+                        title: "ID",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                        hidden: true
+                    },
+                    {
+                        field: "fk_slctd_encbzdo",
+                        title: "ID Consecutivo",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                        hidden: true
+                    },
+                    {
                         field: "nmroDcmnto",
                         title: "Documento",
                         width: 100,
@@ -81,7 +101,48 @@
                                         text: "Aprobar",
                                         click: function (e) {
                                         //Se identifica la fila en la cual se le dio click al boton editar
-                                        var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                            var item = this.dataItem($(e.currentTarget).closest("tr"));
+                                            var grid = $("#rowSelection").data("kendoGrid");
+                                            $(grid.dataSource.data()).each(function (index) {
+                                                if (this.id == item.id) {
+                                                    var csctvo_slctd = getUrlParameter('csctvo_slctd');
+                                                    var crreo_jfe_slctnte = getUrlParameter('crreo_jfe_slctnte');
+                                                    $.post("../AprobacionRechazo/EnviarCambioEstado",
+                                                        {
+                                                            Id: item.id,
+                                                            estado: 2,
+                                                            csctvo_slctd: csctvo_slctd,
+                                                            crreo_jfe_slctnte: crreo_jfe_slctnte,
+                                                            fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
+                                                            fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
+                                                            nmbre_cmplto: item.nmbre_cmplto,
+                                                            fk_slctd_encbzdo: item.fk_slctd_encbzdo
+                                                        },
+                                                        function (Resultado) {
+                                                            if (Resultado.Codigo == 1) {
+                                                                swal.fire({
+                                                                    text: Resultado.Mensaje,
+                                                                    type: 'success',
+                                                                    confirmButtonText: "OK",
+                                                                    confirmButtonColor: '#00AFF0',
+                                                                    allowOutsideClick: false,
+                                                                    allowEscapeKey: false
+                                                                });
+                                                                $('#rowSelection').data("kendoGrid").dataSource.data(Resultado.Resultado.Data);
+                                                            }
+                                                            else {
+                                                                swal.fire({
+                                                                    text: Resultado.Mensaje,
+                                                                    type: 'error',
+                                                                    confirmButtonText: "OK",
+                                                                    confirmButtonColor: '#00AFF0',
+                                                                    allowOutsideClick: false,
+                                                                    allowEscapeKey: false
+                                                                });
+                                                            }
+                                                        });
+                                                }
+                                            });
                                         }
                                     }
                                 ]
@@ -94,7 +155,46 @@
                                         text: "Rechazar",
                                         click: function (e) {
                                             var item = this.dataItem($(e.currentTarget).closest("tr"));
-                                            var grid = $("#rowSelection").data("kendoGrid");     
+                                            var grid = $("#rowSelection").data("kendoGrid");
+                                            $(grid.dataSource.data()).each(function (index) {
+                                                if (this.id == item.id) {
+                                                    var csctvo_slctd = getUrlParameter('csctvo_slctd');
+                                                    var crreo_jfe_slctnte = getUrlParameter('crreo_jfe_slctnte');
+                                                    $.post("../AprobacionRechazo/EnviarCambioEstado", {
+                                                        Id: item.id,
+                                                        estado: 3,
+                                                        csctvo_slctd: csctvo_slctd,
+                                                        crreo_jfe_slctnte: crreo_jfe_slctnte,
+                                                        fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
+                                                        fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
+                                                        nmbre_cmplto: item.nmbre_cmplto,
+                                                        fk_slctd_encbzdo: item.fk_slctd_encbzdo
+                                                    },
+                                                        function (Resultado) {
+                                                            if (Resultado.Codigo == 1) {
+                                                                swal.fire({
+                                                                    text: Resultado.Mensaje,
+                                                                    type: 'success',
+                                                                    confirmButtonText: "OK",
+                                                                    confirmButtonColor: '#00AFF0',
+                                                                    allowOutsideClick: false,
+                                                                    allowEscapeKey: false
+                                                                });
+                                                                $('#rowSelection').data("kendoGrid").dataSource.data(Resultado.Resultado.Data);
+                                                            }
+                                                            else {
+                                                                swal.fire({
+                                                                    text: Resultado.Mensaje,
+                                                                    type: 'error',
+                                                                    confirmButtonText: "OK",
+                                                                    confirmButtonColor: '#00AFF0',
+                                                                    allowOutsideClick: false,
+                                                                    allowEscapeKey: false
+                                                                });
+                                                            }
+                                                        });
+                                                }
+                                            });
                                         }
                                     }
                                 ]
@@ -107,6 +207,21 @@
             $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta)));
 
         });
+
+        var getUrlParameter = function getUrlParameter(sParam) {
+            var sPageURL = window.location.search.substring(1),
+                sURLVariables = sPageURL.split('&'),
+                sParameterName,
+                i;
+
+            for (i = 0; i < sURLVariables.length; i++) {
+                sParameterName = sURLVariables[i].split('=');
+
+                if (sParameterName[0] === sParam) {
+                    return sParameterName[1] === undefined ? true : decodeURIComponent(sParameterName[1]);
+                }
+            }
+        };
     </script>
 </head>
 
