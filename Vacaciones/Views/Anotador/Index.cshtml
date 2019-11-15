@@ -678,7 +678,6 @@
             //Ventana Modal
             //Validacion del campo numero de dias
             $("#NumDias1").focusout(function () {
-                console.log('Entro al focus')
                  if ($("#NumDias1").val() != '') {
                      $.getJSON("/Anotador/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias1").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias1").html()), MinimoDias: $("#MinimoDiasModal").val() }, function (respuesta) {
 
@@ -740,7 +739,6 @@
             });
 
             $("#NumDias1").change(function () {
-                console.log('Entro al change')
                 if ($("#NumDias1").val() != '' && $("#datepicker").val() != '') {
                     $.getJSON("/Anotador/CalcularFechaFin", {
                         NumeroDias: parseInt($("#NumDias1").val()),
@@ -782,20 +780,24 @@
 
                     $($('#rowSelection').data("kendoGrid").dataSource.data()).each(function (index) {
                         if (this.nmroDcmnto == $("#txtCedulaOtros").val()) {
-                                                        exis = true;
+                         exis = true;
                         }
                     });
 
                     if (!exis) {
 
-                        $.getJSON("/Anotador/ConsultarUserSAP", { NroDocumento: parseInt($("#txtCedulaOtros").val()) }, function (oRespuestaSAP) {
+                        $("#DivFondoTrasparente").show();
+                        $("#DivCirculoAzul").show();
 
-                            $("#DivFondoTrasparente").hide();
-                            $("#DivCirculoAzul").hide();
+                        $.getJSON("/Anotador/ConsultarUserSAP", { NroDocumento: parseInt($("#txtCedulaOtros").val()) }, function (oRespuestaSAP) {
 
                             switch (oRespuestaSAP.Codigo) {
 
                                 case "5":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
                                     swal.fire({
                                         text: "El trabajador no cuenta con días disponibles para disfrute de vacaciones",
                                         type: 'warning',
@@ -808,13 +810,13 @@
 
                                 case "4":
 
-                                    $("#DivFondoTrasparente").show();
-                                    $("#DivCirculoAzul").show();
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
 
                                     $.post("../Anotador/ConsultaMotorDeReglas", { RespuestaSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, function (oRespuestaMotorReglas) {
 
-                                        $("#DivFondoTrasparente").hide();
-                                        $("#DivCirculoAzul").hide();
+                                        $("#DivFondoTrasparente").show();
+                                        $("#DivCirculoAzul").show();
 
                                         switch (oRespuestaMotorReglas.Codigo) {
                                             case "1":
@@ -822,6 +824,10 @@
 
                                                     switch (oRespuestaArmarObjetoPantallaModal.Codigo) {
                                                         case "1":
+
+                                                            $("#DivFondoTrasparente").hide();
+                                                            $("#DivCirculoAzul").hide();
+
                                                             //Se manda a abrir la pantalla modal
                                                             $("#ModalOtrosColaboradores").modal({
                                                                 //Evitar que se cierre la modal cuando se da click por fuera de ella
@@ -910,6 +916,10 @@
                                                             break
 
                                                         case "-3":
+
+                                                            $("#DivFondoTrasparente").hide();
+                                                            $("#DivCirculoAzul").hide();
+
                                                             swal.fire({
                                                                 text: oRespuestaArmarObjetoPantallaModal.Mensaje,
                                                                 type: 'error',
@@ -925,6 +935,10 @@
                                                 break;
 
                                             case "-1":
+
+                                                $("#DivFondoTrasparente").hide();
+                                                $("#DivCirculoAzul").hide();
+
                                                 swal.fire({
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
@@ -936,6 +950,10 @@
                                                 break;
 
                                             case "-2":
+
+                                                $("#DivFondoTrasparente").hide();
+                                                $("#DivCirculoAzul").hide();
+
                                                 swal.fire({
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
@@ -947,6 +965,10 @@
                                                 break;
 
                                             case "-3":
+
+                                                $("#DivFondoTrasparente").hide();
+                                                $("#DivCirculoAzul").hide();
+
                                                 swal.fire({
                                                     text: oRespuestaMotorReglas.Mensaje,
                                                     type: 'error',
@@ -961,6 +983,10 @@
                                     break;
 
                                 case "3":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
                                     swal.fire({
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
@@ -972,6 +998,10 @@
                                     break;
 
                                 case "2":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
                                     swal.fire({
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
@@ -983,6 +1013,10 @@
                                     break;
 
                                 case "1":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
                                     swal.fire({
                                         text: oRespuestaSAP.Mensaje,
                                         type: 'error',
@@ -991,6 +1025,71 @@
                                         allowOutsideClick: false,
                                         allowEscapeKey: false
                                     });
+                                    break;
+
+                                case "-1":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
+                                    swal.fire({
+                                        text: oRespuestaSAP.Mensaje,
+                                        type: 'warning',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+
+                                    break;
+
+                                case "-2":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
+                                    swal.fire({
+                                        text: oRespuestaSAP.Mensaje,
+                                        type: 'error',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+
+                                    break;
+
+
+                                case "-3":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
+                                    swal.fire({
+                                        text: oRespuestaSAP.Mensaje,
+                                        type: 'error',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+
+                                    break;
+
+                                case "-4":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
+                                    swal.fire({
+                                        text: oRespuestaSAP.Mensaje,
+                                        type: 'warning',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+
                                     break;
                             }
                         });
@@ -1023,6 +1122,9 @@
             $("#btnAgregar1").click(function () {
                 if ($($('#rowSelection').data("kendoGrid").dataSource.data()).length > 0) {
 
+                    $("#DivFondoTrasparente").show();
+                    $("#DivCirculoAzul").show();
+
                     $.post("../Anotador/GuardarSolicitud", {
                         NroIdentificacionAnotador: $("#NroIdentificacionHidden").val(),
                         NombresEmpleadoAnotador: $("#SpanNombreEmpleado0").html(),
@@ -1033,6 +1135,9 @@
                     }, function (oRespuestaGuardar) {
                         switch (oRespuestaGuardar.Codigo) {
                             case "1":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
 
                                 $.post("../Anotador/EnviarNotificacionFlow", {
                                     oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
@@ -1049,13 +1154,16 @@
                                     allowEscapeKey: false
                                 }).then((result) => {
                                     if (result.value) {
-                                        var url = "@Url.Action("Index", "Home",  null)";
-                                        window.location.href = url
+                                         window.close('', '_parent', '');
                                         }
                                     });
                                 break
 
                             case "-3":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
                                 swal.fire({
                                     text: oRespuestaGuardar.Mensaje,
                                     type: 'error',
@@ -1069,6 +1177,10 @@
                     });
                 }
                 else {
+
+                    $("#DivFondoTrasparente").hide();
+                    $("#DivCirculoAzul").hide();
+
                     swal.fire({
                         text: "Debe ingresar mínimo un ítem a la lista",
                         type: 'warning',
@@ -1279,8 +1391,6 @@
             @Html.Partial("_OtrosColaboradoresEscenario")
             @Html.Partial("_GridEmpleados")
         </div>
-
-
 
         <div class="modal fade  bd-example-modal-lg " id="ModalOtrosColaboradores" role="dialog">
             <div class="modal-dialog modal-lg">

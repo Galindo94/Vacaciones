@@ -124,6 +124,47 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                 oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se encontraron datos con el número del documento enviado";
 
                                 break;
+
+                            case "-1":
+
+                                Logger.Error("El Nro de identificacion no puede ser vacio. Nro. Documento" +
+                                    Identificacion +
+                                   ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
+
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "El Nro. de documento no puede ser vacío";
+
+                                break;
+
+                            case "-2":
+
+                                Logger.Error("Ocurrió un error consultando la información a la API de solicitud de vacaciones. Nro. Documento" +
+                                    Identificacion +
+                                   ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
+
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "Ocurrió un error consultando la información a la API de solicitud de vacaciones";
+
+                                break;
+
+
+                            case "-3":
+
+                                Logger.Error("Ocurrió un error interno en el API de solicitud de vacaciones. Contacte al administrador del sistema . Nro. Documento" +
+                                    Identificacion +
+                                   ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
+
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "Ocurrió un error interno en el API de solicitud de vacaciones. Contacte al administrador del sistema";
+
+                                break;
+
+                            case "-4":
+
+                                Logger.Error("El empleado ya cuenta con una solicitud de vacaciones pendiente de aprobación. Nro. Documento" +
+                                    Identificacion +
+                                   ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
+
+                                oRespuestaSAPCliente.Exception[POS].MESSAGE = "El empleado ya cuenta con una solicitud de vacaciones pendiente de aprobación";
+
+                                break;
                         }
 
                         oMensajeRespuesta.Codigo = oRespuestaSAPCliente.Exception[POS].ID;

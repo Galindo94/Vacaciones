@@ -156,12 +156,77 @@
 
                                 swal.fire({
                                     text: oRespuestaSAP.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
+                            case "-1":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
                                     type: 'error',
                                     confirmButtonText: "OK",
                                     confirmButtonColor: '#00AFF0',
                                     allowOutsideClick: false,
                                     allowEscapeKey: false
                                 });
+
+                                break;
+
+                            case "-2":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+
+                                break;
+
+
+                            case "-3":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
+                                    type: 'error',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+
+                                break;
+
+                            case "-4":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+
                                 break;
                         }
                     });

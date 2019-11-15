@@ -88,6 +88,8 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                             oMensajeRespuesta.Mensaje = "Ocurrió un error consultando la información del motor de reglas. Contacte al administrador del sistema";
 
                             break;
+
+                      
                     }
 
                 }
