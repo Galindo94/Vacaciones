@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosFlow;
@@ -90,7 +91,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser superior a " + MinimoDias,
+                    Mensaje = "La cantidad de días debe ser minimo " + MinimoDias,
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -122,14 +123,13 @@ namespace Vacaciones.Controllers
             RespuestaGuardarSolicitudModels oRespuestaGuardarSolicitudModels = new RespuestaGuardarSolicitudModels();
             try
             {
-
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
                 oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
 
                 oLstSolicitudDetalle.Add(new SolicitudDetalle
                 {
-                    nmbrs_slctnte = NombresEmpleado,
-                    apllds_slctnte = ApellidosEmpleado,
+                    nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado),
+                    apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado),
                     fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                     fcha_fn_vcc = Convert.ToDateTime(FechaFin),
                     nmro_ds = int.Parse(NumeroDias),
@@ -145,8 +145,8 @@ namespace Vacaciones.Controllers
 
 
                 oSolicitudes.fcha_hra_slctd = DateTime.Now;
-                oSolicitudes.nmbrs_slctnte = NombresEmpleado;
-                oSolicitudes.apllds_slctnte = ApellidosEmpleado;
+                oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado);
+                oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado);
                 oSolicitudes.nmro_idntfccn = NroIdentificacion;
                 oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                 oSolicitudes.detalle = oLstSolicitudDetalle;
@@ -156,9 +156,9 @@ namespace Vacaciones.Controllers
                 if (oMensajeRespuesta.Codigo == "1")
                 {
 
-                    string daniel = JsonConvert.SerializeObject(oMensajeRespuesta.Resultado.Data, Formatting.Indented);
+                    string oRespuestaGuardarSolicitud = JsonConvert.SerializeObject(oMensajeRespuesta.Resultado.Data, Formatting.Indented);
 
-                    oRespuestaGuardarSolicitudModels = JsonConvert.DeserializeObject<RespuestaGuardarSolicitudModels>(daniel);
+                    oRespuestaGuardarSolicitudModels = JsonConvert.DeserializeObject<RespuestaGuardarSolicitudModels>(oRespuestaGuardarSolicitud);
 
 
 
@@ -172,7 +172,7 @@ namespace Vacaciones.Controllers
                     FlowModels oFlow = new FlowModels
                     {
                         correoSolicitante = oLstSolicitudDetalle[0].crreo_slctnte,
-                        nombreSolicitante = oLstSolicitudDetalle[0].nmbrs_slctnte + " " + oLstSolicitudDetalle[0].apllds_slctnte,
+                        nombreSolicitante = HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].nmbrs_slctnte) + " " + HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].apllds_slctnte),
                         fecha_fin = oLstSolicitudDetalle[0].fcha_fn_vcc.ToShortDateString(),
                         fecha_inicio = oLstSolicitudDetalle[0].fcha_inco_vccns.ToShortDateString(),
                         CorreoJefe = oLstSolicitudDetalle[0].crreo_jfe_slctnte,

@@ -742,6 +742,18 @@
                             $("#DivCirculoAzul").hide();
 
                             switch (oRespuestaSAP.Codigo) {
+
+                                case "5":
+                                    swal.fire({
+                                        text: oRespuestaSAP.Mensaje,
+                                        type: 'warning',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
+
                                 case "4":
 
                                     $("#DivFondoTrasparente").show();

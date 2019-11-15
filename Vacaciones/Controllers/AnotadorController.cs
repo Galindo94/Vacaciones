@@ -4,6 +4,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq;
+using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosFlow;
@@ -153,9 +154,9 @@ namespace Vacaciones.Controllers
                                 oLstSolicitudDetalle.Add(new SolicitudDetalle
                                 {
                                     nmroDcmnto = NroIdentificacion,
-                                    nmbrs_slctnte = NombresEmpleado,
-                                    apllds_slctnte = ApellidosEmpleado,
-                                    nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
+                                    nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado),
+                                    apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado),
+                                    nmbre_cmplto = HttpUtility.HtmlDecode(NombresEmpleado) + " " + HttpUtility.HtmlDecode(ApellidosEmpleado),
                                     fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                                     fcha_fn_vcc = Convert.ToDateTime(FechaFin),
                                     nmro_ds = int.Parse(NumeroDias),
@@ -203,9 +204,9 @@ namespace Vacaciones.Controllers
                             oLstSolicitudDetalle.Add(new SolicitudDetalle
                             {
                                 nmroDcmnto = NroIdentificacion,
-                                nmbrs_slctnte = NombresEmpleado,
-                                apllds_slctnte = ApellidosEmpleado,
-                                nmbre_cmplto = NombresEmpleado + " " + ApellidosEmpleado,
+                                nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado),
+                                apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado),
+                                nmbre_cmplto = HttpUtility.HtmlDecode(NombresEmpleado) + " " + HttpUtility.HtmlDecode(ApellidosEmpleado),
                                 fcha_inco_vccns = Convert.ToDateTime(FechaInicio),
                                 fcha_fn_vcc = Convert.ToDateTime(FechaFin),
                                 nmro_ds = int.Parse(NumeroDias),
@@ -307,7 +308,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser superior a " + MinimoDias,
+                    Mensaje = "La cantidad de días debe ser minimo  " + MinimoDias,
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -491,11 +492,11 @@ namespace Vacaciones.Controllers
                 oRespuestaSap = JsonConvert.DeserializeObject<RespuestaSAPModels>(RespuestaSAP);
 
 
-                oModalAnotadoresModels.NombreEmpleado = oRespuestaSap.Details[0].PrimerNombre + " " +
-                                                        oRespuestaSap.Details[0].SegundoNombre + " ";
+                oModalAnotadoresModels.NombreEmpleado = HttpUtility.HtmlDecode(oRespuestaSap.Details[0].PrimerNombre) + " " +
+                                                         HttpUtility.HtmlDecode(oRespuestaSap.Details[0].SegundoNombre) + " ";
 
-                oModalAnotadoresModels.ApellidoEmpleado = oRespuestaSap.Details[0].PrimerApellido + " " +
-                                                        oRespuestaSap.Details[0].SegundoApellido;
+                oModalAnotadoresModels.ApellidoEmpleado = HttpUtility.HtmlDecode(oRespuestaSap.Details[0].PrimerApellido) + " " +
+                                                         HttpUtility.HtmlDecode(oRespuestaSap.Details[0].SegundoApellido);
 
 
 
@@ -568,8 +569,8 @@ namespace Vacaciones.Controllers
                         {
                             oLstSolicitudDetalle.Add(new SolicitudDetalle
                             {
-                                nmbrs_slctnte = item.nmbrs_slctnte,
-                                apllds_slctnte = item.apllds_slctnte,
+                                nmbrs_slctnte = HttpUtility.HtmlDecode(item.nmbrs_slctnte),
+                                apllds_slctnte = HttpUtility.HtmlDecode(item.apllds_slctnte),
                                 fcha_inco_vccns = item.fcha_inco_vccns,
                                 fcha_fn_vcc = item.fcha_fn_vcc,
                                 nmro_ds = item.nmro_ds,
@@ -613,8 +614,8 @@ namespace Vacaciones.Controllers
                     oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
 
                     oSolicitudes.fcha_hra_slctd = DateTime.Now;
-                    oSolicitudes.nmbrs_slctnte = NombresEmpleadoAnotador;
-                    oSolicitudes.apllds_slctnte = ApellidosEmpleadoAnotador;
+                    oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleadoAnotador);
+                    oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleadoAnotador);
                     oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
                     oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                     oSolicitudes.detalle = GenerarObjetoSolicitudDetalle(oDataActual);
@@ -696,9 +697,6 @@ namespace Vacaciones.Controllers
                     }
                 }
 
-
-
-
                 foreach (var oCorreo in oLstCorreos)
                 {
                     string correo = "<Table cellpadding=0 cellspacing=0 border=1>";
@@ -724,12 +722,12 @@ namespace Vacaciones.Controllers
 
 
                             oFlow.correoSolicitante = oDetalle.crreo_slctnte;
-                            oFlow.nombreSolicitante = oDetalle.nmbrs_slctnte + " " + oDetalle.apllds_slctnte;
+                            oFlow.nombreSolicitante = HttpUtility.HtmlDecode(oDetalle.nmbrs_slctnte) + " " + HttpUtility.HtmlDecode(oDetalle.apllds_slctnte);
                             oFlow.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
                             oFlow.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
                             oFlow.opt = 4;
 
-
+                            oMensajeRespuesta = new MensajeRespuesta();
                             //Aqui se debe enviar notificacion individual
                             oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
@@ -737,6 +735,7 @@ namespace Vacaciones.Controllers
                             {
                                 Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
                                     oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+                                oMensajeRespuesta = new MensajeRespuesta();
                             }
 
                         }
@@ -754,15 +753,16 @@ namespace Vacaciones.Controllers
 
                     correo = string.Empty;
 
+                    oMensajeRespuesta = new MensajeRespuesta();
                     //Aqui se debe enviar notificacion individual
                     oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                     if (oMensajeRespuesta.Codigo != "1")
+                    {
                         Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);
-
+                        oMensajeRespuesta = new MensajeRespuesta();
+                    }
                 }
-
-
 
                 oMensajeRespuesta.Codigo = "1";
                 oMensajeRespuesta.Mensaje = "Se genero la lista de correos satisfactoriamente";
