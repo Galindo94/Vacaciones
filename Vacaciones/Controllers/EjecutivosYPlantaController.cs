@@ -140,7 +140,8 @@ namespace Vacaciones.Controllers
                     crreo_jfe_slctnte = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorpJefe) ? oRespuestaSAPModels.Details[0].CorreoCorpJefe : oRespuestaSAPModels.Details[0].CorreoPersonalJefe,
                     codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
                     idEstdoSlctd = 1,
-                    scdd = oRespuestaSAPModels.Details[0].Sociedad
+                    scdd = oRespuestaSAPModels.Details[0].Sociedad,
+                    idntfccn_slctnte = NroIdentificacion
                 });
 
 
@@ -180,7 +181,7 @@ namespace Vacaciones.Controllers
                         opt = 1
                     };
 
-                    oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    //oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
                 }
 
 

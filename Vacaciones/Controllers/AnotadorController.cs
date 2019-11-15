@@ -60,7 +60,7 @@ namespace Vacaciones.Controllers
                     switch (oReglas.Prmtro)
                     {
                         case "NroDias":
-                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
+                            ViewBag.NumeroDias = "30";//oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
                             break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
@@ -303,22 +303,34 @@ namespace Vacaciones.Controllers
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
 
-            if (NumeroDias < MinimoDias)
+            if (NumeroDias > 0)
             {
-                oMensajeRespuesta = new MensajeRespuesta
+                if (NumeroDias < MinimoDias)
                 {
-                    Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser minimo  " + MinimoDias,
-                    Resultado = Json("", JsonRequestBehavior.AllowGet)
-                };
-            }
+                    oMensajeRespuesta = new MensajeRespuesta
+                    {
+                        Codigo = "1",
+                        Mensaje = "La cantidad de días debe ser minimo  " + MinimoDias,
+                        Resultado = Json("", JsonRequestBehavior.AllowGet)
+                    };
+                }
 
-            if (NumeroDias > NumDiasDisponibles)
+                if (NumeroDias > NumDiasDisponibles)
+                {
+                    oMensajeRespuesta = new MensajeRespuesta
+                    {
+                        Codigo = "2",
+                        Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles (" + NumDiasDisponibles + ")",
+                        Resultado = Json("", JsonRequestBehavior.AllowGet)
+                    };
+                }
+            }
+            else
             {
                 oMensajeRespuesta = new MensajeRespuesta
                 {
-                    Codigo = "2",
-                    Mensaje = "La cantidad de días debe ser menor o igual al número de días disponibles (" + NumDiasDisponibles + ")",
+                    Codigo = "3",
+                    Mensaje = "La cantidad de días debe ser mayor a 0",
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -581,7 +593,8 @@ namespace Vacaciones.Controllers
                                 crreo_jfe_slctnte = item.crreo_jfe_slctnte,
                                 codEmpldo = item.codEmpldo,
                                 idEstdoSlctd = 1,
-                                scdd = item.scdd
+                                scdd = item.scdd,
+                                idntfccn_slctnte = item.nmroDcmnto
                             });
                         }
 
@@ -729,7 +742,7 @@ namespace Vacaciones.Controllers
 
                             oMensajeRespuesta = new MensajeRespuesta();
                             //Aqui se debe enviar notificacion individual
-                            oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                            //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                             if (oMensajeRespuesta.Codigo != "1")
                             {
@@ -755,7 +768,7 @@ namespace Vacaciones.Controllers
 
                     oMensajeRespuesta = new MensajeRespuesta();
                     //Aqui se debe enviar notificacion individual
-                    oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                     if (oMensajeRespuesta.Codigo != "1")
                     {
