@@ -54,7 +54,6 @@ namespace Vacaciones.Controllers
                 ViewBag.NombresEmpleado = oRespuestaSAPModels.Details[0].PrimerNombre + " " + oRespuestaSAPModels.Details[0].SegundoNombre + " ";
                 ViewBag.ApellidosEmpleado = oRespuestaSAPModels.Details[0].PrimerApellido + " " + oRespuestaSAPModels.Details[0].SegundoApellido;
 
-                ViewBag.CorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
 
                 foreach (var oReglas in oRespuestaMotor.Reglas)
                 {
@@ -618,12 +617,13 @@ namespace Vacaciones.Controllers
         }
 
         public JsonResult GuardarSolicitud(string NroIdentificacionAnotador, string NombresEmpleadoAnotador, string ApellidosEmpleadoAnotador,
-                                           string oCorreoAnotador, string oRespuestaMotor, string oDataActual)
+                                           string oRespuestaMotor, string oDataActual)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
             RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
             Solicitudes oSolicitudes = new Solicitudes();
+            string oCorreoAnotador = string.Empty;
 
             try
             {
@@ -631,12 +631,15 @@ namespace Vacaciones.Controllers
                 {
                     oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
 
+                    oCorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
+
                     oSolicitudes.fcha_hra_slctd = DateTime.Now;
                     oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleadoAnotador);
                     oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleadoAnotador);
                     oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
                     oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                     oSolicitudes.detalle = GenerarObjetoSolicitudDetalle(oDataActual);
+                    oSolicitudes.crro_antdr = oCorreoAnotador;
                     if (oSolicitudes.detalle != null && oSolicitudes.detalle.Count > 0)
                     {
                         oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);

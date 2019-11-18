@@ -15,6 +15,8 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
 
         public int cdgo_escenario { get; set; }
 
+        public string crro_antdr { get; set; }
+
         public List<SolicitudDetalle> detalle { get; set; }
     }
 }

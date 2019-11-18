@@ -1077,7 +1077,7 @@
                                     break;
 
                                 case "-4":
-
+                                    console.log(Entro);
                                     $("#DivFondoTrasparente").hide();
                                     $("#DivCirculoAzul").hide();
 
@@ -1131,7 +1131,6 @@
                         ApellidosEmpleadoAnotador: $("#SpanApellidoEmpleado0").html(),
                         oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
                         oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
-                        oCorreoAnotador : @Html.Raw(Json.Encode(@ViewBag.CorreoAnotador)),
                     }, function (oRespuestaGuardar) {
                         switch (oRespuestaGuardar.Codigo) {
                             case "1":
