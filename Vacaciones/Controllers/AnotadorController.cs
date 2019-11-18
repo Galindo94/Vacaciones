@@ -362,8 +362,15 @@ namespace Vacaciones.Controllers
             {
                 DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias);
 
-                FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
+                if (NumeroDias == 1)
+                {
+                    FechaFin = Convert.ToDateTime(FechaInicio);
+                }
+                else
+                {
 
+                    FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
+                }
                 oMensajeRespuesta.Codigo = "0";
                 oMensajeRespuesta.Mensaje = "";
                 oMensajeRespuesta.Resultado = Json(FechaFin.ToShortDateString());
