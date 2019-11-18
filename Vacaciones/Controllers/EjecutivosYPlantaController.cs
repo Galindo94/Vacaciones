@@ -63,6 +63,14 @@ namespace Vacaciones.Controllers
                             ViewBag.FinFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
                             break;
 
+                        case "NroMinDiasCorreoCompensacion":
+                            ViewBag.NroMinDiasCorreoCompensacion = int.Parse(oReglas.Vlr_Slda);
+                            break;
+
+                        case "CorreoCompensacion":
+                            ViewBag.CorreoCompensacion = oReglas.Vlr_Slda;
+                            break;
+
                     }
                 }
 
@@ -111,7 +119,9 @@ namespace Vacaciones.Controllers
 
 
         public JsonResult GuardarSolicitud(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
-                                           string oRespuestaSAP, string oRespuestaMotor, string NumeroDias, string SabadoHabil, string FechaInicio, string FechaFin)
+                                           string oRespuestaSAP, string oRespuestaMotor, string NumeroDias,
+                                           string SabadoHabil, string FechaInicio, string FechaFin,
+                                           string NroMinDiasCorreoCompensacion, string CorreoCompensacion)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
@@ -123,6 +133,7 @@ namespace Vacaciones.Controllers
             RespuestaGuardarSolicitudModels oRespuestaGuardarSolicitudModels = new RespuestaGuardarSolicitudModels();
             try
             {
+
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
                 oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
 
@@ -141,7 +152,9 @@ namespace Vacaciones.Controllers
                     codEmpldo = oRespuestaSAPModels.Details[0].NroPersonal,
                     idEstdoSlctd = 1,
                     scdd = oRespuestaSAPModels.Details[0].Sociedad,
-                    idntfccn_slctnte = NroIdentificacion
+                    idntfccn_slctnte = NroIdentificacion,
+                    NroMinDiasCorreoCompensacion = int.Parse(NroMinDiasCorreoCompensacion),
+                    CorreoCompensacion = CorreoCompensacion
                 });
 
 
@@ -151,6 +164,7 @@ namespace Vacaciones.Controllers
                 oSolicitudes.nmro_idntfccn = NroIdentificacion;
                 oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                 oSolicitudes.detalle = oLstSolicitudDetalle;
+                oSolicitudes.crro_antdr = "";
 
                 oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
 
@@ -181,7 +195,23 @@ namespace Vacaciones.Controllers
                         opt = 1
                     };
 
-                    //oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+                    if (oLstSolicitudDetalle[0].nmro_ds <= int.Parse(NroMinDiasCorreoCompensacion))
+                    {
+                        FlowModels oFlowMesaCompensacion = new FlowModels
+                        {
+                            CorreoCompensacion = CorreoCompensacion,
+                            nombreSolicitante = HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].nmbrs_slctnte) + " " + HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].apllds_slctnte),
+                            fecha_inicio = oLstSolicitudDetalle[0].fcha_inco_vccns.ToShortDateString(),
+                            fecha_fin = oLstSolicitudDetalle[0].fcha_fn_vcc.ToShortDateString(),
+                            opt = 5
+                        };
+
+                        oConsumoApiFlow.EnviarNotificacionFlow(oFlowMesaCompensacion);
+                    }
+
+
                 }
 
 
@@ -210,9 +240,19 @@ namespace Vacaciones.Controllers
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             try
             {
+
+               
+
                 DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias);
 
-                FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
+                if (NumeroDias == 1)
+                {
+                    FechaFin = Convert.ToDateTime(FechaInicio);
+                }
+                else
+                {
+                    FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
+                }              
 
                 oMensajeRespuesta.Codigo = "0";
                 oMensajeRespuesta.Mensaje = "";

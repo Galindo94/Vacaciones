@@ -10,7 +10,6 @@
         public int opt { get; set; }
         public string lista { get; set; }
         public string url { get; set; }
-        public string correoNomina { get; set; }
         public string CorreoCompensacion { get; set; }
         public string correoAnotador { get; set; }
 

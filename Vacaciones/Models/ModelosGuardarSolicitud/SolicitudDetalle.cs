@@ -42,7 +42,9 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
         public DateTime FinFecha { get; set; }
         public string DiasFestivosSabadosDomingos { get; set; }
 
+        public int NroMinDiasCorreoCompensacion { get; set; }
 
+        public string CorreoCompensacion { get; set; }
 
     }
 }

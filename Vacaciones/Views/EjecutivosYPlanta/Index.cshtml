@@ -185,7 +185,9 @@
                         NumeroDias: $("#NumDias0").val(),
                         SabadoHabil: "@ViewBag.DiasFestivosSabadosDomingos",
                         FechaInicio: $("#kendocalendar_0").val(),
-                        FechaFin: $("#kendocalendar_1").val()
+                        FechaFin: $("#kendocalendar_1").val(),
+                        NroMinDiasCorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)),
+                        CorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.CorreoCompensacion)),
                     }, function (oRespuestaGuardar) {
 
                         $("#DivFondoTrasparente").hide();

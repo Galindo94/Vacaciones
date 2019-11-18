@@ -306,6 +306,26 @@
                         }
                     },
                     {
+                        field: "NroMinDiasCorreoCompensacion",
+                        title: "Minimo de dias donde se debe enviar el correo de compensacion y nomina",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
+                        field: "CorreoCompensacion",
+                        title: "Lista de correos de compensacion y nomina",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        //hidden: true,
+                        headerAttributes: {
+                            style: "text-align: center"
+                        }
+                    },
+                    {
                         title: "Acciones",
                         headerAttributes: {
                             style: "text-align: center; font-size: 12px; font-weight: bold;"
@@ -582,7 +602,9 @@
                         DataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
                         oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
                         DiasFestivosSabadosDomingos: @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos)),
-                        oRespuestaMotor : @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
+                        oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
+                        oMinimoDiasCorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)),
+                        oCorreoCompensacion : @Html.Raw(Json.Encode(@ViewBag.CorreoCompensacion)),
                     }, function (oRespuestaAgregarOEditarEmpleado) {
 
                         switch (oRespuestaAgregarOEditarEmpleado.Codigo) {
@@ -850,6 +872,8 @@
                                                             $("#CorreoJefeSolicitanteModal").val(oRespuestaArmarObjetoPantallaModal.Resultado.Data.CorreoJefeSolicitante);
                                                             $("#CodigoEmpleadoModal").val(oRespuestaArmarObjetoPantallaModal.Resultado.Data.CodigoEmpleado);
                                                             $("#SociedadModal").val(oRespuestaArmarObjetoPantallaModal.Resultado.Data.Sociedad);
+                                                            $("#MinimoDiasCorreoCompensacionModal").val(oRespuestaArmarObjetoPantallaModal.Resultado.Data.NroMinDiasCorreoCompensacion);
+                                                            $("#CorreoCompensacionModal").val(oRespuestaArmarObjetoPantallaModal.Resultado.Data.CorreoCompensacion);
                                                             $("#SpanNumDias1").html(oRespuestaArmarObjetoPantallaModal.Resultado.Data.NroDias);
                                                             $("#SpanNombreEmpleado1").html(oRespuestaArmarObjetoPantallaModal.Resultado.Data.NombreEmpleado);
                                                             $("#SpanApellidoEmpleado1").html(oRespuestaArmarObjetoPantallaModal.Resultado.Data.ApellidoEmpleado);
@@ -1077,7 +1101,7 @@
                                     break;
 
                                 case "-4":
-                                    console.log(Entro);
+
                                     $("#DivFondoTrasparente").hide();
                                     $("#DivCirculoAzul").hide();
 
@@ -1131,6 +1155,7 @@
                         ApellidosEmpleadoAnotador: $("#SpanApellidoEmpleado0").html(),
                         oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
                         oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
+                        oCorreoAnotador : @Html.Raw(Json.Encode(@ViewBag.CorreoAnotador)),
                     }, function (oRespuestaGuardar) {
                         switch (oRespuestaGuardar.Codigo) {
                             case "1":
@@ -1207,6 +1232,8 @@
                 $("#CorreoJefeSolicitanteModal").val('');
                 $("#CodigoEmpleadoModal").val('');
                 $("#SociedadModal").val('');
+                $("#MinimoDiasCorreoCompensacionModal").val('')
+                $("#CorreoCompensacionModal").val('')
                 $("#SpanNumDias1").html('');
                 $("#SpanNombreEmpleado1").html('');
                 $("#SpanApellidoEmpleado1").html
@@ -1237,7 +1264,8 @@
                         InicioFecha: kendo.toString(kendo.parseDate($("#InicioFechaModal").val()), 'dd/MM/yyyy') ,
                         FinFecha: kendo.toString(kendo.parseDate($("#FinFechaModal").val()), 'dd/MM/yyyy') ,
                         DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),
-
+                        oMinimoDiasCorreoCompensacion: $("#MinimoDiasCorreoCompensacionModal").val(),
+                        oCorreoCompensacion: $("#CorreoCompensacionModal").val(),
 
                     }, function (oRespuestaAgregarOEditarEmpleado) {
 
@@ -1341,7 +1369,8 @@
                         InicioFecha: kendo.toString(kendo.parseDate($("#InicioFechaModal").val()), 'dd/MM/yyyy'),
                         FinFecha: kendo.toString(kendo.parseDate($("#FinFechaModal").val()), 'dd/MM/yyyy'),
                         DiasFestivosSabadosDomingos: $("#DiasFestivosSabadosDomingosModal").val(),
-
+                        oMinimoDiasCorreoCompensacion : $("#MinimoDiasCorreoCompensacionModal").val(),
+                        oCorreoCompensacion: $("#CorreoCompensacionModal").val(),
                     }, function (d) {
                         if (d.Codigo == 2) {
                             swal.fire({
@@ -1420,8 +1449,8 @@
             <input id="CorreoJefeSolicitanteModal" type="hidden" />
             <input id="CodigoEmpleadoModal" type="hidden" />
             <input id="SociedadModal" type="hidden" />
-            <input id="SociedadModal" type="hidden" />
-            <input id="MinimoDiasCorreoCompensacion" type="hidden" />
+            <input id="MinimoDiasCorreoCompensacionModal" type="hidden" />
+            <input id="CorreoCompensacionModal" type="hidden" />
         </div>
 
     </div>

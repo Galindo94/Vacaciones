@@ -16,6 +16,11 @@ namespace Vacaciones.Models.ModelosGenerales
         public string CorreoJefeSolicitante { get; set; }
         public string CodigoEmpleado { get; set; }
         public string Sociedad { get; set; }
+        public int NroMinDiasCorreoCompensacion { get; set; }
+
+        public string CorreoCompensacion { get; set; }
+
+
 
 
     }
