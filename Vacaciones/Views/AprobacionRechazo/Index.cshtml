@@ -51,6 +51,16 @@
                         hidden: true
                     },
                     {
+                        field: "crro_antdr",
+                        title: "Correo Solicitante",
+                        width: 100,
+                        media: "(min-width: 50px)",
+                        headerAttributes: {
+                            style: "text-align: center"
+                        },
+                        hidden: true
+                    },
+                    {
                         field: "idntfccn_slctnte",
                         title: "Documento",
                         width: 100,
@@ -129,7 +139,8 @@
                                                             fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                             nmbre_cmplto: item.nmbre_cmplto,
                                                             fk_slctd_encbzdo: item.fk_slctd_encbzdo,
-                                                            crreo_slctnte: item.crreo_slctnte
+                                                            crreo_slctnte: item.crreo_slctnte,
+                                                            crro_antdr: item.crro_antdr
                                                         },
                                                         function (Resultado) {
                                                             $("#DivFondoTrasparente").hide();
@@ -191,7 +202,8 @@
                                                         fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                         nmbre_cmplto: item.nmbre_cmplto,
                                                         fk_slctd_encbzdo: item.fk_slctd_encbzdo,
-                                                        crreo_slctnte: item.crreo_slctnte
+                                                        crreo_slctnte: item.crreo_slctnte,
+                                                        crro_antdr: item.crro_antdr
                                                     },
                                                         function (Resultado) {
                                                             $("#DivFondoTrasparente").hide();
