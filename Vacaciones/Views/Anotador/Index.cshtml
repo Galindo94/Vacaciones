@@ -1142,6 +1142,7 @@
                                 $.post("../Anotador/EnviarNotificacionFlow", {
                                     oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
                                     oIdSolicitud: oRespuestaGuardar.Resultado.Data.Resultado,
+                                     oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels))
                                 });
 
                                 //Aqui se debe hacer el envio de la notificacion
@@ -1420,6 +1421,7 @@
             <input id="CorreoJefeSolicitanteModal" type="hidden" />
             <input id="CodigoEmpleadoModal" type="hidden" />
             <input id="SociedadModal" type="hidden" />
+            <input id="MinimoDiasCorreoCompensacion" type="hidden" />
         </div>
 
     </div>

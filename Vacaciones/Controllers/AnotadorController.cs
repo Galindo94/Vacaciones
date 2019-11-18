@@ -60,7 +60,7 @@ namespace Vacaciones.Controllers
                     switch (oReglas.Prmtro)
                     {
                         case "NroDias":
-                            ViewBag.NumeroDias = "30";//oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');  // Pendiente por realizar ////////////////////////
+                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');
                             break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
@@ -72,6 +72,10 @@ namespace Vacaciones.Controllers
 
                         case "DiasMaxCalendario":
                             ViewBag.FinFecha = DateTime.Now.AddDays(Convert.ToDouble(oReglas.Vlr_Slda));
+                            break;
+
+                        case "NroMinDiasCorreoCompensacion":
+                            ViewBag.NroMinDiasCorreoCompensacion = int.Parse(oReglas.Vlr_Slda);
                             break;
 
                     }
@@ -676,13 +680,17 @@ namespace Vacaciones.Controllers
 
         }
 
-        public JsonResult EnviarNotificacionFlow(string oDataActual, string oIdSolicitud)
+        public JsonResult EnviarNotificacionFlow(string oDataActual, string oIdSolicitud, string oRespuestaSAP)
         {
             List<SolicitudDetalle> oLstSolicitudDetalle = new List<SolicitudDetalle>();
             List<string> oLstCorreos = new List<string>();
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
             ConsumoAPIFlow oConsumoApiFlow = new ConsumoAPIFlow();
             FlowModels oFlow = new FlowModels();
+            string oTableAnotador = string.Empty;
+            string oTableJefes = string.Empty;
+            string oCorreoAnotador = string.Empty;
             try
             {
                 string URIAprobacionyRechazo = Request.Url.Scheme + //Https
@@ -692,11 +700,28 @@ namespace Vacaciones.Controllers
                                                IdSolicitud + int.Parse(oIdSolicitud) + "&" +
                                                CorreoJefe;
 
+                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
+
+
+                oCorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
+
+                //Se declara inicio de la tabla para el correo de los anotadores
+                oTableAnotador = "<Table cellpadding=0 cellspacing=0 border=1>";
+
 
                 oLstSolicitudDetalle = GenerarObjetoSolicitudDetalle(oDataActual);
 
                 if (oLstSolicitudDetalle != null && oLstSolicitudDetalle.Count > 0)
                 {
+                    //Se crean los encabezados para la tabla del anotador
+                    oTableAnotador += "<tr>" +
+                                "<th> Nro. de identificación </th>" +
+                                "<th> Nombres y apellidos </th>" +
+                                "<th> Inicio de vacaciones </th>" +
+                                "<th> Fin de vacaciones </th>" +
+                                "<th> Nro. de días a disfrutar </th> " +
+                           "</tr>";
+
                     foreach (SolicitudDetalle oSolicitudDetalle in oLstSolicitudDetalle)
                     {
                         if (oLstCorreos == null && oLstCorreos.Count == 0)
@@ -707,14 +732,47 @@ namespace Vacaciones.Controllers
                             if (Count == 0)
                                 oLstCorreos.Add(oSolicitudDetalle.crreo_jfe_slctnte);
                         }
+
+                        //Se adiciona cada uno de los empleados a la tabla del anotador
+                        oTableAnotador += "<tr>" +
+                                        "<td>" + oSolicitudDetalle.idntfccn_slctnte + "</td>" +
+                                        "<td>" + oSolicitudDetalle.nmbrs_slctnte + oSolicitudDetalle.apllds_slctnte + "</td>" +
+                                        "<td>" + oSolicitudDetalle.fcha_inco_vccns.ToShortDateString() + "</td>" +
+                                        "<td>" + oSolicitudDetalle.fcha_fn_vcc.ToShortDateString() + "</td>" +
+                                        "<td>" + oSolicitudDetalle.nmro_ds + "</td>" +
+                                        "</tr>";
                     }
                 }
 
+                //Se cierra la tabla del anotador
+                oTableAnotador += "</Table>";
+
+                oFlow = new FlowModels
+                {
+                    correoAnotador = oCorreoAnotador,
+                    lista = oTableAnotador,
+                    opt = 6
+                };
+
+                oTableAnotador = string.Empty;
+
+                oMensajeRespuesta = new MensajeRespuesta();
+                //Aqui se debe enviar notificacion individual
+                //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+
+                if (oMensajeRespuesta.Codigo != "1")
+                {
+                    Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el anotador con correo: " + oCorreoAnotador +
+                        ". Id de la solicitud: " + IdSolicitud);
+
+                }
+
+
                 foreach (var oCorreo in oLstCorreos)
                 {
-                    string correo = "<Table cellpadding=0 cellspacing=0 border=1>";
-                    correo += "<tr>" +
-                                    "<th> Código del empleado </th>" +
+                    oTableJefes = "<Table cellpadding=0 cellspacing=0 border=1>";
+                    oTableJefes += "<tr>" +
+                                    "<th> Nro. de identificación </th>" +
                                     "<th> Nombres y apellidos </th>" +
                                     "<th> Inicio de vacaciones </th>" +
                                     "<th> Fin de vacaciones </th>" +
@@ -725,8 +783,8 @@ namespace Vacaciones.Controllers
                     {
                         if (oDetalle.crreo_jfe_slctnte == oCorreo)
                         {
-                            correo += "<tr>" +
-                                        "<td>" + oDetalle.codEmpldo + "</td>" +
+                            oTableJefes += "<tr>" +
+                                        "<td>" + oDetalle.idntfccn_slctnte + "</td>" +
                                         "<td>" + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte + "</td>" +
                                         "<td>" + oDetalle.fcha_inco_vccns.ToShortDateString() + "</td>" +
                                         "<td>" + oDetalle.fcha_fn_vcc.ToShortDateString() + "</td>" +
@@ -747,24 +805,25 @@ namespace Vacaciones.Controllers
                             if (oMensajeRespuesta.Codigo != "1")
                             {
                                 Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
-                                    oDetalle.codEmpldo + "Nombre Completo: " + oDetalle.nmbre_cmplto);
+                                    oDetalle.codEmpldo + ". Nombre Completo: " + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte +
+                                    ". Id solcicitud: " + IdSolicitud);
                                 oMensajeRespuesta = new MensajeRespuesta();
                             }
 
                         }
                     }
 
-                    correo += "</Table>";
+                    oTableJefes += "</Table>";
 
                     oFlow = new FlowModels
                     {
                         CorreoJefe = oCorreo,
-                        lista = correo,
+                        lista = oTableJefes,
                         url = "<a href=" + URIAprobacionyRechazo + oCorreo + ">Haga clic aqui </a>",
                         opt = 3
                     };
 
-                    correo = string.Empty;
+                    oTableJefes = string.Empty;
 
                     oMensajeRespuesta = new MensajeRespuesta();
                     //Aqui se debe enviar notificacion individual
@@ -772,11 +831,13 @@ namespace Vacaciones.Controllers
 
                     if (oMensajeRespuesta.Codigo != "1")
                     {
-                        Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo);
-                        oMensajeRespuesta = new MensajeRespuesta();
+                        Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo +
+                            ". Id de la solicitud: " + IdSolicitud);
+
                     }
                 }
 
+                oMensajeRespuesta = new MensajeRespuesta();
                 oMensajeRespuesta.Codigo = "1";
                 oMensajeRespuesta.Mensaje = "Se genero la lista de correos satisfactoriamente";
                 oMensajeRespuesta.Resultado = Json(oLstCorreos, JsonRequestBehavior.AllowGet);

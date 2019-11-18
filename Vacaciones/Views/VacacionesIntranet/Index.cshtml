@@ -9,7 +9,7 @@
         $(document).ready(function () {
             $("#btnIngresarVacacionesIntranet").click(function () {
 
-              
+
 
                 $("#DivFondoTrasparente").show();
                 $("#DivCirculoAzul").show();
@@ -34,6 +34,7 @@
                                             allowOutsideClick: false,
                                             allowEscapeKey: false
                                         });
+
                                         break;
 
                                     case "4":
@@ -45,17 +46,21 @@
 
                                             switch (oRespuestaMotorReglas.Codigo) {
 
-                                                case "1":                                                 
+                                                case "1":
 
                                                     var resultado = oRespuestaMotorReglas.Resultado.Data.Escenario[0].Url.split('$');
                                                     var url = $("#RedirectTo").val();
                                                     url = url.replace("ActionName", resultado[0]);
                                                     url = url.replace("ControllerName", resultado[1]);
                                                     $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST", '_blank');
+
+
+                                                    window.close('', '_parent', '');
+
                                                     break;
 
                                                 case "-1":
-                                                    
+
                                                     swal.fire({
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
@@ -64,9 +69,11 @@
                                                         allowOutsideClick: false,
                                                         allowEscapeKey: false
                                                     });
+
                                                     break;
 
                                                 case "-2":
+
                                                     swal.fire({
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
@@ -75,9 +82,11 @@
                                                         allowOutsideClick: false,
                                                         allowEscapeKey: false
                                                     });
+
                                                     break;
 
                                                 case "-3":
+
                                                     swal.fire({
                                                         text: oRespuestaMotorReglas.Mensaje,
                                                         type: 'error',
@@ -86,6 +95,7 @@
                                                         allowOutsideClick: false,
                                                         allowEscapeKey: false
                                                     });
+
                                                     break;
                                             }
 
@@ -122,6 +132,7 @@
                                             allowOutsideClick: false,
                                             allowEscapeKey: false
                                         });
+
                                         break;
 
                                     case "1":
@@ -136,8 +147,21 @@
                                             confirmButtonColor: '#00AFF0',
                                             allowOutsideClick: false,
                                             allowEscapeKey: false
+                                        }).then((result) => {
+                                            if (result.value) {
+                                                var url = $("#RedirectTo").val();
+                                                url = url.replace("ActionName", "Index");
+                                                url = url.replace("ControllerName", "Home");
+                                                $.redirect(url, {}, "POST", '_blank');
+
+                                                window.close('', '_parent', '');
+
+                                            };
+
                                         });
+
                                         break;
+
                                 }
                             });
                             break;
@@ -157,8 +181,12 @@
                                 allowEscapeKey: false
                             }).then((result) => {
                                 if (result.value) {
-                                    var url = "@Url.Action("Index", "Home", null)";
-                                    window.location.href = url
+                                    var url = $("#RedirectTo").val();
+                                    url = url.replace("ActionName", "Index");
+                                    url = url.replace("ControllerName", "Home");
+                                    $.redirect(url, {}, "POST", '_blank');
+
+                                    window.close('', '_parent', '');
                                 }
                             });
                             break;
@@ -178,8 +206,12 @@
                                 allowEscapeKey: false
                             }).then((result) => {
                                 if (result.value) {
-                                    var url = "@Url.Action("Index", "Home", null)";
-                                    window.location.href = url
+                                    var url = $("#RedirectTo").val();
+                                    url = url.replace("ActionName", "Index");
+                                    url = url.replace("ControllerName", "Home");
+                                    $.redirect(url, {}, "POST", '_blank');
+
+                                    window.close('', '_parent', '');
                                 }
                             });
                             break;
@@ -198,6 +230,7 @@
                                 allowOutsideClick: false,
                                 allowEscapeKey: false
                             });
+
                             break;
 
                         // Se encontro usuario pero no tiene informacion basica
@@ -215,15 +248,20 @@
                                 allowEscapeKey: false
                             }).then((result) => {
                                 if (result.value) {
-                                    var url = "@Url.Action("Index", "Home", null)";
-                                    window.location.href = url
+                                    var url = $("#RedirectTo").val();
+                                    url = url.replace("ActionName", "Index");
+                                    url = url.replace("ControllerName", "Home");
+                                    $.redirect(url, {}, "POST", '_blank');
+
+                                    window.close('', '_parent', '');
+
                                     }
                                 });
                             break;
                     }
                 });
 
-               
+
             });
         });
     </script>

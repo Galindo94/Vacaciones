@@ -63,11 +63,15 @@
                                             $("#DivFondoTrasparente").hide();
                                             $("#DivCirculoAzul").hide();
 
+                                            $("#NroDocumento").val('');
+
                                             var resultado = oRespuestaMotorReglas.Resultado.Data.Escenario[0].Url.split('$');
                                             var url = $("#RedirectTo").val();
                                             url = url.replace("ActionName", resultado[0]);
                                             url = url.replace("ControllerName", resultado[1]);
-                                            $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST");
+                                            $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST", '_blank');
+
+                                            window.close('', '_parent', '');
 
                                             break;
 
