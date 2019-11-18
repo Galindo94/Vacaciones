@@ -1131,7 +1131,7 @@
                         ApellidosEmpleadoAnotador: $("#SpanApellidoEmpleado0").html(),
                         oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
                         oDataActual: JSON.stringify($('#rowSelection').data("kendoGrid").dataSource.data()),
-
+                        oCorreoAnotador : @Html.Raw(Json.Encode(@ViewBag.CorreoAnotador)),
                     }, function (oRespuestaGuardar) {
                         switch (oRespuestaGuardar.Codigo) {
                             case "1":
@@ -1420,6 +1420,7 @@
             <input id="CorreoSolicitanteModal" type="hidden" />
             <input id="CorreoJefeSolicitanteModal" type="hidden" />
             <input id="CodigoEmpleadoModal" type="hidden" />
+            <input id="SociedadModal" type="hidden" />
             <input id="SociedadModal" type="hidden" />
             <input id="MinimoDiasCorreoCompensacion" type="hidden" />
         </div>

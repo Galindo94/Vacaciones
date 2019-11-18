@@ -54,6 +54,7 @@ namespace Vacaciones.Controllers
                 ViewBag.NombresEmpleado = oRespuestaSAPModels.Details[0].PrimerNombre + " " + oRespuestaSAPModels.Details[0].SegundoNombre + " ";
                 ViewBag.ApellidosEmpleado = oRespuestaSAPModels.Details[0].PrimerApellido + " " + oRespuestaSAPModels.Details[0].SegundoApellido;
 
+                ViewBag.CorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
 
                 foreach (var oReglas in oRespuestaMotor.Reglas)
                 {
@@ -617,7 +618,7 @@ namespace Vacaciones.Controllers
         }
 
         public JsonResult GuardarSolicitud(string NroIdentificacionAnotador, string NombresEmpleadoAnotador, string ApellidosEmpleadoAnotador,
-                                           string oRespuestaMotor, string oDataActual)
+                                           string oCorreoAnotador, string oRespuestaMotor, string oDataActual)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
@@ -758,7 +759,7 @@ namespace Vacaciones.Controllers
 
                 oMensajeRespuesta = new MensajeRespuesta();
                 //Aqui se debe enviar notificacion individual
-                //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                 if (oMensajeRespuesta.Codigo != "1")
                 {
@@ -800,7 +801,7 @@ namespace Vacaciones.Controllers
 
                             oMensajeRespuesta = new MensajeRespuesta();
                             //Aqui se debe enviar notificacion individual
-                            //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                            oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                             if (oMensajeRespuesta.Codigo != "1")
                             {
@@ -827,7 +828,7 @@ namespace Vacaciones.Controllers
 
                     oMensajeRespuesta = new MensajeRespuesta();
                     //Aqui se debe enviar notificacion individual
-                    //oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
+                    oMensajeRespuesta = oConsumoApiFlow.EnviarNotificacionFlow(oFlow);
 
                     if (oMensajeRespuesta.Codigo != "1")
                     {
