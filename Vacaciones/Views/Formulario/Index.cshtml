@@ -46,7 +46,7 @@
                     if ($("#NumDias0").val() != '') {
                        //Calcular la fecha fin de vacaciones
 
-                        $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                        $.getJSON("/Formulario/CalcularFechaFin", {
                             NumeroDias: parseInt($("#NumDias0").val()),
                             FechaInicio: $("#kendocalendar_0").val(),
                             DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
@@ -88,10 +88,13 @@
                 return /^\d*$/.test(value);
             });
 
+            $('#kendocalendar_1').data('kendoDatePicker').enable(false);
+            
+
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
                 if ($("#NumDias0").val() != '') {
-                    $.getJSON("/EjecutivosYPlanta/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()), MinimoDias : "@ViewBag.MinimoDias" }, function (respuesta) {
+                    $.getJSON("/Formulario/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()), MinimoDias : "@ViewBag.MinimoDias" }, function (respuesta) {
 
                         switch (respuesta.Codigo) {
 
@@ -139,7 +142,7 @@
 
             $("#NumDias0").change(function () {
                 if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
-                    $.getJSON("/EjecutivosYPlanta/CalcularFechaFin", {
+                    $.getJSON("/Formulario/CalcularFechaFin", {
                         NumeroDias: parseInt($("#NumDias0").val()),
                         FechaInicio: $("#kendocalendar_0").val(),
                         DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
@@ -176,7 +179,7 @@
                 if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
                     $("#DivFondoTrasparente").show();
                     $("#DivCirculoAzul").show();
-                    $.post("../EjecutivosYPlanta/GuardarSolicitud", {
+                    $.post("../Formulario/GuardarSolicitud", {
                         NroIdentificacion: $("#NroIdentificacionHidden").val(),
                         NombresEmpleado: "@ViewBag.NombresEmpleado",
                         ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",

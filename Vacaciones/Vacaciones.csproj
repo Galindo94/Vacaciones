@@ -209,7 +209,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AnotadorController.cs" />
     <Compile Include="Controllers\AprobacionRechazoController.cs" />
-    <Compile Include="Controllers\EjecutivosYPlantaController.cs" />
+    <Compile Include="Controllers\FormularioController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VacacionesIntranetController.cs" />
     <Compile Include="Global.asax.cs">
@@ -243,7 +243,7 @@
     <Compile Include="Models\ModelosMotorDeReglas\ErrorModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\EscenarioModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\ReglaModels.cs" />
-    <Compile Include="Utilities\UtilitiesGenerales\DiasContingente.cs" />
+    <Compile Include="Utilities\UtilitiesGenerales\UtilitiesGenerales.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\bootstrap-grid.css" />

@@ -7,9 +7,6 @@
 
     <script type="text/javascript">
         $(document).ready(function () {
-            $("#btnIngresarVacacionesIntranet").click(function () {
-
-
 
                 $("#DivFondoTrasparente").show();
                 $("#DivCirculoAzul").show();
@@ -52,10 +49,7 @@
                                                     var url = $("#RedirectTo").val();
                                                     url = url.replace("ActionName", resultado[0]);
                                                     url = url.replace("ControllerName", resultado[1]);
-                                                    $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST", '_blank');
-
-
-                                                    window.close('', '_parent', '');
+                                                    $.redirect(url, { oDatosFormulario: JSON.stringify(oRespuestaMotorReglas.Resultado.Data), oDatosSAP: JSON.stringify(oRespuestaSAP.Resultado.Data) }, "POST");
 
                                                     break;
 
@@ -149,12 +143,11 @@
                                             allowEscapeKey: false
                                         }).then((result) => {
                                             if (result.value) {
+
                                                 var url = $("#RedirectTo").val();
                                                 url = url.replace("ActionName", "Index");
                                                 url = url.replace("ControllerName", "Home");
-                                                $.redirect(url, {}, "POST", '_blank');
-
-                                                window.close('', '_parent', '');
+                                                $.redirect(url, {}, "POST");
 
                                             };
 
@@ -184,9 +177,7 @@
                                     var url = $("#RedirectTo").val();
                                     url = url.replace("ActionName", "Index");
                                     url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST", '_blank');
-
-                                    window.close('', '_parent', '');
+                                    $.redirect(url, {}, "POST", );
                                 }
                             });
                             break;
@@ -209,9 +200,7 @@
                                     var url = $("#RedirectTo").val();
                                     url = url.replace("ActionName", "Index");
                                     url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST", '_blank');
-
-                                    window.close('', '_parent', '');
+                                    $.redirect(url, {}, "POST");
                                 }
                             });
                             break;
@@ -251,9 +240,7 @@
                                     var url = $("#RedirectTo").val();
                                     url = url.replace("ActionName", "Index");
                                     url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST", '_blank');
-
-                                    window.close('', '_parent', '');
+                                    $.redirect(url, {}, "POST");
 
                                     }
                                 });
@@ -262,25 +249,13 @@
                 });
 
 
-            });
+            //});
         });
     </script>
 
 </head>
 <body>
-    @Html.Hidden("RedirectTo", Url.Action("ActionName", "ControllerName"))
-    <div class="jumbotron">
-        <div class="jumbotron-cuerpo">
-            <div class="container body-content">
-                <h1 class="jumbotron-encabezado center">VACACIONES APP</h1>
-                <div class="col-md-12 center">
-                    <label class="fieldlist-label">Bienvenido (a) @ViewBag.UsuarioIntranet</label>
-                    <button id="btnIngresarVacacionesIntranet" class="btn btn-lg btn-primary">Presione aqui para ingresar</button>
-                </div>
-            </div>
-        </div>
-    </div>
-
+    @Html.Hidden("RedirectTo", Url.Action("ActionName", "ControllerName"))   
 
 </body>
 

@@ -15,7 +15,7 @@ using Vacaciones.Utilities.UtilitiesGenerales;
 
 namespace Vacaciones.Controllers
 {
-    public class EjecutivosYPlantaController : Controller
+    public class FormularioController : Controller
     {
         //Variable para almacenar los Log's
         private static readonly ILog Logger = LogManager.GetLogger(Environment.MachineName);
@@ -29,7 +29,7 @@ namespace Vacaciones.Controllers
             {
                 RespuestaMotorModels oRespuestaMotor = new RespuestaMotorModels();
                 RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
-                DiasContingente oDiasContingente = new DiasContingente();
+                UtilitiesGenerales oDiasContingente = new UtilitiesGenerales();
 
                 oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(oDatosFormulario);
                 ViewBag.oRespuestaMotor = JsonConvert.SerializeObject(oRespuestaMotor);
@@ -99,7 +99,7 @@ namespace Vacaciones.Controllers
                 oMensajeRespuesta = new MensajeRespuesta
                 {
                     Codigo = "1",
-                    Mensaje = "La cantidad de días debe ser minimo " + MinimoDias,
+                    Mensaje = "La cantidad de días debe ser mínimo " + MinimoDias,
                     Resultado = Json("", JsonRequestBehavior.AllowGet)
                 };
             }
@@ -238,21 +238,13 @@ namespace Vacaciones.Controllers
         public JsonResult CalcularFechaFin(int NumeroDias, string FechaInicio, string DiasFestivosSabadosDomingos)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            UtilitiesGenerales oUtilitiesGenerales = new UtilitiesGenerales();
             try
             {
+                DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias - 1);
 
-               
 
-                DateTime FechaFin = Convert.ToDateTime(FechaInicio).AddDays(NumeroDias);
-
-                if (NumeroDias == 1)
-                {
-                    FechaFin = Convert.ToDateTime(FechaInicio);
-                }
-                else
-                {
-                    FechaFin = CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
-                }              
+                FechaFin = oUtilitiesGenerales.CalcularFechaFinHabil(Convert.ToDateTime(FechaInicio), FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
 
                 oMensajeRespuesta.Codigo = "0";
                 oMensajeRespuesta.Mensaje = "";
@@ -274,62 +266,6 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public DateTime CalcularFechaFinHabil(DateTime FechaInicio, DateTime FechaFin, int NumeroDias, string DiasFestivosSabadosDomingos)
-        {
-            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-
-            try
-            {
-                TimeSpan tSpan = new TimeSpan();
-                int contador = 0;
-
-                string[] Fechas;
-                Fechas = DiasFestivosSabadosDomingos.Split(',');
-
-                foreach (var item in Fechas)
-                {
-                    string[] DatosFechaItem = item.Split('/');
-
-                    var FechaItem = new DateTime(Convert.ToInt32(DatosFechaItem[2]), Convert.ToInt32(DatosFechaItem[0]), Convert.ToInt32(DatosFechaItem[1])).ToShortDateString();
-
-                    if (Convert.ToDateTime(FechaItem) == FechaFin)
-                    {
-                        FechaFin = FechaFin.AddDays(1);
-                        tSpan = FechaFin - FechaInicio;
-                    }
-
-                    if (Convert.ToDateTime(FechaItem) >= Convert.ToDateTime(FechaInicio) && Convert.ToDateTime(FechaItem) <= FechaFin)
-                        contador++;
-
-                }
-
-                TimeSpan oCalculo = FechaFin - FechaInicio;
-                int Resultado = oCalculo.Days - contador;
-
-                if (Resultado < NumeroDias - 1)
-                {
-                    FechaFin = FechaFin.AddDays(1);
-                    FechaFin = CalcularFechaFinHabil(FechaInicio, FechaFin, NumeroDias, DiasFestivosSabadosDomingos);
-
-                }
-
-                return FechaFin;
-
-            }
-            catch (Exception Ex)
-            {
-                Logger.Error("Ocurrió un error calculando la fecha de fin. Fecha de inicio: " +
-                  FechaInicio + ". Número de días: " + NumeroDias +
-                  ". Exception: " + Ex);
-
-                oMensajeRespuesta.Codigo = "-1";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado. Consulte al administrador del sistema";
-                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
-
-                return DateTime.Now;
-            }
-
-        }
 
 
     }
