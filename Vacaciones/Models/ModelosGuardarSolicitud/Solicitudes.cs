@@ -18,5 +18,10 @@ namespace Vacaciones.Models.ModelosGuardarSolicitud
         public string crro_antdr { get; set; }
 
         public List<SolicitudDetalle> detalle { get; set; }
+
+        public string ip { get; set; }
+        public string nmbre_usrio { get; set; }
+        public string nmbre_eqpo { get; set; }
+
     }
 }

@@ -593,6 +593,11 @@ namespace Vacaciones.Controllers
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
             RespuestaMotorModels oRespuestaMotorModels = new RespuestaMotorModels();
             Solicitudes oSolicitudes = new Solicitudes();
+            UtilitiesGenerales oUtilitiesGenerales = new UtilitiesGenerales();
+
+            string NombreUser = System.Web.HttpContext.Current.User.Identity.Name;
+            int backSlash = NombreUser.IndexOf("\\");
+            string UserName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
 
             try
             {
@@ -609,6 +614,13 @@ namespace Vacaciones.Controllers
                     oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                     oSolicitudes.detalle = GenerarObjetoSolicitudDetalle(oDataActual);
                     oSolicitudes.crro_antdr = oCorreoAnotador;
+                    oSolicitudes.ip = Request.UserHostAddress;
+                    oSolicitudes.nmbre_usrio = oCorreoAnotador;
+                    oSolicitudes.nmbre_eqpo = oCorreoAnotador;
+                    oSolicitudes.ip = oUtilitiesGenerales.ObtenerIp();
+                    oSolicitudes.nmbre_usrio = UserName;
+                    oSolicitudes.nmbre_eqpo = Environment.MachineName;
+
                     if (oSolicitudes.detalle != null && oSolicitudes.detalle.Count > 0)
                     {
                         oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);

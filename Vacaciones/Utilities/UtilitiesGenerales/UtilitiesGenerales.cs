@@ -1,6 +1,8 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
+using System.Net;
+using System.Net.Sockets;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosMotorDeReglas;
 using Vacaciones.Models.ModelosRespuestaSAP;
@@ -99,6 +101,33 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
 
                 return DateTime.Now;
             }
+
+        }
+
+        public string ObtenerIp()
+        {
+            string Ip = string.Empty;
+
+            var host = Dns.GetHostEntry(Dns.GetHostName());
+            foreach (var ip in host.AddressList)
+            {
+                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                {
+                    Ip = ip.ToString();
+                }
+            }
+
+            if (!string.IsNullOrEmpty(Ip))
+            {
+                return Ip;
+            }
+            else
+            {
+                Logger.Error("Ocurrió un error obteniendo la direccion IP. Fecha de la operacion: " + DateTime.Now);
+                return Ip;
+
+            }
+
 
         }
 

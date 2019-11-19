@@ -2,6 +2,7 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
@@ -131,8 +132,15 @@ namespace Vacaciones.Controllers
             Solicitudes oSolicitudes = new Solicitudes();
             ConsumoAPIFlow oConsumoApiFlow = new ConsumoAPIFlow();
             RespuestaGuardarSolicitudModels oRespuestaGuardarSolicitudModels = new RespuestaGuardarSolicitudModels();
+            UtilitiesGenerales oUtilitiesGenerales = new UtilitiesGenerales();
+
+
             try
             {
+                string NombreUser = System.Web.HttpContext.Current.User.Identity.Name;
+                int backSlash = NombreUser.IndexOf("\\");
+                string UserName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
+
 
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
                 oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
@@ -158,6 +166,8 @@ namespace Vacaciones.Controllers
                 });
 
 
+
+
                 oSolicitudes.fcha_hra_slctd = DateTime.Now;
                 oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado);
                 oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado);
@@ -165,6 +175,9 @@ namespace Vacaciones.Controllers
                 oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                 oSolicitudes.detalle = oLstSolicitudDetalle;
                 oSolicitudes.crro_antdr = "";
+                oSolicitudes.ip = oUtilitiesGenerales.ObtenerIp();
+                oSolicitudes.nmbre_usrio = UserName;
+                oSolicitudes.nmbre_eqpo = Environment.MachineName;
 
                 oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
 
