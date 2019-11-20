@@ -165,9 +165,6 @@ namespace Vacaciones.Controllers
                     CorreoCompensacion = CorreoCompensacion
                 });
 
-
-
-
                 oSolicitudes.fcha_hra_slctd = DateTime.Now;
                 oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleado);
                 oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleado);
@@ -177,7 +174,7 @@ namespace Vacaciones.Controllers
                 oSolicitudes.crro_antdr = "";
                 oSolicitudes.ip = oUtilitiesGenerales.ObtenerIp();
                 oSolicitudes.nmbre_usrio = UserName;
-                oSolicitudes.nmbre_eqpo = Environment.MachineName;
+                oSolicitudes.nmbre_eqpo = oUtilitiesGenerales.ObtenerNombreMaquina();
 
                 oMensajeRespuesta = oConsumoAPIGuardarSolicitud.AlmacenarSolicitud(oSolicitudes);
 
@@ -194,8 +191,9 @@ namespace Vacaciones.Controllers
                                                  "://" + Request.Url.Authority + //WWW.
                                                  Request.ApplicationPath.TrimEnd('/') + "/" + //Base del sitio
                                                  URIAprobacion + // AprobacionYRechazo/Index
-                                                 IdSolicitud + oRespuestaGuardarSolicitudModels.Resultado + "&" +
-                                                 CorreoJefe;
+                                                 IdSolicitud + HttpUtility.UrlEncode(StringCipher.Encrypt(oRespuestaGuardarSolicitudModels.Resultado.ToString())) + "&" +
+                                                 CorreoJefe + HttpUtility.UrlEncode(StringCipher.Encrypt(oLstSolicitudDetalle[0].crreo_jfe_slctnte));
+
 
                     FlowModels oFlow = new FlowModels
                     {
@@ -204,7 +202,7 @@ namespace Vacaciones.Controllers
                         fecha_fin = oLstSolicitudDetalle[0].fcha_fn_vcc.ToShortDateString(),
                         fecha_inicio = oLstSolicitudDetalle[0].fcha_inco_vccns.ToShortDateString(),
                         CorreoJefe = oLstSolicitudDetalle[0].crreo_jfe_slctnte,
-                        url = "<a href=" + URIAprobacionyRechazo + oLstSolicitudDetalle[0].crreo_jfe_slctnte + ">Haga clic aqui </a>",
+                        url = "<a href=" + URIAprobacionyRechazo + ">Haga clic aqui </a>",
                         opt = 1
                     };
 

@@ -39,10 +39,11 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                 if (oHttpWebResponse.StatusCode == HttpStatusCode.OK)
                 {
                     StreamReader oStreamReader = new StreamReader(oHttpWebResponse.GetResponseStream());
-                    var DAniel = oStreamReader.ReadToEnd();
-                    oAprobacion = JsonConvert.DeserializeObject<List<SolicitudAR>>(DAniel);
+                    string oRespuesta = oStreamReader.ReadToEnd();
+                    oAprobacion = JsonConvert.DeserializeObject<List<SolicitudAR>>(oRespuesta);
 
-                    //oMensajeRespuesta.Codigo = oAprobacion.Error.ID.ToString();
+                    oMensajeRespuesta.Codigo = "1";
+                    oMensajeRespuesta.Mensaje = "Consulta realizada correctamente";
                     oMensajeRespuesta.Resultado = Json(oAprobacion, JsonRequestBehavior.AllowGet);
                 }
                 else

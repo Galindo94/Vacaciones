@@ -243,6 +243,7 @@
     <Compile Include="Models\ModelosMotorDeReglas\ErrorModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\EscenarioModels.cs" />
     <Compile Include="Models\ModelosMotorDeReglas\ReglaModels.cs" />
+    <Compile Include="Utilities\UtilitiesGenerales\StringCipher.cs" />
     <Compile Include="Utilities\UtilitiesGenerales\UtilitiesGenerales.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -1034,7 +1035,6 @@
     <Content Include="Views\Shared\_OtrosColaboradoresEscenario.cshtml" />
     <Content Include="Views\Shared\_GridEmpleados.cshtml" />
     <Content Include="Views\Shared\_ModalAnotadores.cshtml" />
-    <Content Include="Views\EjecutivosYPlanta\Index.cshtml" />
     <Content Include="Views\Anotador\Index.cshtml" />
     <Content Include="Views\VacacionesIntranet\Index.cshtml" />
     <Content Include="Scripts\umd\popper.min.js.map" />
@@ -1047,6 +1047,7 @@
     <Content Include="Scripts\popper-utils.min.js.map" />
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\AprobacionRechazo\Index.cshtml" />
+    <Content Include="Views\Formulario\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />

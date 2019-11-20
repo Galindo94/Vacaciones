@@ -1,8 +1,9 @@
 ﻿using log4net;
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Net;
-using System.Net.Sockets;
+using System.Security.Cryptography;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosMotorDeReglas;
 using Vacaciones.Models.ModelosRespuestaSAP;
@@ -43,6 +44,7 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
             }
             catch (Exception Ex)
             {
+                Logger.Error("Ocurrió un error calculando el Nro de dias para el contingente. Exception: " + Ex);
                 return 0;
             }
         }
@@ -106,30 +108,54 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
 
         public string ObtenerIp()
         {
-            string Ip = string.Empty;
-
-            var host = Dns.GetHostEntry(Dns.GetHostName());
-            foreach (var ip in host.AddressList)
+            try
             {
-                if (ip.AddressFamily == AddressFamily.InterNetwork)
+                string Ip = string.Empty;
+
+                Ip = System.Web.HttpContext.Current.Request.UserHostAddress;
+
+
+                if (!string.IsNullOrEmpty(Ip))
                 {
-                    Ip = ip.ToString();
+                    return Ip;
+                }
+                else
+                {
+                    Logger.Error("Ocurrió un error obteniendo la direccion IP. Fecha de la operacion: " + DateTime.Now);
+                    return Ip;
+
                 }
             }
-
-            if (!string.IsNullOrEmpty(Ip))
+            catch (Exception Ex)
             {
-                return Ip;
-            }
-            else
-            {
-                Logger.Error("Ocurrió un error obteniendo la direccion IP. Fecha de la operacion: " + DateTime.Now);
-                return Ip;
-
+                Logger.Error("Ocurrió un error obteniendo la direccion IP. Fecha de la operacion: " + DateTime.Now
+                    + " Exception: " + Ex);
+                return "";
             }
 
 
         }
+
+        public string ObtenerNombreMaquina()
+        {
+            string NombreMaquina = string.Empty;
+
+            NombreMaquina = Dns.GetHostEntry(System.Web.HttpContext.Current.Request.UserHostAddress).HostName;
+
+
+            if (!string.IsNullOrEmpty(NombreMaquina))
+            {
+                return NombreMaquina;
+            }
+            else
+            {
+                Logger.Error("Ocurrió un error obteniendo el nombre de la maquina. Fecha de la operacion: " + DateTime.Now);
+                return NombreMaquina;
+
+            }
+
+        }
+
 
     }
 }

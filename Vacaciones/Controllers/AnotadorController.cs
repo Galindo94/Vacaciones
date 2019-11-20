@@ -619,7 +619,7 @@ namespace Vacaciones.Controllers
                     oSolicitudes.nmbre_eqpo = oCorreoAnotador;
                     oSolicitudes.ip = oUtilitiesGenerales.ObtenerIp();
                     oSolicitudes.nmbre_usrio = UserName;
-                    oSolicitudes.nmbre_eqpo = Environment.MachineName;
+                    oSolicitudes.nmbre_eqpo = oUtilitiesGenerales.ObtenerNombreMaquina();
 
                     if (oSolicitudes.detalle != null && oSolicitudes.detalle.Count > 0)
                     {
@@ -683,8 +683,10 @@ namespace Vacaciones.Controllers
                                                "://" + Request.Url.Authority + //WWW.
                                                Request.ApplicationPath.TrimEnd('/') + "/" + //Base del sitio
                                                URIAprobacion + // AprobacionYRechazo/Index
-                                               IdSolicitud + int.Parse(oIdSolicitud) + "&" +
+                                               IdSolicitud + HttpUtility.UrlEncode(StringCipher.Encrypt(oIdSolicitud)) + "&" +
                                                CorreoJefe;
+
+
 
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
 
@@ -828,7 +830,7 @@ namespace Vacaciones.Controllers
                     {
                         CorreoJefe = oCorreo,
                         lista = oTableJefes,
-                        url = "<a href=" + URIAprobacionyRechazo + oCorreo + ">Haga clic aqui </a>",
+                        url = "<a href=" + URIAprobacionyRechazo + HttpUtility.UrlEncode(StringCipher.Encrypt(oCorreo)) + ">Haga clic aqui </a>",
                         opt = 3
                     };
 

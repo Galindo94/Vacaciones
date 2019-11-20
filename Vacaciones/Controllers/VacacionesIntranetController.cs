@@ -61,7 +61,6 @@ namespace Vacaciones.Controllers
             }
         }
 
-
         public JsonResult ConsultarUserSAP(string UserDA)
         {
             ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();

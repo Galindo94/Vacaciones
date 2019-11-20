@@ -165,21 +165,26 @@
                             $("#DivFondoTrasparente").hide();
                             $("#DivCirculoAzul").hide();
 
-                            swal.fire({
-                                text: oRespuestaDA.Mensaje,
-                                type: 'error',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.value) {
-                                    var url = $("#RedirectTo").val();
-                                    url = url.replace("ActionName", "Index");
-                                    url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST", );
-                                }
-                            });
+                            var url = $("#RedirectTo").val();
+                            url = url.replace("ActionName", "Index");
+                            url = url.replace("ControllerName", "Home");
+                            $.redirect(url, {}, "POST");
+
+                            //swal.fire({
+                            //    text: oRespuestaDA.Mensaje,
+                            //    type: 'error',
+                            //    confirmButtonText: "OK",
+                            //    confirmButtonColor: '#00AFF0',
+                            //    allowOutsideClick: false,
+                            //    allowEscapeKey: false
+                            //}).then((result) => {
+                            //    if (result.value) {
+                            //        var url = $("#RedirectTo").val();
+                            //        url = url.replace("ActionName", "Index");
+                            //        url = url.replace("ControllerName", "Home");
+                            //        $.redirect(url, {}, "POST", );
+                            //    }
+                            //});
                             break;
 
                          // El usuario no se encontro en el DA
@@ -188,21 +193,27 @@
                             $("#DivFondoTrasparente").hide();
                             $("#DivCirculoAzul").hide();
 
-                            swal.fire({
-                                text: oRespuestaDA.Mensaje,
-                                type: 'warning',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.value) {
-                                    var url = $("#RedirectTo").val();
-                                    url = url.replace("ActionName", "Index");
-                                    url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST");
-                                }
-                            });
+                            var url = $("#RedirectTo").val();
+                            url = url.replace("ActionName", "Index");
+                            url = url.replace("ControllerName", "Home");
+                            $.redirect(url, {}, "POST");
+
+
+                            //swal.fire({
+                            //    text: oRespuestaDA.Mensaje,
+                            //    type: 'warning',
+                            //    confirmButtonText: "OK",
+                            //    confirmButtonColor: '#00AFF0',
+                            //    allowOutsideClick: false,
+                            //    allowEscapeKey: false
+                            //}).then((result) => {
+                            //    if (result.value) {
+                            //        var url = $("#RedirectTo").val();
+                            //        url = url.replace("ActionName", "Index");
+                            //        url = url.replace("ControllerName", "Home");
+                            //        $.redirect(url, {}, "POST");
+                            //    }
+                            //});
                             break;
 
                         // Error en el Servicio del DA
@@ -228,22 +239,27 @@
                             $("#DivFondoTrasparente").hide();
                             $("#DivCirculoAzul").hide();
 
-                            swal.fire({
-                                text: oRespuestaDA.Mensaje,
-                                type: 'error',
-                                confirmButtonText: "OK",
-                                confirmButtonColor: '#00AFF0',
-                                allowOutsideClick: false,
-                                allowEscapeKey: false
-                            }).then((result) => {
-                                if (result.value) {
-                                    var url = $("#RedirectTo").val();
-                                    url = url.replace("ActionName", "Index");
-                                    url = url.replace("ControllerName", "Home");
-                                    $.redirect(url, {}, "POST");
+                            var url = $("#RedirectTo").val();
+                            url = url.replace("ActionName", "Index");
+                            url = url.replace("ControllerName", "Home");
+                            $.redirect(url, {}, "POST");
 
-                                    }
-                                });
+                            //swal.fire({
+                            //    text: oRespuestaDA.Mensaje,
+                            //    type: 'error',
+                            //    confirmButtonText: "OK",
+                            //    confirmButtonColor: '#00AFF0',
+                            //    allowOutsideClick: false,
+                            //    allowEscapeKey: false
+                            //}).then((result) => {
+                            //    if (result.value) {
+                            //        var url = $("#RedirectTo").val();
+                            //        url = url.replace("ActionName", "Index");
+                            //        url = url.replace("ControllerName", "Home");
+                            //        $.redirect(url, {}, "POST");
+
+                            //        }
+                            //    });
                             break;
                     }
                 });
@@ -255,7 +271,7 @@
 
 </head>
 <body>
-    @Html.Hidden("RedirectTo", Url.Action("ActionName", "ControllerName"))   
+    @Html.Hidden("RedirectTo", Url.Action("ActionName", "ControllerName"))
 
 </body>
 

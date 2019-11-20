@@ -7,6 +7,26 @@
     <script>
         $(document).ready(function () {
 
+            //Funcion utilizada para evitar que se pongna decimales, "." y "," dentro del campo numeor de dias
+            (function ($) {
+                $.fn.inputFilter = function (inputFilter) {
+                    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
+                        if (inputFilter(this.value)) {
+                            this.oldValue = this.value;
+                            this.oldSelectionStart = this.selectionStart;
+                            this.oldSelectionEnd = this.selectionEnd;
+                        } else if (this.hasOwnProperty("oldValue")) {
+                            this.value = this.oldValue;
+                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
+                        }
+                    });
+                };
+            }(jQuery));
+
+            $("#NroDocumento").inputFilter(function (value) {
+                return /^\d*$/.test(value);
+            });
+
             //Creacion de la grid
             $("#rowSelection").kendoGrid({
                 dataSource: {
@@ -246,7 +266,81 @@
                 ]
             });
 
-            $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta)));
+
+
+            switch (@Html.Raw(Json.Encode(ViewBag.Respuesta.Codigo))) {
+
+                case "1":
+
+                    $("#CuerpoGrid").show();
+                    $("#CuerpoLogin").hide();
+                    $("#CuerpoError").hide();
+                    $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta.Resultado.Data)));
+
+                    break;
+
+                case "-3":
+                    $("#CuerpoGrid").hide();
+                    $("#CuerpoLogin").show();
+                    $("#CuerpoError").hide();
+                    break;
+
+            }
+
+
+
+            $("#btnAgregar0").click(function () {
+                if ($("#NroDocumento").val() != '') {
+
+                    $("#DivFondoTrasparente").show();
+                    $("#DivCirculoAzul").show();
+
+                    $.getJSON("/AprobacionRechazo/ConsultarUserSAPDocumento",
+                        {
+                            NroDocumento: parseInt($("#NroDocumento").val()),
+                            oIdDecodificado: @Html.Raw(Json.Encode(ViewBag.IdDecodificado)),
+                            oCorreoDecodificado: @Html.Raw(Json.Encode(ViewBag.CorreoDecodificado)),
+                        }, function (oRespuestaSAP) {
+                        switch (oRespuestaSAP.Codigo) {
+
+                            case "1":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                $("#CuerpoGrid").show();
+                                $("#CuerpoLogin").hide();
+                                $("#CuerpoError").hide();
+                                $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta.Resultado.Data)));
+
+                                break;
+
+                            case "-3":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                $("#CuerpoGrid").hide();
+                                $("#CuerpoLogin").hide();
+                                $("#CuerpoError").show();
+
+                                break;
+                        }
+                    });
+                }
+                else {
+                    swal.fire({
+                        text: "El campo Nro. de identificación es obligatorio",
+                        type: 'warning',
+                        confirmButtonText: "OK",
+                        confirmButtonColor: '#00AFF0',
+                        allowOutsideClick: false,
+                        allowEscapeKey: false
+                    });
+                }
+            });
+
+
 
         });
 
@@ -269,7 +363,7 @@
 
 <body>
     <div class="jumbotron">
-        <div class="jumbotron-cuerpo">
+        <div class="jumbotron-cuerpo" id="CuerpoGrid">
             <br />
             <div class="col-md-12 center">
                 <div class="col-md-12 jumbotron-encabezado">
@@ -281,6 +375,34 @@
                 <div style="display:table-cell; overflow:auto" id="rowSelection"></div>
             </div>
         </div>
+
+        <div class="jumbotron-cuerpo" id="CuerpoLogin">
+            <div class="container body-content">
+                <h1 class="jumbotron-encabezado center">Login</h1>
+                <div class="col-md-12 center">
+                    <h6>No hemos identificado un usuario en el directorio activo <br /> Por favor ingrese su n&uacute;mero de documento de identidad</h6>
+                 
+                    <input id="NroDocumento" class="k-textbox" type="text" onkeydown="return event.keyCode !== 69" />
+                    <br />
+                    <br />
+                    <button class="btn btn-lg btn-postobon">Ingresar</button>
+                </div>
+            </div>
+        </div>
+
+        <div class="jumbotron-cuerpo" id="CuerpoError">
+            <div class="container body-content">
+                <h1 class="jumbotron-encabezado center">Advertencia</h1>
+                <div class="col-md-12 center jumbotron">
+                    <h6>
+                        El usuario identificado o el Nro. de documento de identidad ingresado no corresponden al empleado encargado de realizar la gesti&oacute;n de la solicitud.
+                        <br /> Muchas gracias
+                    </h6>
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </body>
 
