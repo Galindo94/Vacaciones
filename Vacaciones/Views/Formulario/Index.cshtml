@@ -209,10 +209,9 @@
                                     allowEscapeKey: false
                                 }).then((result) => {
                                     if (result.value) {
+
                                         var url = "@Url.Action("Index", "VacacionesIntranet",  null)";
                                         window.location.href = url
-
-                                        window.close('', '_parent', '');
 
                                     }
                                 });

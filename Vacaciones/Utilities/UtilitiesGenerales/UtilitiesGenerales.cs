@@ -140,22 +140,32 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
         {
             string NombreMaquina = string.Empty;
 
-            NombreMaquina = Dns.GetHostEntry(System.Web.HttpContext.Current.Request.UserHostAddress).HostName;
-
-
-            if (!string.IsNullOrEmpty(NombreMaquina))
+            try
             {
-                return NombreMaquina;
-            }
-            else
-            {
-                Logger.Error("Ocurrió un error obteniendo el nombre de la maquina. Fecha de la operacion: " + DateTime.Now);
-                return NombreMaquina;
+
+                NombreMaquina = Dns.GetHostEntry(System.Web.HttpContext.Current.Request.UserHostAddress).HostName;
+                
+                if (!string.IsNullOrEmpty(NombreMaquina))
+                {
+                    return NombreMaquina;
+                }
+                else
+                {
+                    Logger.Error("Ocurrió un error obteniendo el nombre de la maquina. Fecha de la operacion: " + DateTime.Now);
+                    return NombreMaquina;
+
+                }
 
             }
+
+            catch (Exception Ex)
+            {
+                Logger.Error("Ocurrió un error obteniendo el nombre de la maquina. Fecha de la operacion: " + DateTime.Now
+                    + " Exception: " + Ex);
+                return "";
+            }
+
 
         }
-
-
     }
 }

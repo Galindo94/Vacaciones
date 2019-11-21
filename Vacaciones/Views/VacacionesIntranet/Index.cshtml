@@ -16,6 +16,9 @@
 
                         case "0":
                             $.post("../VacacionesIntranet/ConsultarUserSAP", { UserDA: JSON.stringify(oRespuestaDA.Resultado.Data) }, function (oRespuestaSAP) {
+
+                                console.log(oRespuestaSAP.Codigo)
+
                                 switch (oRespuestaSAP.Codigo) {
 
                                     case "5":
@@ -155,6 +158,69 @@
 
                                         break;
 
+                                    case "-1":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
+                                        swal.fire({
+                                            text: oRespuestaMotorReglas.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
+                                    case "-2":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
+                                        swal.fire({
+                                            text: oRespuestaMotorReglas.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
+                                    case "-3":
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
+                                        swal.fire({
+                                            text: oRespuestaMotorReglas.Mensaje,
+                                            type: 'error',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+                                        break;
+
+
+                                    case "-4":
+
+
+                                        $("#DivFondoTrasparente").hide();
+                                        $("#DivCirculoAzul").hide();
+
+                                        swal.fire({
+                                            text: oRespuestaSAP.Mensaje,
+                                            type: 'warning',
+                                            confirmButtonText: "OK",
+                                            confirmButtonColor: '#00AFF0',
+                                            allowOutsideClick: false,
+                                            allowEscapeKey: false
+                                        });
+
+                                        break;
+
                                 }
                             });
                             break;
@@ -170,21 +236,7 @@
                             url = url.replace("ControllerName", "Home");
                             $.redirect(url, {}, "POST");
 
-                            //swal.fire({
-                            //    text: oRespuestaDA.Mensaje,
-                            //    type: 'error',
-                            //    confirmButtonText: "OK",
-                            //    confirmButtonColor: '#00AFF0',
-                            //    allowOutsideClick: false,
-                            //    allowEscapeKey: false
-                            //}).then((result) => {
-                            //    if (result.value) {
-                            //        var url = $("#RedirectTo").val();
-                            //        url = url.replace("ActionName", "Index");
-                            //        url = url.replace("ControllerName", "Home");
-                            //        $.redirect(url, {}, "POST", );
-                            //    }
-                            //});
+                          
                             break;
 
                          // El usuario no se encontro en el DA
@@ -199,21 +251,7 @@
                             $.redirect(url, {}, "POST");
 
 
-                            //swal.fire({
-                            //    text: oRespuestaDA.Mensaje,
-                            //    type: 'warning',
-                            //    confirmButtonText: "OK",
-                            //    confirmButtonColor: '#00AFF0',
-                            //    allowOutsideClick: false,
-                            //    allowEscapeKey: false
-                            //}).then((result) => {
-                            //    if (result.value) {
-                            //        var url = $("#RedirectTo").val();
-                            //        url = url.replace("ActionName", "Index");
-                            //        url = url.replace("ControllerName", "Home");
-                            //        $.redirect(url, {}, "POST");
-                            //    }
-                            //});
+                          
                             break;
 
                         // Error en el Servicio del DA
@@ -244,22 +282,7 @@
                             url = url.replace("ControllerName", "Home");
                             $.redirect(url, {}, "POST");
 
-                            //swal.fire({
-                            //    text: oRespuestaDA.Mensaje,
-                            //    type: 'error',
-                            //    confirmButtonText: "OK",
-                            //    confirmButtonColor: '#00AFF0',
-                            //    allowOutsideClick: false,
-                            //    allowEscapeKey: false
-                            //}).then((result) => {
-                            //    if (result.value) {
-                            //        var url = $("#RedirectTo").val();
-                            //        url = url.replace("ActionName", "Index");
-                            //        url = url.replace("ControllerName", "Home");
-                            //        $.redirect(url, {}, "POST");
-
-                            //        }
-                            //    });
+                          
                             break;
                     }
                 });

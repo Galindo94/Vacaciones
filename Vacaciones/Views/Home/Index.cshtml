@@ -38,6 +38,22 @@
                     $.getJSON("/Home/ConsultarUserSAP", { NroDocumento: parseInt($("#NroDocumento").val()) }, function (oRespuestaSAP) {
                         switch (oRespuestaSAP.Codigo) {
 
+
+                            case "6":
+
+                                $("#DivFondoTrasparente").hide();
+                                $("#DivCirculoAzul").hide();
+
+                                swal.fire({
+                                    text: oRespuestaSAP.Mensaje,
+                                    type: 'warning',
+                                    confirmButtonText: "OK",
+                                    confirmButtonColor: '#00AFF0',
+                                    allowOutsideClick: false,
+                                    allowEscapeKey: false
+                                });
+                                break;
+
                             case "5":
 
                                 $("#DivFondoTrasparente").hide();

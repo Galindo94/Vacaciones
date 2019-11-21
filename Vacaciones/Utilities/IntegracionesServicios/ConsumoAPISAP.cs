@@ -80,6 +80,13 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                         {
                             //Procesado correctamente
                             case "4":
+
+                                if (string.IsNullOrEmpty(oRespuestaSAPCliente.Details[0].CorreoCorpJefe))
+                                {
+                                    oRespuestaSAPCliente.Exception[0].ID = "6";
+                                    oRespuestaSAPCliente.Exception[POS].MESSAGE = "No se ha identificado la información de su jefe inmediato. Comuníquese con Gestión Humana";
+                                }
+
                                 if (oRespuestaSAPCliente.Details[0].Contingentes.Contigente != null && oRespuestaSAPCliente.Details[0].Contingentes.Contigente.Count > 0 && oRespuestaSAPCliente.Details[0].IdGestor == "NO")
                                 {
                                     foreach (var item in oRespuestaSAPCliente.Details[0].Contingentes.Contigente)
@@ -91,6 +98,8 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                         }
                                     }
                                 }
+
+                               
                                 break;
 
                             //Error: Favor Enviar Nro.(s) de Identificación

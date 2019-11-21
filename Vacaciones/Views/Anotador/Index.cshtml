@@ -815,13 +815,28 @@
 
                             switch (oRespuestaSAP.Codigo) {
 
+                                case "6":
+
+                                    $("#DivFondoTrasparente").hide();
+                                    $("#DivCirculoAzul").hide();
+
+                                    swal.fire({
+                                        text: "No se ha identificado la información del jefe inmediato del trabajador. Comuníquese con Gestión Humana",
+                                        type: 'warning',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
+
                                 case "5":
 
                                     $("#DivFondoTrasparente").hide();
                                     $("#DivCirculoAzul").hide();
 
                                     swal.fire({
-                                        text: "El trabajador no cuenta con días disponibles para disfrute de vacaciones",
+                                        text:  "El trabajador no cuenta con días disponibles para disfrute de vacaciones",
                                         type: 'warning',
                                         confirmButtonText: "OK",
                                         confirmButtonColor: '#00AFF0',
@@ -1179,7 +1194,8 @@
                                     allowEscapeKey: false
                                 }).then((result) => {
                                     if (result.value) {
-                                         window.close('', '_parent', '');
+                                          var url = "@Url.Action("Index", "VacacionesIntranet",  null)";
+                                        window.location.href = url
                                         }
                                     });
                                 break
@@ -1241,7 +1257,7 @@
 
             });
 
-                                    //Boton de agregar un nuevo registro desde la pantalla modal
+            //Boton de agregar un nuevo registro desde la pantalla modal
             $("#btnAgregarModal").click(function () {
                 if ($("#txtCedulaOtros").val() != '' && $("#NumDias1").val() != '' && $("#datepicker").val() != '' ) {
                     $.post("../Anotador/AgregarOEditarEmpleado", {
