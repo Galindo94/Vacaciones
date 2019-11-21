@@ -145,16 +145,16 @@
                                             var grid = $("#rowSelection").data("kendoGrid");
                                             $(grid.dataSource.data()).each(function (index) {
                                                 if (this.id == item.id) {
-                                                    var csctvo_slctd = getUrlParameter('csctvo_slctd');
-                                                    var crreo_jfe_slctnte = getUrlParameter('crreo_jfe_slctnte');
+                                                    //var csctvo_slctd = getUrlParameter('csctvo_slctd');
+                                                    //var crreo_jfe_slctnte = getUrlParameter('crreo_jfe_slctnte');
                                                     $("#DivFondoTrasparente").show();
                                                     $("#DivCirculoAzul").show();
                                                     $.post("../AprobacionRechazo/EnviarCambioEstado",
                                                         {
                                                             Id: item.id,
                                                             estado: 2,
-                                                            csctvo_slctd: csctvo_slctd,
-                                                            crreo_jfe_slctnte: crreo_jfe_slctnte,
+                                                            csctvo_slctd: @Html.Raw(Json.Encode(ViewBag.IdCodificado)),
+                                                            crreo_jfe_slctnte: @Html.Raw(Json.Encode(ViewBag.CorreoCodificado)),
                                                             fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
                                                             fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                             nmbre_cmplto: item.nmbre_cmplto,
@@ -209,15 +209,13 @@
                                             var grid = $("#rowSelection").data("kendoGrid");
                                             $(grid.dataSource.data()).each(function (index) {
                                                 if (this.id == item.id) {
-                                                    var csctvo_slctd = getUrlParameter('csctvo_slctd');
-                                                    var crreo_jfe_slctnte = getUrlParameter('crreo_jfe_slctnte');
                                                     $("#DivFondoTrasparente").show();
                                                     $("#DivCirculoAzul").show();
                                                     $.post("../AprobacionRechazo/EnviarCambioEstado", {
                                                         Id: item.id,
                                                         estado: 3,
-                                                        csctvo_slctd: csctvo_slctd,
-                                                        crreo_jfe_slctnte: crreo_jfe_slctnte,
+                                                        csctvo_slctd: @Html.Raw(Json.Encode(ViewBag.IdCodificado)),
+                                                        crreo_jfe_slctnte: @Html.Raw(Json.Encode(ViewBag.CorreoCodificado)),
                                                         fcha_inco_vccns: kendo.toString(kendo.parseDate(item.fcha_inco_vccns), 'dd/MM/yyyy'),
                                                         fcha_fn_vcc: kendo.toString(kendo.parseDate(item.fcha_fn_vcc), 'dd/MM/yyyy'),
                                                         nmbre_cmplto: item.nmbre_cmplto,
@@ -273,72 +271,20 @@
                 case "1":
 
                     $("#CuerpoGrid").show();
-                    $("#CuerpoLogin").hide();
                     $("#CuerpoError").hide();
                     $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta.Resultado.Data)));
 
                     break;
 
                 case "-3":
-                    $("#CuerpoGrid").hide();
-                    $("#CuerpoLogin").show();
-                    $("#CuerpoError").hide();
+                    //$("#CuerpoGrid").hide();
+                    //$("#CuerpoLogin").show();
+                     $("#CuerpoGrid").hide();
+                    $("#CuerpoError").show();
                     break;
 
             }
 
-
-
-            $("#btnAgregar0").click(function () {
-                if ($("#NroDocumento").val() != '') {
-
-                    $("#DivFondoTrasparente").show();
-                    $("#DivCirculoAzul").show();
-
-                    $.getJSON("/AprobacionRechazo/ConsultarUserSAPDocumento",
-                        {
-                            NroDocumento: parseInt($("#NroDocumento").val()),
-                            oIdDecodificado: @Html.Raw(Json.Encode(ViewBag.IdDecodificado)),
-                            oCorreoDecodificado: @Html.Raw(Json.Encode(ViewBag.CorreoDecodificado)),
-                        }, function (oRespuestaSAP) {
-                        switch (oRespuestaSAP.Codigo) {
-
-                            case "1":
-
-                                $("#DivFondoTrasparente").hide();
-                                $("#DivCirculoAzul").hide();
-
-                                $("#CuerpoGrid").show();
-                                $("#CuerpoLogin").hide();
-                                $("#CuerpoError").hide();
-                                $('#rowSelection').data("kendoGrid").dataSource.data(@Html.Raw(Json.Encode(ViewBag.Respuesta.Resultado.Data)));
-
-                                break;
-
-                            case "-3":
-
-                                $("#DivFondoTrasparente").hide();
-                                $("#DivCirculoAzul").hide();
-
-                                $("#CuerpoGrid").hide();
-                                $("#CuerpoLogin").hide();
-                                $("#CuerpoError").show();
-
-                                break;
-                        }
-                    });
-                }
-                else {
-                    swal.fire({
-                        text: "El campo Nro. de identificación es obligatorio",
-                        type: 'warning',
-                        confirmButtonText: "OK",
-                        confirmButtonColor: '#00AFF0',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    });
-                }
-            });
 
 
 
@@ -376,27 +322,13 @@
             </div>
         </div>
 
-        <div class="jumbotron-cuerpo" id="CuerpoLogin">
-            <div class="container body-content">
-                <h1 class="jumbotron-encabezado center">Login</h1>
-                <div class="col-md-12 center">
-                    <h6>No hemos identificado un usuario en el directorio activo <br /> Por favor ingrese su n&uacute;mero de documento de identidad</h6>
-                 
-                    <input id="NroDocumento" class="k-textbox" type="text" onkeydown="return event.keyCode !== 69" />
-                    <br />
-                    <br />
-                    <button class="btn btn-lg btn-postobon">Ingresar</button>
-                </div>
-            </div>
-        </div>
 
         <div class="jumbotron-cuerpo" id="CuerpoError">
             <div class="container body-content">
                 <h1 class="jumbotron-encabezado center">Advertencia</h1>
                 <div class="col-md-12 center jumbotron">
                     <h6>
-                        El usuario identificado o el Nro. de documento de identidad ingresado no corresponden al empleado encargado de realizar la gesti&oacute;n de la solicitud.
-                        <br /> Muchas gracias
+                        Usted no es la persona autorizada para aprobar o rechazar esta solicitud.
                     </h6>
                 </div>
             </div>

@@ -64,7 +64,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
             {
 
                 Logger.Error("Ocurrió un error consultando la información de la solicitud. Consecutivo: " +
-                    csctvo_slctd + ". Coreeo jefe del solicitante: " + crreo_jfe_slctnte +
+                    csctvo_slctd + ". Correo jefe del solicitante: " + crreo_jfe_slctnte +
                     ". Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "-3";

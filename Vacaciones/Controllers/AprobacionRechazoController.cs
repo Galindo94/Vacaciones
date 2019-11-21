@@ -28,7 +28,6 @@ namespace Vacaciones.Controllers
             ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             PersonaModels oPersona = new PersonaModels();
-            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
 
             try
             {
@@ -43,25 +42,14 @@ namespace Vacaciones.Controllers
                 ViewBag.CorreoCodificado = crreo_jfe_slctnte;
 
                 MensajeRespuesta oMensajeRespuestaDA = new MensajeRespuesta();
-                oMensajeRespuestaDA = JsonConvert.DeserializeObject<MensajeRespuesta>(JsonConvert.SerializeObject(ConsultarUserDA(userName).Data));
+                oMensajeRespuestaDA = ConsultarUserDA(userName);
 
                 if (oMensajeRespuestaDA.Codigo == "0")
                 {
-                    MensajeRespuesta oMensajeRespuestaSAP = new MensajeRespuesta();
-                    oMensajeRespuestaSAP = JsonConvert.DeserializeObject<MensajeRespuesta>(JsonConvert.SerializeObject(ConsultarUserSAP(oMensajeRespuestaDA.Resultado.Data.ToString()).Data));
-
-                    if (oMensajeRespuestaSAP.Codigo == "4")
-                    {
-                        oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oMensajeRespuestaSAP.Resultado.Data.ToString());
-
-                        string oCorreoCorporativoSAP = oRespuestaSAPModels.Details[0].CorreoCorp;
-                        string oCorreoPersonalSAP = oRespuestaSAPModels.Details[0].CorreoPersonal;
-
-
-
-
-                        if (!string.IsNullOrEmpty(oCorreoCorporativoSAP) &&
-                            (oCorreoCorporativoSAP == oCorreoDecodificado || oCorreoCorporativoSAP == oCorreoPersonalSAP))
+                    string oPersonaModel = JsonConvert.SerializeObject(oMensajeRespuestaDA.Resultado.Data);
+                    oPersona = JsonConvert.DeserializeObject<PersonaModels>(oPersonaModel);
+                    
+                        if (oPersona.Correo.ToUpper() == oCorreoDecodificado.ToUpper())
                         {
                             oMensajeRespuesta = cons.ConsultarAprobacionRechazo(int.Parse(oIdDecodificado), oCorreoDecodificado);
                             ViewBag.Respuesta = Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet).Data;
@@ -76,16 +64,7 @@ namespace Vacaciones.Controllers
 
                         }
 
-                    }
-                    else
-                    {
-                        oMensajeRespuesta.Codigo = "-3";
-                        oMensajeRespuesta.Mensaje = "";
-                        oMensajeRespuesta.Resultado = new JsonResult();
-
-                        ViewBag.Respuesta = Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet).Data;
-
-                    }
+                   
                 }
                 else
                 {
@@ -107,7 +86,7 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public JsonResult ConsultarUserDA(string NombreUsuario)
+        public MensajeRespuesta ConsultarUserDA(string NombreUsuario)
         {
             PersonaModels oPersona = new PersonaModels();
             ConsumoDA oConsumoDA = new ConsumoDA();
@@ -118,7 +97,7 @@ namespace Vacaciones.Controllers
                 //Se guarda respuesta del API del DA
                 oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
                 //Se retornan los valores
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+                return oMensajeRespuesta;
 
             }
             catch (Exception Ex)
@@ -133,116 +112,25 @@ namespace Vacaciones.Controllers
 
                 oMensajeRespuesta.Codigo = oPersona.Codigo.ToString();
                 oMensajeRespuesta.Mensaje = oPersona.Respuesta;
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oPersona, Formatting.Indented), JsonRequestBehavior.AllowGet);
+                oMensajeRespuesta.Resultado = Json(oPersona, JsonRequestBehavior.AllowGet);
 
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+                return oMensajeRespuesta;
             }
         }
 
-        public JsonResult ConsultarUserSAP(string UserDA)
-        {
-            ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
-            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-            RespuestaSAPModels oRespuestaSAP = new RespuestaSAPModels
-            {
-                Details = new List<DetailsModels>(),
-                Exception = new List<ExceptionModels>()
-            };
+       
 
-            try
-            {
-                oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion);
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-            }
-            catch (Exception Ex)
-            {
-                Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
-                             "Nro. Documento: " + JsonConvert.DeserializeObject<PersonaModels>(UserDA).Identificacion +
-                             "Exception: " + Ex);
-
-                oMensajeRespuesta.Codigo = "3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
-            }
-        }
-
-        public JsonResult ConsultarUserSAPDocumento(int NroDocumento, string oIdDecodificado, string oCorreoDecodificado)
-        {
-
-            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
-            ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
-            RespuestaSAPModels oRespuestaSAPModels = new RespuestaSAPModels();
-            ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
-            try
-            {
-                oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(NroDocumento);
-
-                if (oMensajeRespuesta.Codigo == "4")
-                {
-
-                    string IdDecodificado = StringCipher.Decrypt(oIdDecodificado);
-                    string CorreoDecodificado = StringCipher.Decrypt(oCorreoDecodificado);
-
-                    oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oMensajeRespuesta.Resultado.Data.ToString());
-
-                    string oCorreoCorporativoSAP = oRespuestaSAPModels.Details[0].CorreoCorp;
-                    string oCorreoPersonalSAP = oRespuestaSAPModels.Details[0].CorreoPersonal;
-
-
-                    if (!string.IsNullOrEmpty(oCorreoCorporativoSAP) &&
-                        (oCorreoCorporativoSAP == oCorreoDecodificado || oCorreoCorporativoSAP == oCorreoPersonalSAP))
-                    {
-                        oMensajeRespuesta = cons.ConsultarAprobacionRechazo(int.Parse(IdDecodificado), CorreoDecodificado);
-                        ViewBag.Respuesta = Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet).Data;
-                    }
-                    else
-                    {
-                        oMensajeRespuesta.Codigo = "-3";
-                        oMensajeRespuesta.Mensaje = "";
-                        oMensajeRespuesta.Resultado = new JsonResult();
-
-                        ViewBag.Respuesta = Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet).Data;
-
-                    }
-                }
-                else
-                {
-                    oMensajeRespuesta.Codigo = "-3";
-                    oMensajeRespuesta.Mensaje = "";
-                    oMensajeRespuesta.Resultado = new JsonResult();
-
-                    ViewBag.Respuesta = Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet).Data;
-
-                }
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-
-            }
-            catch (Exception Ex)
-            {
-                Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
-                                             "Nro. Documento: " + NroDocumento +
-                                             "Exception: " + Ex);
-
-                oMensajeRespuesta.Codigo = "-3";
-                oMensajeRespuesta.Mensaje = "Ocurrió un error inesperado en la consulta de la información. Contacte al administrador del sistema";
-                oMensajeRespuesta.Resultado = Json(JsonConvert.SerializeObject(oMensajeRespuesta, Formatting.Indented), JsonRequestBehavior.AllowGet);
-
-                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
-            }
-        }
-
-        public JsonResult EnviarCambioEstado(int Id, int estado, int csctvo_slctd, string crreo_jfe_slctnte, DateTime fcha_inco_vccns, DateTime fcha_fn_vcc, string nmbre_cmplto, int fk_slctd_encbzdo, string crreo_slctnte, string crro_antdr)
+        public JsonResult EnviarCambioEstado(int Id, int estado, string csctvo_slctd, string crreo_jfe_slctnte, DateTime fcha_inco_vccns, DateTime fcha_fn_vcc, string nmbre_cmplto, int fk_slctd_encbzdo, string crreo_slctnte, string crro_antdr)
         {
             ConsumoAPIAprobacion cons = new ConsumoAPIAprobacion();
             ResultadoCambioEstado oMensajeRespuesta = new ResultadoCambioEstado();
             oMensajeRespuesta = cons.CambiarEstadoSolicitud(Id, estado);
 
+            string oIdDecodificado = StringCipher.Decrypt(csctvo_slctd);
+            string oCorreoDecodificado = StringCipher.Decrypt(crreo_jfe_slctnte);
+
             MensajeRespuesta DataGrid = new MensajeRespuesta();
-            DataGrid = cons.ConsultarAprobacionRechazo(csctvo_slctd, crreo_jfe_slctnte);
+            DataGrid = cons.ConsultarAprobacionRechazo(int.Parse(oIdDecodificado), oCorreoDecodificado);
             if (oMensajeRespuesta.Codigo == 1 && estado == 3)
             {
                 ConsumoAPIFlow consFlow = new ConsumoAPIFlow();

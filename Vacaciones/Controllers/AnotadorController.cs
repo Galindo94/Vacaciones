@@ -61,7 +61,7 @@ namespace Vacaciones.Controllers
                     switch (oReglas.Prmtro)
                     {
                         case "NroDias":
-                            ViewBag.NumeroDias = oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');
+                            ViewBag.NumeroDias =  oDiasContingente.CalcularDiasContingente(oRespuestaSAPModels.Details[0].Contingentes.Contigente, oReglas).ToString().Replace('.', ',');
                             break;
                         case "NroMinDias":
                             ViewBag.MinimoDias = Convert.ToDouble(oReglas.Vlr_Slda);
