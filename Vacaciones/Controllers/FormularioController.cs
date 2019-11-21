@@ -2,10 +2,11 @@
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
-using System.Net;
+using System.Linq;
 using System.Web;
 using System.Web.Configuration;
 using System.Web.Mvc;
+using Vacaciones.Models.ModelosFechasSolicitud;
 using Vacaciones.Models.ModelosFlow;
 using Vacaciones.Models.ModelosGuardarSolicitud;
 using Vacaciones.Models.ModelosMotorDeReglas;
@@ -245,7 +246,6 @@ namespace Vacaciones.Controllers
 
         }
 
-
         public JsonResult CalcularFechaFin(int NumeroDias, string FechaInicio, string DiasFestivosSabadosDomingos)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
@@ -278,6 +278,75 @@ namespace Vacaciones.Controllers
         }
 
 
+        public JsonResult ConsultaFechasSolicitudExistentes(string oIdentificacion, string FechaInicio, string FechaFin)
+        {
+            MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
+            ConsumoAPIFechasSolicitud oConsumoAPIFechas = new ConsumoAPIFechasSolicitud();
+            RespuestaFechasSolicitudModels oRespuesteFechaSolicitud = new RespuestaFechasSolicitudModels();
+            List<DateTime> oRangoFechasSolicitud = new List<DateTime>();
+            List<string> oListaFechasBD = new List<string>();
+            bool encontrado = false;
+            DateTime oFechaInicio = new DateTime();
+            DateTime oFechaFin = new DateTime();
+            try
+            {
+                oMensajeRespuesta = oConsumoAPIFechas.ConsultarFechasSolicitud(oIdentificacion);
+
+                if (oMensajeRespuesta.Codigo == "1")
+                {
+                    oRespuesteFechaSolicitud = JsonConvert.DeserializeObject<RespuestaFechasSolicitudModels>(JsonConvert.SerializeObject(oMensajeRespuesta.Resultado.Data));
+
+                    oListaFechasBD = oRespuesteFechaSolicitud.Fechas;
+
+                    oFechaInicio = Convert.ToDateTime(FechaInicio);
+                    oFechaFin = Convert.ToDateTime(FechaFin);
+
+                    for (DateTime date = oFechaInicio; date <= oFechaFin; date = date.AddDays(1))
+                        oRangoFechasSolicitud.Add(date);
+
+                    if (oListaFechasBD != null && oListaFechasBD.Count > 0)
+                    {
+                        foreach (var oFecha in oRangoFechasSolicitud)
+                        {
+
+                            var ResultCount = from oItem in oListaFechasBD
+                                              where Convert.ToDateTime(oItem) == oFecha
+                                              select oItem.Count();
+
+                            if (ResultCount.Count() > 0)
+                            {
+                                encontrado = true;
+                                break;
+                            }
+                        }
+                    }
+                    if (encontrado)
+                    {
+                        oMensajeRespuesta.Codigo = "2";
+                        oMensajeRespuesta.Mensaje = "Usted tiene una solicitud de vacaciones aprobada y pendiente de disfrutar en el período indicado";
+                    }
+
+                }
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+            }
+            catch (Exception Ex)
+            {
+
+                //Se deja registro en el Log del error
+                Logger.Error("Ocurrió un error validando que el empelado con Nro documento: " + oIdentificacion +
+                    " no tuviese una solicitud aprobada y pendiente de disfrute en el rango de fechas seleccionado.Fecha de inicio: " + FechaInicio +
+                    " Fecha de fin: " + FechaFin +
+                    ". Exception: " + Ex);
+
+                oMensajeRespuesta.Codigo = "-3";
+                oMensajeRespuesta.Mensaje = "Ocurrió un error validando que usted no tenga una solicitud de vacaciones pendiente de disfrute en el rango de fechas seleccionado. Contacte al administrador del sistema";
+                oMensajeRespuesta.Resultado = Json("", JsonRequestBehavior.AllowGet);
+
+                return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
+
+            }
+        }
 
     }
 

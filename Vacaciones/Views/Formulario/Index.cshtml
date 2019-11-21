@@ -5,6 +5,7 @@
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
 
+
     <script>
 
         $(document).ready(function () {
@@ -89,7 +90,7 @@
             });
 
             $('#kendocalendar_1').data('kendoDatePicker').enable(false);
-            
+
 
             //Validacion del campo numero de dias en pantalla principal
             $("#NumDias0").focusout(function () {
@@ -179,78 +180,141 @@
                 if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
                     $("#DivFondoTrasparente").show();
                     $("#DivCirculoAzul").show();
-                    $.post("../Formulario/GuardarSolicitud", {
-                        NroIdentificacion: $("#NroIdentificacionHidden").val(),
-                        NombresEmpleado: "@ViewBag.NombresEmpleado",
-                        ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",
-                        oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
-                        oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
-                        NumeroDias: $("#NumDias0").val(),
-                        SabadoHabil: "@ViewBag.DiasFestivosSabadosDomingos",
-                        FechaInicio: $("#kendocalendar_0").val(),
-                        FechaFin: $("#kendocalendar_1").val(),
-                        NroMinDiasCorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)),
-                        CorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.CorreoCompensacion)),
-                    }, function (oRespuestaGuardar) {
 
-                        $("#DivFondoTrasparente").hide();
-                        $("#DivCirculoAzul").hide();
 
-                        switch (oRespuestaGuardar.Codigo) {
+                    $.post("../Formulario/ConsultaFechasSolicitudExistentes",
+                        {
+                            oIdentificacion: $("#NroIdentificacionHidden").val(),
+                            FechaInicio: $("#kendocalendar_0").val(),
+                            FechaFin: $("#kendocalendar_1").val(),
+                        }, function (oRespuestaFechasSolicitudes) {
 
-                            case "1":
+                            $("#DivFondoTrasparente").hide();
+                            $("#DivCirculoAzul").hide();
 
-                                swal.fire({
-                                    text: oRespuestaGuardar.Mensaje,
-                                    type: 'success',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                }).then((result) => {
-                                    if (result.value) {
+                            switch (oRespuestaFechasSolicitudes.Codigo) {
 
-                                        var url = "@Url.Action("Index", "VacacionesIntranet",  null)";
-                                        window.location.href = url
+                                case "-1":
+                                    swal.fire({
+                                        text: oRespuestaFechasSolicitudes.Mensaje,
+                                        type: 'error',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
 
-                                    }
-                                });
-                                break;
+                                case "-2":
+                                    swal.fire({
+                                        text: oRespuestaFechasSolicitudes.Mensaje,
+                                        type: 'error',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
 
-                            case "-1":
-                                swal.fire({
-                                    text: oRespuestaGuardar.Mensaje,
-                                    type: 'error',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                });
-                                break;
+                                case "-3":
+                                    swal.fire({
+                                        text: oRespuestaFechasSolicitudes.Mensaje,
+                                        type: 'error',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
 
-                            case "-2":
-                                swal.fire({
-                                    text: oRespuestaGuardar.Mensaje,
-                                    type: 'error',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                });
-                                break;
+                                case "1":
 
-                            case "-3":
-                                swal.fire({
-                                    text: oRespuestaGuardar.Mensaje,
-                                    type: 'error',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                });
-                                break;
-                            }
-                        })
+                                    $.post("../Formulario/GuardarSolicitud",
+                                        {
+                                            NroIdentificacion: $("#NroIdentificacionHidden").val(),
+                                            NombresEmpleado: "@ViewBag.NombresEmpleado",
+                                            ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",
+                                            oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
+                                            oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
+                                            NumeroDias: $("#NumDias0").val(),
+                                            SabadoHabil: "@ViewBag.DiasFestivosSabadosDomingos",
+                                            FechaInicio: $("#kendocalendar_0").val(),
+                                            FechaFin: $("#kendocalendar_1").val(),
+                                            NroMinDiasCorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)),
+                                            CorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.CorreoCompensacion)),
+                                        }, function (oRespuestaGuardar) {
+
+                                            $("#DivFondoTrasparente").hide();
+                                            $("#DivCirculoAzul").hide();
+
+                                            switch (oRespuestaGuardar.Codigo) {
+
+                                                case "1":
+                                                    swal.fire({
+                                                        text: oRespuestaGuardar.Mensaje,
+                                                        type: 'success',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    }).then((result) => {
+                                                        if (result.value) {
+                                                            var url = "@Url.Action("Index", "FinVacaciones",  null)";
+                                                            window.location.href = url
+                                                        }
+                                                        });
+                                                    break;
+
+                                                case "-1":
+                                                    swal.fire({
+                                                        text: oRespuestaGuardar.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                                case "-2":
+                                                    swal.fire({
+                                                        text: oRespuestaGuardar.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                                case "-3":
+                                                    swal.fire({
+                                                        text: oRespuestaGuardar.Mensaje,
+                                                        type: 'error',
+                                                        confirmButtonText: "OK",
+                                                        confirmButtonColor: '#00AFF0',
+                                                        allowOutsideClick: false,
+                                                        allowEscapeKey: false
+                                                    });
+                                                    break;
+
+                                            }
+                                        })
+
+                                    break;
+
+                                case "2":
+                                    swal.fire({
+                                        text: oRespuestaFechasSolicitudes.Mensaje,
+                                        type: 'warning',
+                                        confirmButtonText: "OK",
+                                        confirmButtonColor: '#00AFF0',
+                                        allowOutsideClick: false,
+                                        allowEscapeKey: false
+                                    });
+                                    break;
+                        }
+                    });
                 }
                 else {
                     swal.fire({
@@ -266,6 +330,7 @@
         });
 
     </script>
+
 </head>
 <body>
     <div class="jumbotron">

@@ -209,6 +209,7 @@
     <Compile Include="App_Start\RouteConfig.cs" />
     <Compile Include="Controllers\AnotadorController.cs" />
     <Compile Include="Controllers\AprobacionRechazoController.cs" />
+    <Compile Include="Controllers\FinVacacionesController.cs" />
     <Compile Include="Controllers\FormularioController.cs" />
     <Compile Include="Controllers\HomeController.cs" />
     <Compile Include="Controllers\VacacionesIntranetController.cs" />
@@ -216,6 +217,7 @@
       <DependentUpon>Global.asax</DependentUpon>
     </Compile>
     <Compile Include="Models\ModelosAproRechazo\SolicitudAR.cs" />
+    <Compile Include="Models\ModelosFechasSolicitud\RespuestaFechasSolicitudModels.cs" />
     <Compile Include="Models\ModelosFlow\FlowModels.cs" />
     <Compile Include="Models\ModelosFlow\RespuestaFlowModels.cs" />
     <Compile Include="Models\ModelosGenerales\ModalAnotadoresModels.cs" />
@@ -228,6 +230,7 @@
     <Compile Include="Models\ModelosRespuestaSAP\VacacionesModels.cs" />
     <Compile Include="Models\ModelosRespuestaSAP\VacacionModels.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIAprobacion.cs" />
+    <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIFechasSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIFlow.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIGuardarSolicitud.cs" />
     <Compile Include="Utilities\IntegracionesServicios\ConsumoAPIMotorDeReglas.cs" />
@@ -1048,6 +1051,7 @@
     <Content Include="Scripts\popper-utils.js.map" />
     <Content Include="Views\AprobacionRechazo\Index.cshtml" />
     <Content Include="Views\Formulario\Index.cshtml" />
+    <Content Include="Views\FinVacaciones\Index.cshtml" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="Content\Site.css" />
