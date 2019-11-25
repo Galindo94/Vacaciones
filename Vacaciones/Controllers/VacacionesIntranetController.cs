@@ -10,6 +10,7 @@ using Vacaciones.Models.ModelosRespuestaSAP;
 using Vacaciones.Utilities;
 using Vacaciones.Utilities.IntegracionesServicios;
 using System.Security.Principal;
+using Vacaciones.Utilities.UtilitiesGenerales;
 
 namespace Vacaciones.Controllers
 {
@@ -24,12 +25,12 @@ namespace Vacaciones.Controllers
             string NombreUser = System.Web.HttpContext.Current.User.Identity.Name;
             int backSlash = NombreUser.IndexOf("\\");
             string userName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
-            ViewBag.UsuarioIntranet = userName;
+            ViewBag.UsuarioIntranet = StringCipher.Encrypt(userName);
             return View();
         }
 
         // GET: VacacionesIntranet/Details/5
-        public JsonResult ConsultarUserDA(string NombreUsuario)
+        public JsonResult ConsultarUsuarioDirectorioActivo(string NombreUsuario)
         {
             PersonaModels oPersona = new PersonaModels();
             ConsumoDA oConsumoDA = new ConsumoDA();
@@ -38,7 +39,7 @@ namespace Vacaciones.Controllers
             try
             {
                 //Se guarda respuesta del API del DA
-                oMensajeRespuesta = oConsumoDA.ConsultarUserDA(NombreUsuario);
+                oMensajeRespuesta = oConsumoDA.ConsultarUserDA(StringCipher.Decrypt(NombreUsuario));
                 //Se retornan los valores
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
 
@@ -61,7 +62,7 @@ namespace Vacaciones.Controllers
             }
         }
 
-        public JsonResult ConsultarUserSAP(string UserDA)
+        public JsonResult ConsultarUsuarioServicioSAP(string UserDA)
         {
             ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();

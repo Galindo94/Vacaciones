@@ -55,7 +55,7 @@ namespace Vacaciones.Controllers
                 ViewBag.NombresEmpleado = oRespuestaSAPModels.Details[0].PrimerNombre + " " + oRespuestaSAPModels.Details[0].SegundoNombre + " ";
                 ViewBag.ApellidosEmpleado = oRespuestaSAPModels.Details[0].PrimerApellido + " " + oRespuestaSAPModels.Details[0].SegundoApellido;
 
-                ViewBag.CorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
+                ViewBag.CorreoAnotador = StringCipher.Encrypt(!string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal);
 
                 foreach (var oReglas in oRespuestaMotor.Reglas)
                 {
@@ -81,9 +81,8 @@ namespace Vacaciones.Controllers
                             break;
 
                         case "CorreoCompensacion":
-                            ViewBag.CorreoCompensacion = oReglas.Vlr_Slda;
+                            ViewBag.CorreoCompensacion = StringCipher.Encrypt(oReglas.Vlr_Slda);
                             break;
-
 
                     }
                 }
@@ -93,6 +92,13 @@ namespace Vacaciones.Controllers
                 // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
                 string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? true : false);
                 ViewBag.DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos;
+
+
+                if (oRespuestaSAPModels.Exception[0].ID == "-5")
+                    ViewBag.TieneVacaciones = "SI";
+                else
+                    ViewBag.TieneVacaciones = "NO";
+
 
 
                 return View();
@@ -186,7 +192,7 @@ namespace Vacaciones.Controllers
                                     FinFecha = oFinFecha,
                                     DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos,
                                     NroMinDiasCorreoCompensacion = int.Parse(oMinimoDiasCorreoCompensacion),
-                                    CorreoCompensacion = oCorreoCompensacion
+                                    CorreoCompensacion = StringCipher.Decrypt(oCorreoCompensacion)
                                 });
 
                                 oMensajeRespuesta = new MensajeRespuesta
@@ -238,7 +244,7 @@ namespace Vacaciones.Controllers
                                 FinFecha = Convert.ToDateTime(FinFecha),
                                 DiasFestivosSabadosDomingos = DiasFestivosSabadosDomingos,
                                 NroMinDiasCorreoCompensacion = int.Parse(oMinimoDiasCorreoCompensacion),
-                                CorreoCompensacion = oCorreoCompensacion
+                                CorreoCompensacion = StringCipher.Decrypt(oCorreoCompensacion)
                             });
 
                             oMensajeRespuesta = new MensajeRespuesta
@@ -498,7 +504,7 @@ namespace Vacaciones.Controllers
                             break;
 
                         case "CorreoCompensacion":
-                            oModalAnotadoresModels.CorreoCompensacion = oReglas.Vlr_Slda;
+                            oModalAnotadoresModels.CorreoCompensacion = StringCipher.Encrypt(oReglas.Vlr_Slda);
                             break;
 
 
@@ -606,18 +612,14 @@ namespace Vacaciones.Controllers
                 {
                     oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
 
-                    //oCorreoAnotador = !string.IsNullOrEmpty(oRespuestaSAPModels.Details[0].CorreoCorp) ? oRespuestaSAPModels.Details[0].CorreoCorp : oRespuestaSAPModels.Details[0].CorreoPersonal;
-
                     oSolicitudes.fcha_hra_slctd = DateTime.Now;
                     oSolicitudes.nmbrs_slctnte = HttpUtility.HtmlDecode(NombresEmpleadoAnotador);
                     oSolicitudes.apllds_slctnte = HttpUtility.HtmlDecode(ApellidosEmpleadoAnotador);
                     oSolicitudes.nmro_idntfccn = NroIdentificacionAnotador;
                     oSolicitudes.cdgo_escenario = oRespuestaMotorModels.Escenario[0].Cdgo;
                     oSolicitudes.detalle = GenerarObjetoSolicitudDetalle(oDataActual);
-                    oSolicitudes.crro_antdr = oCorreoAnotador;
+                    oSolicitudes.crro_antdr = StringCipher.Decrypt(oCorreoAnotador);
                     oSolicitudes.ip = Request.UserHostAddress;
-                    oSolicitudes.nmbre_usrio = oCorreoAnotador;
-                    oSolicitudes.nmbre_eqpo = oCorreoAnotador;
                     oSolicitudes.ip = oUtilitiesGenerales.ObtenerIp();
                     oSolicitudes.nmbre_usrio = UserName;
                     oSolicitudes.nmbre_eqpo = oUtilitiesGenerales.ObtenerNombreMaquina();
@@ -632,7 +634,7 @@ namespace Vacaciones.Controllers
                              oSolicitudes.nmro_idntfccn +
                              ". Especificacion: Ocurrió un error generando el Objeto solicitud detalle en la clase AnotadorController método GenerarObjetoSolicitudDetalle" + ". ");
 
-                        oMensajeRespuesta.Codigo = "-1";
+                        oMensajeRespuesta.Codigo = "-3";
                         oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
                     }
 
@@ -640,7 +642,7 @@ namespace Vacaciones.Controllers
                 }
                 else
                 {
-                    oMensajeRespuesta.Codigo = "-1";
+                    oMensajeRespuesta.Codigo = "-3";
                     oMensajeRespuesta.Mensaje = "Ocurrió un error almacenando la solicitud de vacaciones. Contacte al administrador del sistema";
 
                     Logger.Error("Ocurrió un error almacenando la solicitud de vacaciones. Nro Documento Encabezado: " +
@@ -752,7 +754,7 @@ namespace Vacaciones.Controllers
                 if (oMensajeRespuesta.Codigo != "1")
                 {
                     Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el anotador con correo: " + oCorreoAnotador +
-                        ". Id de la solicitud: " + IdSolicitud);
+                        ". Id de la solicitud: " + oIdSolicitud);
 
                 }
 
@@ -793,9 +795,9 @@ namespace Vacaciones.Controllers
 
                             if (oMensajeRespuesta.Codigo != "1")
                             {
-                                Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
-                                    oDetalle.codEmpldo + ". Nombre Completo: " + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte +
-                                    ". Id solcicitud: " + IdSolicitud);
+                                Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con Nro documento: " +
+                                    oDetalle.idntfccn_slctnte + ". Nombre Completo: " + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte +
+                                    ". Id solcicitud: " + oIdSolicitud);
                                 oMensajeRespuesta = new MensajeRespuesta();
                             }
 
@@ -803,7 +805,7 @@ namespace Vacaciones.Controllers
                             if (oDetalle.nmro_ds <= oDetalle.NroMinDiasCorreoCompensacion)
                             {
                                 oFlowCompensacion = new FlowModels();
-                                oFlowCompensacion.CorreoCompensacion = oDetalle.CorreoCompensacion;
+                                oFlowCompensacion.CorreoCompensacion = StringCipher.Decrypt(oDetalle.CorreoCompensacion);
                                 oFlowCompensacion.nombreSolicitante = HttpUtility.HtmlDecode(oDetalle.nmbrs_slctnte) + " " + HttpUtility.HtmlDecode(oDetalle.apllds_slctnte);
                                 oFlowCompensacion.fecha_inicio = oDetalle.fcha_inco_vccns.ToShortDateString();
                                 oFlowCompensacion.fecha_fin = oDetalle.fcha_fn_vcc.ToShortDateString();
@@ -815,9 +817,9 @@ namespace Vacaciones.Controllers
 
                                 if (oMensajeRespuesta.Codigo != "1")
                                 {
-                                    Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con código SAP: " +
-                                        oDetalle.codEmpldo + ". Nombre Completo: " + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte +
-                                        ". Id solcicitud: " + IdSolicitud);
+                                    Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el empleado con Nro documento: " +
+                                        oDetalle.idntfccn_slctnte + ". Nombre Completo: " + oDetalle.nmbrs_slctnte + oDetalle.apllds_slctnte +
+                                        ". Id solcicitud: " + oIdSolicitud);
                                     oMensajeRespuesta = new MensajeRespuesta();
                                 }
                             }
@@ -844,7 +846,7 @@ namespace Vacaciones.Controllers
                     if (oMensajeRespuesta.Codigo != "1")
                     {
                         Logger.Error("Ocurrió un error enviando las notificaciones por correo electrónico para el jefe con correo: " + oCorreo +
-                            ". Id de la solicitud: " + IdSolicitud);
+                            ". Id de la solicitud: " + oIdSolicitud);
 
                     }
                 }

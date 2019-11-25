@@ -99,7 +99,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                     }
                                 }
 
-                               
+
                                 break;
 
                             //Error: Favor Enviar Nro.(s) de Identificación
@@ -134,6 +134,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
                                 break;
 
+                            //Identificacion vacia
                             case "-1":
 
                                 Logger.Error("El Nro de identificacion no puede ser vacio. Nro. Documento" +
@@ -154,7 +155,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
                                 break;
 
-
+                            //Error en el API
                             case "-3":
 
                                 Logger.Error("Ocurrió un error interno en el API de solicitud de vacaciones. Contacte al administrador del sistema . Nro. Documento" +
@@ -165,6 +166,7 @@ namespace Vacaciones.Utilities.IntegracionesServicios
 
                                 break;
 
+                            //Empleado que ya cuenta con vacaciones
                             case "-4":
 
                                 Logger.Error("El empleado ya cuenta con una solicitud de vacaciones pendiente de aprobación. Nro. Documento" +
@@ -172,6 +174,16 @@ namespace Vacaciones.Utilities.IntegracionesServicios
                                    ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
 
                                 oRespuestaSAPCliente.Exception[POS].MESSAGE = "El empleado ya cuenta con una solicitud de vacaciones pendiente de aprobación";
+
+                                break;
+
+                            //Empleado ya cuenta con vacaciones pero es anotador
+                            case "-5":
+
+                                Logger.Error("El empleado ya cuenta con una solicitud de vacaciones pendiente de aprobación. Nro. Documento" +
+                                    Identificacion +
+                                    ". Mas sin embargo, por ser un anotador, se deja continuar." +
+                                   ". Mensaje del servicio: " + oRespuestaSAPCliente.Exception[0].MESSAGE);
 
                                 break;
                         }

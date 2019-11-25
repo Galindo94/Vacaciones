@@ -4,333 +4,43 @@
 <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1">
+    <script src="~/Scripts/FormScripts/Formulario.js"></script>
 
+    @Html.Hidden("fechasConcatendas", (string)ViewBag.DiasFestivosSabadosDomingos)
+    @Html.Hidden("inicioFecha", (HtmlString)@Html.Raw(Json.Encode(ViewBag.InicioFecha)))
+    @Html.Hidden("finFecha", (HtmlString)@Html.Raw(Json.Encode(ViewBag.FinFecha)))
+    @Html.Hidden("MinimoDias", (string)Json.Encode(ViewBag.MinimoDias))
+    @Html.Hidden("NombresEmpleado", (string)ViewBag.NombresEmpleado)
+    @Html.Hidden("ApellidosEmpleado", (string)ViewBag.ApellidosEmpleado)
+    @Html.Hidden("oRespuestaSAPModels", (string)@ViewBag.oRespuestaSAPModels)
+    @Html.Hidden("oRespuestaMotor", (string)@ViewBag.oRespuestaMotor)
+    @Html.Hidden("NroMinDiasCorreoCompensacion", (HtmlString)@Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)))
+    @Html.Hidden("CorreoCompensacion", (string)ViewBag.CorreoCompensacion)
 
     <script>
-
         $(document).ready(function () {
 
-            //Funcion utilizada para evitar que se pongna decimales, "." y "," dentro del campo numeor de dias
-            (function ($) {
-                $.fn.inputFilter = function (inputFilter) {
-                    return this.on("input keydown keyup mousedown mouseup select contextmenu drop", function () {
-                        if (inputFilter(this.value)) {
-                            this.oldValue = this.value;
-                            this.oldSelectionStart = this.selectionStart;
-                            this.oldSelectionEnd = this.selectionEnd;
-                        } else if (this.hasOwnProperty("oldValue")) {
-                            this.value = this.oldValue;
-                            this.setSelectionRange(this.oldSelectionStart, this.oldSelectionEnd);
-                        }
-                    });
-                };
-            }(jQuery));
-
-
-            //Control de kendoCalendar
-            var fechasConcatendas = @Html.Raw(Json.Encode(ViewBag.DiasFestivosSabadosDomingos));
-            var inicioFecha = @Html.Raw(Json.Encode(ViewBag.InicioFecha));
-            var finFecha = @Html.Raw(Json.Encode(ViewBag.FinFecha));
-            var dates = [];
-            var fechas = fechasConcatendas.split(",")
-
-            for (var index = 0; index < fechas.length; index++) {
-                dates.push(new Date(fechas[index]));
-            }
-
-            $(".kendocalendar").kendoDatePicker({
-                format: "dd/MM/yyyy",
-                min: inicioFecha,
-                max: finFecha,
-                disableDates: dates
-                ,change: function () {
-                    if ($("#NumDias0").val() != '') {
-                       //Calcular la fecha fin de vacaciones
-
-                        $.getJSON("/Formulario/CalcularFechaFin", {
-                            NumeroDias: parseInt($("#NumDias0").val()),
-                            FechaInicio: $("#kendocalendar_0").val(),
-                            DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
-                        }, function (oRespuesta) {
-                           switch (oRespuesta.Codigo) {
-
-                               case "0":
-                                   var fechas = oRespuesta.Resultado.Data.split("/");
-                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
-                                   break;
-
-                               case "-1":
-                                   swal.fire({
-                                       text: respuesta.Mensaje,
-                                       type: 'warning',
-                                       confirmButtonText: "OK",
-                                       confirmButtonColor: '#00AFF0',
-                                       allowOutsideClick: false,
-                                       allowEscapeKey: false
-                                   }).then((result) => {
-                                       if (result.value) {
-                                           $("#kendocalendar_1").val('');
-                                       }
-                                   });
-                                   break;
-                           }
-                       })
-                   }
-                }
-            });
+           crearCalendario();
 
             $(".kendocalendar").attr("readonly", true);
             $(".kendocalendar").attr("placeholder", "DD/MM/AAAA");
             $("input[class='kendocalendar k-input']").each(function (index) {
                 $(this).attr('id', 'kendocalendar_' + index);
             });
-
             $("#NumDias0").inputFilter(function (value) {
                 return /^\d*$/.test(value);
             });
-
             $('#kendocalendar_1').data('kendoDatePicker').enable(false);
 
-
-            //Validacion del campo numero de dias en pantalla principal
-            $("#NumDias0").focusout(function () {
-                if ($("#NumDias0").val() != '') {
-                    $.getJSON("/Formulario/ValidarCantidadDias", { NumeroDias: parseInt($("#NumDias0").val()), NumDiasDisponibles: parseFloat($("#SpanNumDias0").html()), MinimoDias : "@ViewBag.MinimoDias" }, function (respuesta) {
-
-                        switch (respuesta.Codigo) {
-
-                            case "1":
-                                swal.fire({
-                                    text: respuesta.Mensaje,
-                                    type: 'warning',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                }).then((result) => {
-                                    if (result.value) {
-                                        setTimeout(function () {
-                                            $("#kendocalendar_1").val('');
-                                            $("#NumDias0").val('');
-                                            $("#NumDias0").focus();
-                                        }, 500)
-                                    }
-                                });
-                                break;
-
-                            case "2":
-                                swal.fire({
-                                    text: respuesta.Mensaje,
-                                    type: 'warning',
-                                    confirmButtonText: "OK",
-                                    confirmButtonColor: '#00AFF0',
-                                    allowOutsideClick: false,
-                                    allowEscapeKey: false
-                                }).then((result) => {
-                                    if (result.value) {
-                                        setTimeout(function () {
-                                            $("#kendocalendar_1").val('');
-                                            $("#NumDias0").val('');
-                                            $("#NumDias0").focus();
-                                        }, 500)
-                                    }
-                                });
-                                break;
-                        }
-                    })
-                }
-            });
-
-            $("#NumDias0").change(function () {
-                if ($("#NumDias0").val() != '' && $("#kendocalendar_0").val()!= '') {
-                    $.getJSON("/Formulario/CalcularFechaFin", {
-                        NumeroDias: parseInt($("#NumDias0").val()),
-                        FechaInicio: $("#kendocalendar_0").val(),
-                        DiasFestivosSabadosDomingos: "@ViewBag.DiasFestivosSabadosDomingos"
-                    }, function (oRespuesta) {
-                           switch (oRespuesta.Codigo) {
-
-                               case "0":
-                                   var fechas = oRespuesta.Resultado.Data.split("/");
-                                   $("#kendocalendar_1").val(new Date(parseInt(fechas[2]), parseInt(fechas[1] - 1), parseInt(fechas[0])).toJSON().slice(0, 10).split('-').reverse().join('/'));
-                                   break;
-
-                               case "-1":
-                                   swal.fire({
-                                       text: respuesta.Mensaje,
-                                       type: 'warning',
-                                       confirmButtonText: "OK",
-                                       confirmButtonColor: '#00AFF0',
-                                       allowOutsideClick: false,
-                                       allowEscapeKey: false
-                                   }).then((result) => {
-                                       if (result.value) {
-                                           $("#kendocalendar_1").val('');
-                                       }
-                                   });
-                                   break;
-                           }
-                       })
-                   }
-            });
+            validarNumDias();
+            calcularFechaFin();
 
 
-            //Evento del boton aregar dentro de la ventana Principal
-            $("#btnAgregar0").click(function () {
-                if ($("#NroIdentificacionHidden").val() != '' && $("#NumDias0").val() != '' && $("#kendocalendar_0").val() != '') {
-                    $("#DivFondoTrasparente").show();
-                    $("#DivCirculoAzul").show();
+            var URL = "@Url.Action("Index", "FinVacaciones",  null)";
+            guardarSolicitud(URL)
 
-
-                    $.post("../Formulario/ConsultaFechasSolicitudExistentes",
-                        {
-                            oIdentificacion: $("#NroIdentificacionHidden").val(),
-                            FechaInicio: $("#kendocalendar_0").val(),
-                            FechaFin: $("#kendocalendar_1").val(),
-                        }, function (oRespuestaFechasSolicitudes) {
-
-                            $("#DivFondoTrasparente").hide();
-                            $("#DivCirculoAzul").hide();
-
-                            switch (oRespuestaFechasSolicitudes.Codigo) {
-
-                                case "-1":
-                                    swal.fire({
-                                        text: oRespuestaFechasSolicitudes.Mensaje,
-                                        type: 'error',
-                                        confirmButtonText: "OK",
-                                        confirmButtonColor: '#00AFF0',
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false
-                                    });
-                                    break;
-
-                                case "-2":
-                                    swal.fire({
-                                        text: oRespuestaFechasSolicitudes.Mensaje,
-                                        type: 'error',
-                                        confirmButtonText: "OK",
-                                        confirmButtonColor: '#00AFF0',
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false
-                                    });
-                                    break;
-
-                                case "-3":
-                                    swal.fire({
-                                        text: oRespuestaFechasSolicitudes.Mensaje,
-                                        type: 'error',
-                                        confirmButtonText: "OK",
-                                        confirmButtonColor: '#00AFF0',
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false
-                                    });
-                                    break;
-
-                                case "1":
-
-                                    $.post("../Formulario/GuardarSolicitud",
-                                        {
-                                            NroIdentificacion: $("#NroIdentificacionHidden").val(),
-                                            NombresEmpleado: "@ViewBag.NombresEmpleado",
-                                            ApellidosEmpleado: "@ViewBag.ApellidosEmpleado",
-                                            oRespuestaSAP: @Html.Raw(Json.Encode(@ViewBag.oRespuestaSAPModels)),
-                                            oRespuestaMotor: @Html.Raw(Json.Encode(@ViewBag.oRespuestaMotor)),
-                                            NumeroDias: $("#NumDias0").val(),
-                                            SabadoHabil: "@ViewBag.DiasFestivosSabadosDomingos",
-                                            FechaInicio: $("#kendocalendar_0").val(),
-                                            FechaFin: $("#kendocalendar_1").val(),
-                                            NroMinDiasCorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.NroMinDiasCorreoCompensacion)),
-                                            CorreoCompensacion: @Html.Raw(Json.Encode(@ViewBag.CorreoCompensacion)),
-                                        }, function (oRespuestaGuardar) {
-
-                                            $("#DivFondoTrasparente").hide();
-                                            $("#DivCirculoAzul").hide();
-
-                                            switch (oRespuestaGuardar.Codigo) {
-
-                                                case "1":
-                                                    swal.fire({
-                                                        text: oRespuestaGuardar.Mensaje,
-                                                        type: 'success',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    }).then((result) => {
-                                                        if (result.value) {
-                                                            var url = "@Url.Action("Index", "FinVacaciones",  null)";
-                                                            window.location.href = url
-                                                        }
-                                                        });
-                                                    break;
-
-                                                case "-1":
-                                                    swal.fire({
-                                                        text: oRespuestaGuardar.Mensaje,
-                                                        type: 'error',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    });
-                                                    break;
-
-                                                case "-2":
-                                                    swal.fire({
-                                                        text: oRespuestaGuardar.Mensaje,
-                                                        type: 'error',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    });
-                                                    break;
-
-                                                case "-3":
-                                                    swal.fire({
-                                                        text: oRespuestaGuardar.Mensaje,
-                                                        type: 'error',
-                                                        confirmButtonText: "OK",
-                                                        confirmButtonColor: '#00AFF0',
-                                                        allowOutsideClick: false,
-                                                        allowEscapeKey: false
-                                                    });
-                                                    break;
-
-                                            }
-                                        })
-
-                                    break;
-
-                                case "2":
-                                    swal.fire({
-                                        text: oRespuestaFechasSolicitudes.Mensaje,
-                                        type: 'warning',
-                                        confirmButtonText: "OK",
-                                        confirmButtonColor: '#00AFF0',
-                                        allowOutsideClick: false,
-                                        allowEscapeKey: false
-                                    });
-                                    break;
-                        }
-                    });
-                }
-                else {
-                    swal.fire({
-                        text: "Debe ingresar el número de días y la fecha de inicio para la solicitud de vacaciones",
-                        type: 'warning',
-                        confirmButtonText: "OK",
-                        confirmButtonColor: '#00AFF0',
-                        allowOutsideClick: false,
-                        allowEscapeKey: false
-                    })
-                };
-            });
         });
-
     </script>
-
 </head>
 <body>
     <div class="jumbotron">

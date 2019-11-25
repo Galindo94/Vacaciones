@@ -20,12 +20,13 @@ namespace Vacaciones.Controllers
             return View();
         }
 
-        public JsonResult ConsultarUserSAP(int NroDocumento)
+        public JsonResult ConsultarUsuariosAPISAP(string NroIdentificacion)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPISAP oConsumoAPISAP = new ConsumoAPISAP();
             try
             {
+                int NroDocumento = int.Parse(NroIdentificacion);
                 oMensajeRespuesta = oConsumoAPISAP.ConsultarUserSAP(NroDocumento);
 
                 return Json(oMensajeRespuesta, JsonRequestBehavior.AllowGet);
@@ -34,7 +35,7 @@ namespace Vacaciones.Controllers
             catch (Exception Ex)
             {
                 Logger.Error("Ocurrió un error interno en el consumo del API de SAP con el " +
-                                             "Nro. Documento: " + NroDocumento +
+                                             "Nro. Documento: " + NroIdentificacion +
                                              "Exception: " + Ex);
 
                 oMensajeRespuesta.Codigo = "3";

@@ -5,6 +5,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Helpers;
 using System.Web.Mvc;
 using Vacaciones.Models.ModelosFechasSolicitud;
 using Vacaciones.Models.ModelosFlow;
@@ -34,10 +35,10 @@ namespace Vacaciones.Controllers
                 UtilitiesGenerales oDiasContingente = new UtilitiesGenerales();
 
                 oRespuestaMotor = JsonConvert.DeserializeObject<RespuestaMotorModels>(oDatosFormulario);
-                ViewBag.oRespuestaMotor = JsonConvert.SerializeObject(oRespuestaMotor);
+                ViewBag.oRespuestaMotor = StringCipher.Encrypt(JsonConvert.SerializeObject(oRespuestaMotor));
 
                 oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oDatosSAP);
-                ViewBag.oRespuestaSAPModels = JsonConvert.SerializeObject(oRespuestaSAPModels);
+                ViewBag.oRespuestaSAPModels = StringCipher.Encrypt(JsonConvert.SerializeObject(oRespuestaSAPModels));
 
                 ViewBag.NroIdentificacion = oRespuestaSAPModels.Details[0].NroDocumento;
 
@@ -70,13 +71,11 @@ namespace Vacaciones.Controllers
                             break;
 
                         case "CorreoCompensacion":
-                            ViewBag.CorreoCompensacion = oReglas.Vlr_Slda;
+                            ViewBag.CorreoCompensacion = StringCipher.Encrypt(oReglas.Vlr_Slda);
                             break;
 
                     }
                 }
-
-                ViewBag.SabadoHabil = oRespuestaSAPModels.Details[0].SabadoHabil;
 
                 // Se obtienen las fechas de los festivos, sabados y domingos (Si se envía true incluira los sábados, si se envía false no incluirá los sábados, según criterio)
                 string DiasFestivosSabadosDomingos = FestivosColombia.DiasFestivoSabadosDomingosConcatenado(DateTime.Now.Year, oRespuestaSAPModels.Details[0].SabadoHabil == "NO" ? true : false);
@@ -122,8 +121,8 @@ namespace Vacaciones.Controllers
 
         public JsonResult GuardarSolicitud(string NroIdentificacion, string NombresEmpleado, string ApellidosEmpleado,
                                            string oRespuestaSAP, string oRespuestaMotor, string NumeroDias,
-                                           string SabadoHabil, string FechaInicio, string FechaFin,
-                                           string NroMinDiasCorreoCompensacion, string CorreoCompensacion)
+                                           string FechaInicio, string FechaFin, string NroMinDiasCorreoCompensacion,
+                                           string CorreoCompensacion)
         {
             MensajeRespuesta oMensajeRespuesta = new MensajeRespuesta();
             ConsumoAPIGuardarSolicitud oConsumoAPIGuardarSolicitud = new ConsumoAPIGuardarSolicitud();
@@ -142,9 +141,8 @@ namespace Vacaciones.Controllers
                 int backSlash = NombreUser.IndexOf("\\");
                 string UserName = backSlash > 0 ? NombreUser.Substring(backSlash + 1) : NombreUser;
 
-
-                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(oRespuestaSAP);
-                oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(oRespuestaMotor);
+                oRespuestaSAPModels = JsonConvert.DeserializeObject<RespuestaSAPModels>(StringCipher.Decrypt(oRespuestaSAP));
+                oRespuestaMotorModels = JsonConvert.DeserializeObject<RespuestaMotorModels>(StringCipher.Decrypt(oRespuestaMotor));
 
                 oLstSolicitudDetalle.Add(new SolicitudDetalle
                 {
@@ -163,7 +161,7 @@ namespace Vacaciones.Controllers
                     scdd = oRespuestaSAPModels.Details[0].Sociedad,
                     idntfccn_slctnte = NroIdentificacion,
                     NroMinDiasCorreoCompensacion = int.Parse(NroMinDiasCorreoCompensacion),
-                    CorreoCompensacion = CorreoCompensacion
+                    CorreoCompensacion = StringCipher.Decrypt(CorreoCompensacion)
                 });
 
                 oSolicitudes.fcha_hra_slctd = DateTime.Now;
@@ -213,7 +211,7 @@ namespace Vacaciones.Controllers
                     {
                         FlowModels oFlowMesaCompensacion = new FlowModels
                         {
-                            CorreoCompensacion = CorreoCompensacion,
+                            CorreoCompensacion = StringCipher.Decrypt(CorreoCompensacion),
                             nombreSolicitante = HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].nmbrs_slctnte) + " " + HttpUtility.HtmlDecode(oLstSolicitudDetalle[0].apllds_slctnte),
                             fecha_inicio = oLstSolicitudDetalle[0].fcha_inco_vccns.ToShortDateString(),
                             fecha_fin = oLstSolicitudDetalle[0].fcha_fn_vcc.ToShortDateString(),
