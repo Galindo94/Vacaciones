@@ -59,6 +59,10 @@
             agregarPantallaModal();
             editarPantallaModal();
 
+            $("#NumDias1").inputFilter(function (value) {
+                return /^\d*$/.test(value);
+            });
+
 
         });
 
