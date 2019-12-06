@@ -59,7 +59,8 @@ namespace Vacaciones.Utilities.UtilitiesGenerales
                 int contador = 0;
 
                 string[] Fechas;
-                Fechas = DiasFestivosSabadosDomingos.Split(',');
+				DiasFestivosSabadosDomingos=DiasFestivosSabadosDomingos.TrimEnd(',');
+				Fechas = DiasFestivosSabadosDomingos.Split(',');
 
                 foreach (var item in Fechas)
                 {
